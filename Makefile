@@ -3,6 +3,7 @@ SRCDIR 	 := src
 LIBDIR 	 := lib
 CXXFLAGS := -g -O2 -Wall -Wextra -std=c++14 -pedantic -I$(SRCDIR) $(CXXFLAGS)
 LDFLAGS  := -O2
+LIBS     :=
 AR       := ar crs
 MKDIR    := mkdir -p
 RM       := rm -f
@@ -15,7 +16,7 @@ EXE    := analysis/yam2.exe
 # NLopt (https://nlopt.readthedocs.io/
 NLOPT    ?= /usr
 CXXFLAGS += -I$(NLOPT)/include
-LDFLAGS  += -L$(NLOPT)/lib -lnlopt
+LIBS     += -L$(NLOPT)/lib -lnlopt
 
 .PHONY: all install clean
 
@@ -28,7 +29,7 @@ $(LIB): $(LIBOBJ)
 	ranlib $@
 
 analysis/%.exe: analysis/%.o $(LIB)
-	$(CXX) $(LDFLAGS) -o $@ $< -L$(LIBDIR) -l$(PKGNAME)
+	$(CXX) $(LDFLAGS) -o $@ $< -L$(LIBDIR) -l$(PKGNAME) $(LIBS)
 
 clean::
 	$(RM) $(EXE) $(LIBOBJ) $(LIB)
