@@ -4,6 +4,7 @@
 #include "momentum.h"
 
 #include <optional>
+#include <ostream>
 #include <vector>
 
 namespace yam2 {
@@ -49,6 +50,8 @@ public:
         const std::vector<FourMomentum> &as,
         const std::vector<FourMomentum> &bs, const TransverseMomentum &ptmiss,
         double minv);
+
+    friend std::ostream &operator<<(std::ostream &os, const InputKinematics &p);
 };
 
 std::optional<InputKinematics> mkInput(const std::vector<FourMomentum> &as,

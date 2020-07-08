@@ -37,4 +37,14 @@ std::optional<InputKinematics> mkInput(const vector<FourMomentum> &as,
     return {
         {p1 * s, p2 * s, q1 * s, q2 * s, ptmiss * s, minvsq * s * s, scale}};
 }
+
+std::ostream &operator<<(std::ostream &os, const InputKinematics &p) {
+    os << "p1: " << p.p1_ << '\n'
+       << "p2: " << p.p2_ << '\n'
+       << "q1: " << p.q1_ << '\n'
+       << "q2: " << p.q2_ << '\n'
+       << "ptmiss: " << p.ptmiss_ << '\n'
+       << "m(invisible): " << std::sqrt(p.minvsq_);
+    return os;
+}
 }  // namespace yam2
