@@ -50,6 +50,11 @@ public:
         const std::vector<FourMomentum> &bs, const TransverseMomentum &ptmiss,
         double minv);
 };
+
+std::optional<InputKinematics> mkInput(const std::vector<FourMomentum> &as,
+                                       const std::vector<FourMomentum> &bs,
+                                       const TransverseMomentum &ptmiss,
+                                       double minv);
 }  // namespace yam2
 
 #endif  // YAM2_SRC_INPUT_H_
