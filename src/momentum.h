@@ -12,6 +12,22 @@ struct Mass {
     double square() const { return value * value; }
 };
 
+class TransverseMomentum {
+private:
+    double x_, y_;
+
+public:
+    TransverseMomentum() = delete;
+    TransverseMomentum(double x, double y) : x_(x), y_(y) {}
+
+    double px() const { return x_; }
+    double py() const { return y_; }
+    double pt() const { return std::hypot(x_, y_); }
+
+    friend std::ostream &operator<<(std::ostream &os,
+                                    const TransverseMomentum &p);
+};
+
 class FourMomentum {
 private:
     double t_, x_, y_, z_;
@@ -33,13 +49,12 @@ public:
         return mSq >= 0 ? std::sqrt(mSq) : 0;
     }
 
-    double transverseEnergy() const {
-        // return std::sqrt(x_ * x_ + y_ * y_ + m2());
-        return std::sqrt(t_ * t_ - z_ * z_);
-    }
+    double transverseEnergy() const { return std::sqrt(t_ * t_ - z_ * z_); }
+
+    TransverseMomentum transverseVector() const { return {x_, y_}; }
 
     double dot(const FourMomentum &p) const {
-        return e() * p.e() - px() * p.px() - py() * p.py() - pz() * p.pz();
+        return t_ * p.e() - x_ * p.px() - y_ * p.py() - z_ * p.pz();
     }
 
     FourMomentum &operator+=(const FourMomentum &p) {
@@ -64,23 +79,6 @@ FourMomentum sum(const F<FourMomentum> &ps) {
     for (const auto &p : ps) { psum += p; }
     return psum;
 }
-
-class TransverseMomentum {
-private:
-    double x_, y_;
-
-public:
-    TransverseMomentum() = delete;
-    TransverseMomentum(double x, double y) : x_(x), y_(y) {}
-    TransverseMomentum(const FourMomentum &v4) : x_(v4.px()), y_(v4.py()) {}
-
-    double px() const { return x_; }
-    double py() const { return y_; }
-    double pt() const { return std::hypot(x_, y_); }
-
-    friend std::ostream &operator<<(std::ostream &os,
-                                    const TransverseMomentum &p);
-};
 }  // namespace yam2
 
 #endif  // YAM2_SRC_MOMENTUM_H_
