@@ -24,6 +24,8 @@ public:
     double py() const { return y_; }
     double pt() const { return std::hypot(x_, y_); }
 
+    TransverseMomentum operator*(double a) const { return {a * x_, a * y_}; }
+
     friend std::ostream &operator<<(std::ostream &os,
                                     const TransverseMomentum &p);
 };
@@ -49,12 +51,18 @@ public:
         return mSq >= 0 ? std::sqrt(mSq) : 0;
     }
 
+    double pt() const { return std::sqrt(x_ * x_ + y_ * y_); }
+
     double transverseEnergy() const { return std::sqrt(t_ * t_ - z_ * z_); }
 
     TransverseMomentum transverseVector() const { return {x_, y_}; }
 
     double dot(const FourMomentum &p) const {
         return t_ * p.e() - x_ * p.px() - y_ * p.py() - z_ * p.pz();
+    }
+
+    FourMomentum operator*(double a) const {
+        return {a * t_, a * x_, a * y_, a * z_};
     }
 
     FourMomentum &operator+=(const FourMomentum &p) {
