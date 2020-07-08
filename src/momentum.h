@@ -9,7 +9,9 @@ struct Mass {
     double value;
     Mass() : value(0) {}
     explicit Mass(double v) : value(v) {}
+
     double square() const { return value * value; }
+    Mass operator*(double a) const { return Mass{value * a}; }
 };
 
 class TransverseMomentum {
@@ -36,8 +38,13 @@ private:
 
 public:
     FourMomentum() = delete;
+
     FourMomentum(double t, double x, double y, double z)
         : t_(t), x_(x), y_(y), z_(z) {}
+
+    FourMomentum(Mass m, double x, double y, double z) : x_(x), y_(y), z_(z) {
+        t_ = std::sqrt(x_ * x_ + y_ * y_ + z_ * z_ + m.square());
+    }
 
     double e() const { return t_; }
     double px() const { return x_; }
