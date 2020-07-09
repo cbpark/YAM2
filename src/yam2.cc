@@ -8,7 +8,7 @@
 #include <optional>
 #include <ostream>
 
-#include "constraint.h"  // Constraints
+#include "constraint.h"  // Constraint
 #include "input.h"       // InputKinematics
 #include "object.h"      // m2ObjF
 #include "variables.h"   // Variables, initialGuess
@@ -17,13 +17,16 @@ using std::optional;
 using std::vector;
 
 namespace yam2 {
+/*
+ * 'Constriant' type is the function pointer defined in 'constrain.h'.
+ * 'InputKinematics' type is defined in 'input.h'
+ */
 optional<M2Solution> m2SQP(const vector<Constraint> &cfs,
                            const optional<InputKinematics> &inp, double eps) {
     if (!inp) { return {}; }
 
     auto inpv = inp.value();
-
-    auto algorithm = nlopt::opt{nlopt::LD_SLSQP, 4};
+    nlopt::opt algorithm{nlopt::LD_SLSQP, 4};  // the subproblem is BFGS.
     algorithm.set_min_objective(m2ObjF, &inpv);
 
     const double epsf = eps * 1.0e-2;
@@ -34,13 +37,14 @@ optional<M2Solution> m2SQP(const vector<Constraint> &cfs,
         algorithm.add_equality_constraint(cf, &inpv, eps);
     }
 
-    auto x = initialGuess(inpv);
-    double minf;
+    auto x = initialGuess(inpv);  // x = variables = (k1x, k1y, k1z, k2z).
+    double minf;  // minf = the minimum value of the objective function.
     auto result = algorithm.optimize(x, minf);
-    if (result < 0) { return {}; }
+    if (result < 0) { return {}; }  // if failed, return nothing.
 
-    minf *= inpv.scale();
+    minf *= inpv.scale();  // back to original scale.
     const auto sol_vars = mkVariables(x);
+    // the solutions will be all back to the original scale.
     const M2Solution sol{inpv, sol_vars.value(), minf};
     return sol;
 }
@@ -70,15 +74,14 @@ optional<M2Solution> m2AugLag(const vector<Constraint> &cfs,
     if (!inp) { return {}; }
 
     auto inpv = inp.value();
-
-    auto subproblem = nlopt::opt(nlopt::LN_NELDERMEAD, 4);
+    nlopt::opt subproblem{nlopt::LN_NELDERMEAD, 4};
     subproblem.set_min_objective(m2ObjF, &inpv);
 
     const double epsf = eps * 1.0e-2;
     subproblem.set_ftol_rel(epsf);
     subproblem.set_ftol_abs(epsf);
 
-    auto algorithm = nlopt::opt(nlopt::LD_AUGLAG_EQ, 4);
+    nlopt::opt algorithm{nlopt::LD_AUGLAG_EQ, 4};
     algorithm.set_min_objective(m2ObjF, &inpv);
     algorithm.set_local_optimizer(subproblem);
 
