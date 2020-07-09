@@ -6,8 +6,8 @@
 #include "momentum.h"
 #include "variables.h"
 
-#include <utility>
 #include <array>
+#include <tuple>
 
 namespace yam2 {
 class Gradient {
@@ -50,15 +50,15 @@ public:
     }
 };
 
-using Gradients = std::pair<Gradient, Gradient>;
-
 using FGType = std::pair<double, Gradient>;
 
-std::pair<Gradients, double> m2Grad(const InputKinematics &inp,
-                                    const Invisibles &ks,
-                                    const FourMomentum &p1,
-                                    const FourMomentum &p2,
-                                    const Variables &var);
+using Gradients = std::pair<Gradient, Gradient>;
+
+std::tuple<Gradients, double, double> m2Grad(const InputKinematics &inp,
+                                             const Invisibles &ks,
+                                             const FourMomentum &p1,
+                                             const FourMomentum &p2,
+                                             const Variables &var);
 }  // namespace yam2
 
 #endif  // YAM2_SRC_GRADIENT_H_

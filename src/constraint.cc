@@ -11,9 +11,9 @@ FGType constraintF(const FourMomentum &p1, const FourMomentum &p2,
                    const InputKinematics &inp, const Variables &var) {
     const auto ks = mkInvisibles(inp, var);
     const auto m2grad = m2Grad(inp, ks, p1, p2, var);
-    const auto &[grads, delta_m] = m2grad;
+    const auto &[grads, m1, m2] = m2grad;
     const auto &[grad1, grad2] = grads;
-    return {delta_m, grad1 - grad2};
+    return {m1 - m2, grad1 - grad2};
 }
 
 FGType constrantA(const InputKinematics &inp, const Variables &var) {

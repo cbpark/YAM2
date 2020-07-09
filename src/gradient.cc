@@ -6,6 +6,7 @@
 #include "variables.h"
 
 #include <cmath>
+#include <tuple>
 #include <utility>
 
 namespace yam2 {
@@ -15,11 +16,11 @@ double safeDivisor(double x) {
     return std::min(-eps0, x);
 }
 
-std::pair<Gradients, double> m2Grad(const InputKinematics &inp,
-                                    const Invisibles &ks,
-                                    const FourMomentum &p1,
-                                    const FourMomentum &p2,
-                                    const Variables &var) {
+std::tuple<Gradients, double, double> m2Grad(const InputKinematics &inp,
+                                             const Invisibles &ks,
+                                             const FourMomentum &p1,
+                                             const FourMomentum &p2,
+                                             const Variables &var) {
     const auto k1 = ks.k1();
     const double m1 = invariantMass(p1, k1);
     const double m1inverse = 1.0 / safeDivisor(m1);
@@ -37,6 +38,6 @@ std::pair<Gradients, double> m2Grad(const InputKinematics &inp,
                        r2 * var.k2z() - p2.pz());
     d2 *= m2inverse;
 
-    return {std::make_pair(d1, d2), m1 - m2};
+    return {std::make_pair(d1, d2), m1, m2};
 }
 }  // namespace yam2

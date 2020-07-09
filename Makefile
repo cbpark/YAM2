@@ -1,8 +1,8 @@
 PKGNAME  := YAM2
 SRCDIR 	 := src
 LIBDIR 	 := lib
-CXXFLAGS := -g -O2 -Wall -Wextra -std=c++17 -pedantic -I$(SRCDIR) $(CXXFLAGS)
-LDFLAGS  := -O2
+CXXFLAGS := -g -O0 -Wall -Wextra -std=c++17 -pedantic -I$(SRCDIR) $(CXXFLAGS)
+LDFLAGS  := -O0
 LIBS     := -lm
 AR       := ar crs
 MKDIR    := mkdir -p
