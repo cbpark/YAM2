@@ -21,6 +21,7 @@ public:
     double k1y() const { return k1y_; }
     double k1z() const { return k1z_; }
     double k2z() const { return k2z_; }
+    std::vector<double> variables() const { return {k1x_, k1y_, k1z_, k2z_}; }
 
     friend std::optional<Variables> mkVariables(const std::vector<double> &ks);
 };
