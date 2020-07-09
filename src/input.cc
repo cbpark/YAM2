@@ -1,3 +1,7 @@
+/*
+ *  Copyright (c) 2020 Chan Beom Park <cbpark@gmail.com>
+ */
+
 #include "input.h"
 
 #include <algorithm>
@@ -5,6 +9,8 @@
 #include <iterator>
 #include <optional>
 #include <vector>
+
+#include "momentum.h"  // FourMomentum, TransverseMomentum, Mass
 
 using std::vector;
 
@@ -33,8 +39,7 @@ std::optional<InputKinematics> mkInput(const vector<FourMomentum> &as,
     const double scale = std::sqrt(scalesq);
     const double s = 1.0 / scale;
 
-    return {
-        {p1 * s, p2 * s, q1 * s, q2 * s, ptmiss * s, minv * s, scale}};
+    return {{p1 * s, p2 * s, q1 * s, q2 * s, ptmiss * s, minv * s, scale}};
 }
 
 std::ostream &operator<<(std::ostream &os, const InputKinematics &p) {

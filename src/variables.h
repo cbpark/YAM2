@@ -1,7 +1,9 @@
+/*
+ *  Copyright (c) 2020 Chan Beom Park <cbpark@gmail.com>
+ */
+
 #ifndef YAM2_SRC_VARIABLES_H_
 #define YAM2_SRC_VARIABLES_H_
-
-#include "input.h"
 
 #include <optional>
 #include <vector>
@@ -26,17 +28,10 @@ public:
     friend std::optional<Variables> mkVariables(const std::vector<double> &ks);
 };
 
-std::optional<Variables> mkVariables(const std::vector<double> &ks) {
+inline std::optional<Variables> mkVariables(const std::vector<double> &ks) {
     if (ks.size() != 4) { return {}; }
-    auto var = Variables{ks};
+    Variables var{ks};
     return var;
-}
-
-Variables initialGuess(const InputKinematics &inp) {
-    const std::vector<double> guess{0.5 * inp.ptmiss().px(),
-                                    0.5 * inp.ptmiss().py(), 0.0, 0.0};
-    auto var = mkVariables(guess);
-    return var.value();
 }
 }  // namespace yam2
 

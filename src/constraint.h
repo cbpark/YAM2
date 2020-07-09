@@ -1,19 +1,23 @@
+/*
+ *  Copyright (c) 2020 Chan Beom Park <cbpark@gmail.com>
+ */
+
 #ifndef YAM2_SRC_CONSTRAINT_H_
 #define YAM2_SRC_CONSTRAINT_H_
-
-#include "input.h"   // InputKinematics
-#include "object.h"  // NLFunc
 
 #include <vector>
 
 namespace yam2 {
-using Constraints = std::vector<NLoptFunc>;
+typedef double (*Constraint)(const std::vector<double> &x,
+                             std::vector<double> &grad, void *input);
 
 /** constraint: (p1 + k1)^2 = (p2 + k2)^2 */
-NLoptFunc constraintA(const InputKinematics &inp);
+double constraintA(const std::vector<double> &x, std::vector<double> &grad,
+                   void *input);
 
 /** constraint: (q1 + k1)^2 = (q2 + k2)^2 */
-NLoptFunc constraintB(const InputKinematics &inp);
+double constraintB(const std::vector<double> &x, std::vector<double> &grad,
+                   void *input);
 }  // namespace yam2
 
 #endif  // YAM2_SRC_CONSTRAINT_H_

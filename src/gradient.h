@@ -1,14 +1,19 @@
+/*
+ *  Copyright (c) 2020 Chan Beom Park <cbpark@gmail.com>
+ */
+
 #ifndef YAM2_SRC_GRADIENT_H_
 #define YAM2_SRC_GRADIENT_H_
 
-#include "input.h"
-#include "invisibles.h"
-#include "momentum.h"
-#include "variables.h"
-
 #include <array>
 #include <tuple>
+#include <utility>
 #include <vector>
+
+#include "input.h"       // InputKinematics
+#include "invisibles.h"  // Invisibles
+#include "momentum.h"    // FourMomentum
+#include "variables.h"   // Variables
 
 namespace yam2 {
 class Gradient {
@@ -54,8 +59,6 @@ public:
         return g1;
     }
 };
-
-using FGType = std::pair<double, Gradient>;
 
 using Gradients = std::pair<Gradient, Gradient>;
 

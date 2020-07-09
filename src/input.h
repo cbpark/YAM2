@@ -1,11 +1,15 @@
+/*
+ *  Copyright (c) 2020 Chan Beom Park <cbpark@gmail.com>
+ */
+
 #ifndef YAM2_SRC_INPUT_H_
 #define YAM2_SRC_INPUT_H_
-
-#include "momentum.h"
 
 #include <optional>
 #include <ostream>
 #include <vector>
+
+#include "momentum.h"
 
 namespace yam2 {
 class InputKinematics {
