@@ -31,23 +31,31 @@ public:
     friend std::ostream &operator<<(std::ostream &os, const M2Solution &sol);
 };
 
-const double EPS = 1.0e-2;
+constexpr double EPS = 1.0e-2;
 
+/** M2XX variable using the SQP method */
 std::optional<M2Solution> m2XXSQP(const std::optional<InputKinematics> &inp,
                                   double eps = EPS);
+/** M2CX variable using the SQP method */
 std::optional<M2Solution> m2CXSQP(const std::optional<InputKinematics> &inp,
                                   double eps = EPS);
+/** M2XC variable using the SQP method */
 std::optional<M2Solution> m2XCSQP(const std::optional<InputKinematics> &inp,
                                   double eps = EPS);
+/** M2CC variable using the SQP method */
 std::optional<M2Solution> m2CCSQP(const std::optional<InputKinematics> &inp,
                                   double eps = EPS);
 
+/** M2XX variable using the augmented Lagrangian method */
 std::optional<M2Solution> m2XXAugLag(const std::optional<InputKinematics> &inp,
                                      double eps = EPS);
+/** M2CX variable using the augmented Lagrangian method */
 std::optional<M2Solution> m2CXAugLag(const std::optional<InputKinematics> &inp,
                                      double eps = EPS);
+/** M2XC variable using the augmented Lagrangian method */
 std::optional<M2Solution> m2XCAugLag(const std::optional<InputKinematics> &inp,
                                      double eps = EPS);
+/** M2CC variable using the augmented Lagrangian method */
 std::optional<M2Solution> m2CCAugLag(const std::optional<InputKinematics> &inp,
                                      double eps = EPS);
 
