@@ -8,6 +8,7 @@
 #include <ostream>
 #include <vector>
 
+#include "input.h"
 #include "invisibles.h"  // Invisibles, mkInvisibles
 #include "momentum.h"    // FourMomentum
 #include "variables.h"   // Variables
@@ -40,6 +41,15 @@ std::optional<M2Solution> m2XCSQP(const std::optional<InputKinematics> &inp,
                                   double eps = EPS);
 std::optional<M2Solution> m2CCSQP(const std::optional<InputKinematics> &inp,
                                   double eps = EPS);
+
+std::optional<M2Solution> m2XXAugLag(const std::optional<InputKinematics> &inp,
+                                     double eps = EPS);
+std::optional<M2Solution> m2CXAugLag(const std::optional<InputKinematics> &inp,
+                                     double eps = EPS);
+std::optional<M2Solution> m2XCAugLag(const std::optional<InputKinematics> &inp,
+                                     double eps = EPS);
+std::optional<M2Solution> m2CCAugLag(const std::optional<InputKinematics> &inp,
+                                     double eps = EPS);
 
 inline std::vector<double> initialGuess(const InputKinematics &inp) {
     return {0.5 * inp.ptmiss().px(), 0.5 * inp.ptmiss().py(), 0.0, 0.0};
