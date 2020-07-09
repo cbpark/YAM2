@@ -8,6 +8,7 @@
 
 #include <array>
 #include <tuple>
+#include <vector>
 
 namespace yam2 {
 class Gradient {
@@ -23,6 +24,10 @@ public:
     double dk1y() const { return dk1y_; }
     double dk1z() const { return dk1z_; }
     double dk2z() const { return dk2z_; }
+
+    std::vector<double> gradient() const {
+        return {dk1x_, dk1y_, dk1z_, dk2z_};
+    }
 
     Gradient &operator*=(double a) {
         this->dk1x_ *= a;
