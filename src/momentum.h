@@ -88,6 +88,11 @@ public:
     friend std::ostream &operator<<(std::ostream &os, const FourMomentum &p);
 };
 
+double invariantMass(const FourMomentum& p, const FourMomentum& k) {
+    const auto psum = p + k;
+    return psum.m();
+}
+
 template <template <typename> class F>
 FourMomentum sum(const F<FourMomentum> &ps) {
     FourMomentum psum{0, 0, 0, 0};
