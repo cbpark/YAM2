@@ -28,8 +28,8 @@ public:
 
     TransverseMomentum operator*(double a) const { return {a * x_, a * y_}; }
 
-    friend std::ostream &operator<<(std::ostream &os,
-                                    const TransverseMomentum &p);
+    friend std::ostream& operator<<(std::ostream& os,
+                                    const TransverseMomentum& p);
 };
 
 class FourMomentum {
@@ -64,7 +64,7 @@ public:
 
     TransverseMomentum transverseVector() const { return {x_, y_}; }
 
-    double dot(const FourMomentum &p) const {
+    double dot(const FourMomentum& p) const {
         return t_ * p.e() - x_ * p.px() - y_ * p.py() - z_ * p.pz();
     }
 
@@ -72,7 +72,7 @@ public:
         return {a * t_, a * x_, a * y_, a * z_};
     }
 
-    FourMomentum &operator+=(const FourMomentum &p) {
+    FourMomentum& operator+=(const FourMomentum& p) {
         this->t_ += p.e();
         this->x_ += p.px();
         this->y_ += p.py();
@@ -80,23 +80,20 @@ public:
         return *this;
     }
 
-    friend FourMomentum operator+(FourMomentum p1, const FourMomentum &p2) {
+    friend FourMomentum operator+(FourMomentum p1, const FourMomentum& p2) {
         p1 += p2;
         return p1;
     }
 
-    friend std::ostream &operator<<(std::ostream &os, const FourMomentum &p);
+    friend std::ostream& operator<<(std::ostream& os, const FourMomentum& p);
 };
 
-double invariantMass(const FourMomentum& p, const FourMomentum& k) {
-    const auto psum = p + k;
-    return psum.m();
-}
+double invariantMass(const FourMomentum& p, const FourMomentum& k);
 
 template <template <typename> class F>
-FourMomentum sum(const F<FourMomentum> &ps) {
+FourMomentum sum(const F<FourMomentum>& ps) {
     FourMomentum psum{0, 0, 0, 0};
-    for (const auto &p : ps) { psum += p; }
+    for (const auto& p : ps) { psum += p; }
     return psum;
 }
 }  // namespace yam2
