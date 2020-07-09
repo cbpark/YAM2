@@ -1,7 +1,7 @@
 PKGNAME  := YAM2
 SRCDIR 	 := src
 LIBDIR 	 := lib
-CXXFLAGS := -g -O0 -Wall -Wextra -std=c++17 -pedantic -I$(SRCDIR) $(CXXFLAGS)
+CXXFLAGS := -g -O2 -Wall -Wextra -std=c++17 -pedantic -I$(SRCDIR) $(CXXFLAGS)
 LDFLAGS  := -O0
 LIBS     := -lm
 AR       := ar crs
@@ -11,7 +11,7 @@ RM       := rm -f
 LIB    := $(LIBDIR)/lib$(PKGNAME).a
 LIBSRC := $(wildcard $(SRCDIR)/*.cc)
 LIBOBJ := $(LIBSRC:.cc=.o)
-EXE    := analysis/yam2.exe
+EXE    := examples/yam2
 
 # NLopt (https://nlopt.readthedocs.io/
 NLOPT    ?= /usr
@@ -20,7 +20,7 @@ LIBS     += -L$(NLOPT)/lib -lnlopt
 
 .PHONY: all install clean
 
-all: $(EXE)
+all: $(LIB)
 
 $(LIB): CXXFLAGS += -fPIC
 $(LIB): $(LIBOBJ)
@@ -28,7 +28,7 @@ $(LIB): $(LIBOBJ)
 	$(AR) $@ $^
 	ranlib $@
 
-analysis/%.exe: analysis/%.o $(LIB)
+examples/%: examples/%.o $(LIB)
 	$(CXX) $(LDFLAGS) -o $@ $< -L$(LIBDIR) -l$(PKGNAME) $(LIBS)
 
 clean::
