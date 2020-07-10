@@ -18,10 +18,10 @@ using std::optional;
 using std::vector;
 
 namespace yam2 {
-int M2Solution::neval_objf = 0;
+int neval_objf = 0;
 
 double m2ObjF(const vector<double> &x, vector<double> &grad, void *input) {
-    ++M2Solution::neval_objf;
+    ++neval_objf;
 
     const auto var = mkVariables(x);
     auto *const inp = reinterpret_cast<InputKinematics *>(input);
@@ -50,6 +50,8 @@ optional<M2Solution> m2SQP(const vector<Constraint> &cfs,
                            int neval) {
     if (!inp) { return {}; }
 
+    neval_objf = 0;
+
     auto inpv = inp.value();
     nlopt::opt algorithm{nlopt::LD_SLSQP, 4};  // the subproblem is BFGS.
     algorithm.set_min_objective(m2ObjF, &inpv);
@@ -71,7 +73,7 @@ optional<M2Solution> m2SQP(const vector<Constraint> &cfs,
     minf *= inpv.scale();  // back to original scale.
     const auto sol_vars = mkVariables(x);
     // the solutions will be all back to the original scale.
-    const M2Solution sol{inpv, sol_vars.value(), minf};
+    const M2Solution sol{inpv, sol_vars.value(), minf, neval_objf};
 
     return sol;
 }
@@ -105,6 +107,8 @@ optional<M2Solution> m2AugLag(const nlopt::algorithm &subopt,
                               int neval) {
     if (!inp) { return {}; }
 
+    neval_objf = 0;
+
     auto inpv = inp.value();
     nlopt::opt subproblem{subopt, 4};
     subproblem.set_min_objective(m2ObjF, &inpv);
@@ -133,7 +137,7 @@ optional<M2Solution> m2AugLag(const nlopt::algorithm &subopt,
 
     minf *= inpv.scale();
     const auto sol_vars = mkVariables(x);
-    const M2Solution sol{inpv, sol_vars.value(), minf};
+    const M2Solution sol{inpv, sol_vars.value(), minf, neval_objf};
 
     return sol;
 }
@@ -198,8 +202,7 @@ optional<M2Solution> m2CCAugLagNMSimplex(const optional<InputKinematics> &inp,
 }
 
 std::ostream &operator<<(std::ostream &os, const M2Solution &sol) {
-    os << "-- found minimum after " << M2Solution::neval_objf
-       << " evaluations:\n";
+    os << "-- found minimum after " << sol.neval_objf() << " evaluations:\n";
     os << "M2: " << sol.m2() << '\n'
        << "k1: " << sol.k1() << '\n'
        << "k2: " << sol.k2();

@@ -19,17 +19,20 @@ class M2Solution {
 private:
     double m2_;
     Invisibles ksol_;
+    int neval_objf_;
 
 public:
     M2Solution() = delete;
-    M2Solution(const InputKinematics &inp, const Variables &sol, double m2)
-        : m2_(m2), ksol_(mkInvisibles(inp, sol, inp.scale())) {}
-
-    static int neval_objf;
+    M2Solution(const InputKinematics &inp, const Variables &sol, double m2,
+               int neval_objf)
+        : m2_(m2),
+          ksol_(mkInvisibles(inp, sol, inp.scale())),
+          neval_objf_(neval_objf) {}
 
     double m2() const { return m2_; }
     FourMomentum k1() const { return ksol_.k1(); }
     FourMomentum k2() const { return ksol_.k2(); }
+    int neval_objf() const { return neval_objf_; }
 
     friend std::ostream &operator<<(std::ostream &os, const M2Solution &sol);
 };
