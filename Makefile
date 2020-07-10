@@ -11,7 +11,7 @@ RM       := rm -f
 LIB    := $(LIBDIR)/lib$(PKGNAME).a
 LIBSRC := $(wildcard $(SRCDIR)/*.cc)
 LIBOBJ := $(LIBSRC:.cc=.o)
-EXE    := examples/yam2
+EXE    := examples/m2
 
 # NLopt (https://nlopt.readthedocs.io/
 NLOPT    ?= /usr
