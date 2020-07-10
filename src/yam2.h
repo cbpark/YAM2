@@ -25,7 +25,7 @@ public:
     M2Solution(const InputKinematics &inp, const Variables &sol, double m2)
         : m2_(m2), ksol_(mkInvisibles(inp, sol, inp.scale())) {}
 
-    static int neval_obj;
+    static int neval_objf;
 
     double m2() const { return m2_; }
     FourMomentum k1() const { return ksol_.k1(); }

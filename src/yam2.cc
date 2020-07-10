@@ -18,10 +18,10 @@ using std::optional;
 using std::vector;
 
 namespace yam2 {
-int M2Solution::neval_obj = 0;
+int M2Solution::neval_objf = 0;
 
 double m2ObjF(const vector<double> &x, vector<double> &grad, void *input) {
-    ++M2Solution::neval_obj;
+    ++M2Solution::neval_objf;
 
     const auto var = mkVariables(x);
     auto *const inp = reinterpret_cast<InputKinematics *>(input);
@@ -198,7 +198,7 @@ optional<M2Solution> m2CCAugLagNMSimplex(const optional<InputKinematics> &inp,
 }
 
 std::ostream &operator<<(std::ostream &os, const M2Solution &sol) {
-    os << "-- found minimum after " << M2Solution::neval_obj
+    os << "-- found minimum after " << M2Solution::neval_objf
        << " evaluations:\n";
     os << "M2: " << sol.m2() << '\n'
        << "k1: " << sol.k1() << '\n'
