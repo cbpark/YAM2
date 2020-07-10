@@ -27,13 +27,16 @@ int main() {
         return 1;
     }
 
-    auto m2sol = yam2::m2CCSQP(input.value(), 1.0e-2);  // tolerance: 1.0e-2
+    // tolerance is set to be 1.0e-3.
+    // -- if not set, it will use the default value (1.0e-2).
+    auto m2sol = yam2::m2CCSQP(input.value(), 1.0e-3);
     if (!m2sol) {
         std::cerr << "Failed to find minimum.\n";
         return 1;
     } else {
         // std::cout << m2sol.value() << '\n';
 
+        // k1 and k2 are the M2 solutions to the momenta of C1 and C2.
         std::cout << "M2CC = " << m2sol.value().m2() << '\n'
                   << "where \n"
                   << "  k1: " << m2sol.value().k1() << '\n'
