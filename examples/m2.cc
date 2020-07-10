@@ -37,7 +37,7 @@ int main() {
         // std::cout << m2sol.value() << '\n';
 
         // k1 and k2 are the M2 solutions to the momenta of C1 and C2.
-        std::cout << "M2CC = " << m2sol.value().m2() << '\n'
+        std::cout << "M2 = " << m2sol.value().m2() << '\n'
                   << "where \n"
                   << "  k1: " << m2sol.value().k1() << '\n'
                   << "  k2: " << m2sol.value().k2() << '\n';

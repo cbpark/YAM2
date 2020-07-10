@@ -1,4 +1,5 @@
 PKGNAME  := YAM2
+VERSION  := 0.0.0.0
 SRCDIR 	 := src
 LIBDIR 	 := lib
 CXXFLAGS := -g -O2 -Wall -Wextra -std=c++17 -pedantic -I$(SRCDIR) $(CXXFLAGS)
@@ -16,7 +17,7 @@ EXE    := examples/m2
 # NLopt (https://nlopt.readthedocs.io/
 NLOPT    ?= /usr
 CXXFLAGS += -I$(NLOPT)/include
-LIBS     += -L$(NLOPT)/lib -lnlopt
+LIBS     += -L$(NLOPT)/lib -lnlopt -Wl,-rpath $(NLOPT)/lib
 
 .PHONY: all install clean
 
