@@ -41,7 +41,7 @@ public:
 constexpr double EPS = 1.0e-3;
 
 /** the maximum number of interations */
-constexpr int NEVAL = 1000;
+constexpr int NEVAL = 5000;
 
 /** M2XX variable using the SQP method */
 std::optional<M2Solution> m2XXSQP(const std::optional<InputKinematics> &inp,
