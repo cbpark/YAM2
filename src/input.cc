@@ -15,8 +15,8 @@
 using std::vector;
 
 namespace yam2 {
-double getScale(const FourMomentum &p) { return p.pt(); }
-double getScale(const TransverseMomentum &p) { return p.pt(); }
+double getPT(const FourMomentum &p) { return p.pt(); }
+double getPT(const TransverseMomentum &p) { return p.pt(); }
 
 std::optional<InputKinematics> mkInput(const vector<FourMomentum> &as,
                                        const vector<FourMomentum> &bs,
@@ -30,13 +30,13 @@ std::optional<InputKinematics> mkInput(const vector<FourMomentum> &as,
 
     const auto p1 = ps.front(), p2 = ps.back();
     const auto q1 = bs.front(), q2 = bs.back();
-    const double m1 = p1.m(), m2 = p2.m();
-    const double scalesq = getScale(p1) + getScale(p2) + getScale(ptmiss) +
-                           m1 * m1 + m2 * m2 + 2 * minv.square();
+    const double m1sq = p1.msq(), m2sq = p2.msq();
+    const double scalesq =
+        getPT(p1) + getPT(p2) + getPT(ptmiss) + m1sq + m2sq + 2 * minv.square();
 
-    if (scalesq <= 0) { return {}; }
+    if (scalesq <= 0.0) { return {}; }
 
-    const double scale = std::sqrt(scalesq);
+    const double scale = std::sqrt(scalesq);  // scale > 0
     const double s = 1.0 / scale;
 
     return {{p1 * s, p2 * s, q1 * s, q2 * s, ptmiss * s, minv * s, scale}};

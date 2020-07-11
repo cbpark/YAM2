@@ -63,7 +63,7 @@ public:
         return mSq >= 0 ? std::sqrt(mSq) : std::sqrt(-mSq);
     }
 
-    double pt() const { return std::sqrt(x_ * x_ + y_ * y_); }
+    double pt() const { return std::hypot(x_, y_); }
 
     TransverseMomentum transverseVector() const { return {x_, y_}; }
 
@@ -101,7 +101,7 @@ inline double invariantMass(const FourMomentum &p, const FourMomentum &k) {
 }
 
 inline FourMomentum sum(const std::vector<FourMomentum> &ps) {
-    FourMomentum psum{0, 0, 0, 0};
+    FourMomentum psum{0.0, 0.0, 0.0, 0.0};
     for (const auto &p : ps) { psum += p; }
     return psum;
 }
