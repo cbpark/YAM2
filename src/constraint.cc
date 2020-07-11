@@ -10,13 +10,14 @@
 #include "variables.h"   // mkVariables, NLoptVar
 
 namespace yam2 {
-double constraintA(const NLoptVar &x, NLoptVar &grad, void *input) {
+double constraint(const FourMomentum &p1, const FourMomentum &p2,
+                  const NLoptVar &x, NLoptVar &grad, void *input) {
     const auto var = mkVariables(x);
+    const auto var_val = var.value();
     auto *const inp = reinterpret_cast<InputKinematics *>(input);
-    const auto ks = mkInvisibles(*inp, var.value());
+    const auto ks = mkInvisibles(*inp, var_val);
 
-    const auto &[grads, m1, m2] =
-        m2Grad(*inp, inp->p1(), inp->p2(), ks, var.value());
+    const auto &[grads, m1, m2] = m2Grad(*inp, p1, p2, ks, var_val);
     const auto &[grad1, grad2] = grads;
 
     if (!grad.empty()) {
@@ -26,19 +27,17 @@ double constraintA(const NLoptVar &x, NLoptVar &grad, void *input) {
     return m1 - m2;
 }
 
-double constraintB(const NLoptVar &x, NLoptVar &grad, void *input) {
-    const auto var = mkVariables(x);
+double constraintA(const NLoptVar &x, NLoptVar &grad, void *input) {
     auto *const inp = reinterpret_cast<InputKinematics *>(input);
-    const auto ks = mkInvisibles(*inp, var.value());
+    const auto p1 = inp->p1();
+    const auto p2 = inp->p2();
+    return constraint(p1, p2, x, grad, input);
+}
 
-    const auto &[grads, m1, m2] =
-        m2Grad(*inp, inp->q1(), inp->q2(), ks, var.value());
-    const auto &[grad1, grad2] = grads;
-
-    if (!grad.empty()) {
-        const auto dgrad = grad1 - grad2;
-        grad = dgrad.gradient();
-    }
-    return m1 - m2;
+double constraintB(const NLoptVar &x, NLoptVar &grad, void *input) {
+    auto *const inp = reinterpret_cast<InputKinematics *>(input);
+    const auto q1 = inp->q1();
+    const auto q2 = inp->q2();
+    return constraint(q1, q2, x, grad, input);
 }
 }  // namespace yam2

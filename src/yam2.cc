@@ -7,7 +7,6 @@
 #include <nlopt.hpp>  // for the NLopt API
 
 #include <exception>  // std::exception
-#include <memory>
 #include <optional>
 #include <ostream>
 #include <tuple>  // std::tuple
@@ -25,18 +24,18 @@ int neval_objf = 0;
 
 namespace yam2 {
 double mTot(const NLoptVar &x, NLoptVar &grad, void *input) {
-    const auto var = mkVariables(x);
+    const auto var = mkVariables(x);  // this will not be empty.
+    const auto var_val = var.value();
     auto *const inp = reinterpret_cast<InputKinematics *>(input);
-    const auto ks = mkInvisibles(*inp, var.value());
+    const auto ks = mkInvisibles(*inp, var_val);
 
     const auto p1 = inp->p1(), p2 = inp->p2();
-    const auto tot = p1 + p2 + ks.k1() + ks.k2();
-    const double m_tot = tot.m();
+    const auto ptot = p1 + p2 + ks.k1() + ks.k2();
+    const double m_tot = ptot.m();
     if (!grad.empty()) {
-        const auto grad_mtot = mtotGrad(*inp, p1, p2, ks, var.value(), m_tot);
+        const auto grad_mtot = mtotGrad(*inp, p1, p2, ks, var_val, m_tot);
         grad = grad_mtot.gradient();
     }
-
     return m_tot;
 }
 
@@ -69,11 +68,12 @@ double m2ObjF(const NLoptVar &x, NLoptVar &grad, void *input) {
     ++neval_objf;
 
     const auto var = mkVariables(x);
+    const auto var_val = var.value();
     auto *const inp = reinterpret_cast<InputKinematics *>(input);
-    const auto ks = mkInvisibles(*inp, var.value());
+    const auto ks = mkInvisibles(*inp, var_val);
 
     const auto &[grads, m1, m2] =
-        m2Grad(*inp, inp->p1(), inp->p2(), ks, var.value());
+        m2Grad(*inp, inp->p1(), inp->p2(), ks, var_val);
     const auto &[grad1, grad2] = grads;
 
     if (!grad.empty()) {
