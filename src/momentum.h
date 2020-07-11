@@ -5,7 +5,7 @@
 #ifndef YAM2_SRC_MOMENTUM_H_
 #define YAM2_SRC_MOMENTUM_H_
 
-#include <cmath>
+#include <cmath>  // std::sqrt
 #include <ostream>
 #include <vector>
 
@@ -29,7 +29,6 @@ public:
 
     double px() const { return x_; }
     double py() const { return y_; }
-    double pt() const { return std::hypot(x_, y_); }
 
     TransverseMomentum operator*(double a) const { return {a * x_, a * y_}; }
 
@@ -48,7 +47,7 @@ public:
         : t_(t), x_(x), y_(y), z_(z) {}
 
     FourMomentum(Mass m, double x, double y, double z) : x_(x), y_(y), z_(z) {
-        t_ = std::sqrt(x_ * x_ + y_ * y_ + z_ * z_ + m.square());
+        t_ = std::sqrt(x * x + y * y + z * z + m.square());
     }
 
     double e() const { return t_; }
@@ -62,8 +61,6 @@ public:
         const double mSq = msq();
         return mSq >= 0 ? std::sqrt(mSq) : std::sqrt(-mSq);
     }
-
-    double pt() const { return std::hypot(x_, y_); }
 
     TransverseMomentum transverseVector() const { return {x_, y_}; }
 

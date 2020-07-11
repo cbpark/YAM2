@@ -15,9 +15,6 @@
 using std::vector;
 
 namespace yam2 {
-double getPT(const FourMomentum &p) { return p.pt(); }
-double getPT(const TransverseMomentum &p) { return p.pt(); }
-
 std::optional<InputKinematics> mkInput(const vector<FourMomentum> &as,
                                        const vector<FourMomentum> &bs,
                                        const TransverseMomentum &ptmiss,
@@ -30,9 +27,7 @@ std::optional<InputKinematics> mkInput(const vector<FourMomentum> &as,
 
     const auto p1 = ps.front(), p2 = ps.back();
     const auto q1 = bs.front(), q2 = bs.back();
-    const double m1sq = p1.msq(), m2sq = p2.msq();
-    const double scalesq =
-        getPT(p1) + getPT(p2) + getPT(ptmiss) + m1sq + m2sq + 2 * minv.square();
+    const double scalesq = p1.msq() + p2.msq() + 2 * minv.square();
 
     if (scalesq <= 0.0) { return {}; }
 
