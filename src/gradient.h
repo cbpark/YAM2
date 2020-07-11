@@ -8,12 +8,11 @@
 #include <array>
 #include <tuple>
 #include <utility>
-#include <vector>
 
 #include "input.h"       // InputKinematics
 #include "invisibles.h"  // Invisibles
 #include "momentum.h"    // FourMomentum
-#include "variables.h"   // Variables
+#include "variables.h"   // Variables, NLoptVar
 
 namespace yam2 {
 class Gradient {
@@ -30,9 +29,7 @@ public:
     double dk1z() const { return dk1z_; }
     double dk2z() const { return dk2z_; }
 
-    std::vector<double> gradient() const {
-        return {dk1x_, dk1y_, dk1z_, dk2z_};
-    }
+    NLoptVar gradient() const { return {dk1x_, dk1y_, dk1z_, dk2z_}; }
 
     Gradient &operator*=(double a) {
         this->dk1x_ *= a;

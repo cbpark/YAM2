@@ -6,7 +6,6 @@
 #define YAM2_SRC_YAM2_H_
 
 #include <ostream>
-#include <vector>
 
 #include "input.h"
 

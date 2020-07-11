@@ -9,11 +9,13 @@
 #include <vector>
 
 namespace yam2 {
+using NLoptVar = std::vector<double>;
+
 class Variables {
 private:
     double k1x_, k1y_, k1z_, k2z_;
 
-    explicit Variables(const std::vector<double> &ks)
+    explicit Variables(const NLoptVar &ks)
         : k1x_(ks[0]), k1y_(ks[1]), k1z_(ks[2]), k2z_(ks[3]) {}
 
 public:
@@ -23,12 +25,12 @@ public:
     double k1y() const { return k1y_; }
     double k1z() const { return k1z_; }
     double k2z() const { return k2z_; }
-    std::vector<double> variables() const { return {k1x_, k1y_, k1z_, k2z_}; }
+    NLoptVar variables() const { return {k1x_, k1y_, k1z_, k2z_}; }
 
-    friend std::optional<Variables> mkVariables(const std::vector<double> &ks);
+    friend std::optional<Variables> mkVariables(const NLoptVar &ks);
 };
 
-inline std::optional<Variables> mkVariables(const std::vector<double> &ks) {
+inline std::optional<Variables> mkVariables(const NLoptVar &ks) {
     if (ks.size() != 4) { return {}; }
     Variables var{ks};
     return var;

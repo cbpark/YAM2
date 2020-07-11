@@ -4,17 +4,13 @@
 
 #include "constraint.h"
 
-#include <vector>
-
 #include "gradient.h"    // m2Grad
 #include "input.h"       // InputKinematics
 #include "invisibles.h"  // mkInvisibles
-#include "variables.h"   // mkVariables
-
-using std::vector;
+#include "variables.h"   // mkVariables, NLoptVar
 
 namespace yam2 {
-double constraintA(const vector<double> &x, vector<double> &grad, void *input) {
+double constraintA(const NLoptVar &x, NLoptVar &grad, void *input) {
     const auto var = mkVariables(x);
     auto *const inp = reinterpret_cast<InputKinematics *>(input);
     const auto ks = mkInvisibles(*inp, var.value());
@@ -30,7 +26,7 @@ double constraintA(const vector<double> &x, vector<double> &grad, void *input) {
     return m1 - m2;
 }
 
-double constraintB(const vector<double> &x, vector<double> &grad, void *input) {
+double constraintB(const NLoptVar &x, NLoptVar &grad, void *input) {
     const auto var = mkVariables(x);
     auto *const inp = reinterpret_cast<InputKinematics *>(input);
     const auto ks = mkInvisibles(*inp, var.value());
