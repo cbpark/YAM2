@@ -12,7 +12,7 @@
 #include "gradient.h"    // m2Grad
 #include "input.h"       // InputKinematics
 #include "invisibles.h"  // mkInvisibles
-#include "variables.h"   // Variables, initialGuess, mkVariables
+#include "variables.h"   // Variables, mkVariables
 
 using std::optional;
 using std::vector;
@@ -41,14 +41,16 @@ double mTot(const vector<double> &x, vector<double> &grad, void *input) {
  */
 vector<double> initialGuessMtot(InputKinematics &inp, double eps, int neval) {
     // nlopt::opt algorithm{nlopt::LD_SLSQP, 4};
+    // the simplex method seems to be fine enough.
     nlopt::opt algorithm{nlopt::LN_NELDERMEAD, 4};
     algorithm.set_min_objective(mTot, &inp);
-    const double epsf = eps * 0.1;  // we don't have to be very accurate here
+    const double epsf = eps * 0.1;  // we don't have to be very accurate here.
     algorithm.set_ftol_rel(epsf);
     algorithm.set_ftol_abs(epsf);
     algorithm.set_maxeval(neval);
 
-    const auto x0 = initialGuess(inp);
+    const vector<double> x0{0.5 * inp.ptmiss().px(), 0.5 * inp.ptmiss().py(),
+                            0.0, 0.0};
     auto x = x0;
     double minf;
     auto result = algorithm.optimize(x, minf);
@@ -171,7 +173,7 @@ optional<M2Solution> m2AugLag(const nlopt::algorithm &subopt,
         algorithm.add_equality_constraint(cf, &inpv, eps);
     }
 
-    auto x = initialGuess(inpv);
+    auto x = initialGuessMtot(inpv, eps, neval);
     double minf;
     auto result = algorithm.optimize(x, minf);
     if (result < 0) { return {}; }

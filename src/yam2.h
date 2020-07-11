@@ -101,10 +101,6 @@ std::optional<M2Solution> m2XCAugLagNMSimplex(
 std::optional<M2Solution> m2CCAugLagNMSimplex(
     const std::optional<InputKinematics> &inp, double eps = EPS,
     int neval = NEVAL);
-
-inline std::vector<double> initialGuess(const InputKinematics &inp) {
-    return {0.5 * inp.ptmiss().px(), 0.5 * inp.ptmiss().py(), 0.0, 0.0};
-}
 }  // namespace yam2
 
 #endif  // namespace yam2
