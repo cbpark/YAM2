@@ -154,7 +154,7 @@ optional<M2Solution> m2AugLag(const nlopt::algorithm &subopt,
     nlopt::opt subproblem{subopt, 4};
     subproblem.set_min_objective(m2ObjF, &inpv);
 
-    const double epsf = eps * 1.0e-2;
+    const double epsf = eps * 1.0e-3;
     subproblem.set_ftol_rel(epsf);
     subproblem.set_ftol_abs(epsf);
     subproblem.set_maxeval(neval * 5);
@@ -165,7 +165,7 @@ optional<M2Solution> m2AugLag(const nlopt::algorithm &subopt,
 
     algorithm.set_ftol_rel(epsf);
     algorithm.set_ftol_abs(epsf);
-    algorithm.set_maxeval(neval);
+    algorithm.set_maxeval(neval * 5);
 
     for (const auto &cf : cfs) {
         algorithm.add_equality_constraint(cf, &inpv, eps);
