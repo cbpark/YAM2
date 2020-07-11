@@ -4,11 +4,13 @@
 
 #include "yam2.h"
 
-#include <exception>  // std::exception
 #include <nlopt.hpp>  // for the NLopt API
+
+#include <exception>  // std::exception
+#include <memory>
 #include <optional>
 #include <ostream>
-#include <utility>  // std::tuple
+#include <tuple>  // std::tuple
 
 #include "constraint.h"  // Constraint
 #include "gradient.h"    // m2Grad
