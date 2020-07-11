@@ -20,7 +20,7 @@ double constraintA(const vector<double> &x, vector<double> &grad, void *input) {
     const auto ks = mkInvisibles(*inp, var.value());
 
     const auto &[grads, m1, m2] =
-        m2Grad(*inp, ks, inp->p1(), inp->p2(), var.value());
+        m2Grad(*inp, inp->p1(), inp->p2(), ks, var.value());
     const auto &[grad1, grad2] = grads;
 
     if (!grad.empty()) {
@@ -36,7 +36,7 @@ double constraintB(const vector<double> &x, vector<double> &grad, void *input) {
     const auto ks = mkInvisibles(*inp, var.value());
 
     const auto &[grads, m1, m2] =
-        m2Grad(*inp, ks, inp->q1(), inp->q2(), var.value());
+        m2Grad(*inp, inp->q1(), inp->q2(), ks, var.value());
     const auto &[grad1, grad2] = grads;
 
     if (!grad.empty()) {

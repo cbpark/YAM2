@@ -63,10 +63,14 @@ public:
 using Gradients = std::pair<Gradient, Gradient>;
 
 std::tuple<Gradients, double, double> m2Grad(const InputKinematics &inp,
-                                             const Invisibles &ks,
                                              const FourMomentum &p1,
                                              const FourMomentum &p2,
+                                             const Invisibles &ks,
                                              const Variables &var);
+
+Gradient mtotGrad(const InputKinematics &inp, const FourMomentum &p1,
+                  const FourMomentum &p2, const Invisibles &ks,
+                  const Variables &var, double m);
 }  // namespace yam2
 
 #endif  // YAM2_SRC_GRADIENT_H_

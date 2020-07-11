@@ -21,9 +21,9 @@ double safeDivisor(double x) {
 }
 
 std::tuple<Gradients, double, double> m2Grad(const InputKinematics &inp,
-                                             const Invisibles &ks,
                                              const FourMomentum &p1,
                                              const FourMomentum &p2,
+                                             const Invisibles &ks,
                                              const Variables &var) {
     const auto k1 = ks.k1();
     const double m1 = invariantMass(p1, k1);
@@ -43,5 +43,24 @@ std::tuple<Gradients, double, double> m2Grad(const InputKinematics &inp,
     d2 *= m2inverse;
 
     return {std::make_pair(d1, d2), m1, m2};
+}
+
+Gradient mtotGrad(const InputKinematics &inp, const FourMomentum &p1,
+                  const FourMomentum &p2, const Invisibles &ks,
+                  const Variables &var, double m) {
+    const auto p = p1 + p2;
+    const double eV = p.e(), pz = p.pz();
+    const double e1 = ks.k1().e(), e2 = ks.k2().e();
+    const double e1e2m = safeDivisor(e1 * e2 * m), e1m = safeDivisor(e1 * m),
+                 e2m = safeDivisor(e2 * m);
+    const double fac = -(eV + e1 + e2) / e1e2m;
+    const double k1z = var.k1z(), k2z = var.k2z();
+
+    const double dk1x = fac * (e1 * inp.ptmiss().px() - (e1 + e2) * var.k1x());
+    const double dk1y = fac * (e1 * inp.ptmiss().py() - (e1 + e2) * var.k1y());
+    const double dk1z = ((eV + e2) * k1z - (pz + k2z) * e1) / e1m;
+    const double dk2z = ((eV + e1) * k2z - (pz + k1z) * e2) / e2m;
+
+    return {dk1x, dk1y, dk1z, dk2z};
 }
 }  // namespace yam2

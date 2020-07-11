@@ -17,9 +17,48 @@
 using std::optional;
 using std::vector;
 
-namespace yam2 {
-int neval_objf = 0;
+int neval_objf = 0;  // to count the number of object function evaluations.
 
+namespace yam2 {
+double mTot(const vector<double> &x, vector<double> &grad, void *input) {
+    const auto var = mkVariables(x);
+    auto *const inp = reinterpret_cast<InputKinematics *>(input);
+    const auto ks = mkInvisibles(*inp, var.value());
+
+    const auto p1 = inp->p1(), p2 = inp->p2();
+    const auto tot = p1 + p2 + ks.k1() + ks.k2();
+    const double m_tot = tot.m();
+    if (!grad.empty()) {
+        const auto grad_mtot = mtotGrad(*inp, p1, p2, ks, var.value(), m_tot);
+        grad = grad_mtot.gradient();
+    }
+
+    return m_tot;
+}
+
+/**
+ *  the initial configuration that minimizes M_{tot}^2 = (p1 + p2 + k1 + k2)^2.
+ */
+vector<double> initialGuessMtot(InputKinematics &inp, double eps, int neval) {
+    // nlopt::opt algorithm{nlopt::LD_SLSQP, 4};
+    nlopt::opt algorithm{nlopt::LN_NELDERMEAD, 4};
+    algorithm.set_min_objective(mTot, &inp);
+    const double epsf = eps * 0.1;  // we don't have to be very accurate here
+    algorithm.set_ftol_rel(epsf);
+    algorithm.set_ftol_abs(epsf);
+    algorithm.set_maxeval(neval);
+
+    const auto x0 = initialGuess(inp);
+    auto x = x0;
+    double minf;
+    auto result = algorithm.optimize(x, minf);
+    if (result < 0) { return x0; }
+    return x;
+}
+
+/**
+ * The objective function for the M2 variable
+ */
 double m2ObjF(const vector<double> &x, vector<double> &grad, void *input) {
     ++neval_objf;
 
@@ -28,7 +67,7 @@ double m2ObjF(const vector<double> &x, vector<double> &grad, void *input) {
     const auto ks = mkInvisibles(*inp, var.value());
 
     const auto &[grads, m1, m2] =
-        m2Grad(*inp, ks, inp->p1(), inp->p2(), var.value());
+        m2Grad(*inp, inp->p1(), inp->p2(), ks, var.value());
     const auto &[grad1, grad2] = grads;
 
     if (!grad.empty()) {
@@ -56,7 +95,7 @@ optional<M2Solution> m2SQP(const vector<Constraint> &cfs,
     nlopt::opt algorithm{nlopt::LD_SLSQP, 4};  // the subproblem is BFGS.
     algorithm.set_min_objective(m2ObjF, &inpv);
 
-    const double epsf = eps * 1.0e-2;
+    const double epsf = eps * 1.0e-3;
     algorithm.set_ftol_rel(epsf);
     algorithm.set_ftol_abs(epsf);
     algorithm.set_maxeval(neval);
@@ -65,7 +104,9 @@ optional<M2Solution> m2SQP(const vector<Constraint> &cfs,
         algorithm.add_equality_constraint(cf, &inpv, eps);
     }
 
-    auto x = initialGuess(inpv);  // x = variables = (k1x, k1y, k1z, k2z).
+    // x = variables = (k1x, k1y, k1z, k2z).
+    // auto x = initialGuess(inpv);
+    auto x = initialGuessMtot(inpv, eps, neval);
     double minf;  // minf = the minimum value of the objective function.
     auto result = algorithm.optimize(x, minf);
     if (result < 0) { return {}; }  // if failed, return nothing.

@@ -38,7 +38,7 @@ public:
 };
 
 /** the default tolerance value */
-constexpr double EPS = 1.0e-2;
+constexpr double EPS = 1.0e-3;
 
 /** the maximum number of interations */
 constexpr int NEVAL = 1000;
