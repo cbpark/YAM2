@@ -27,7 +27,9 @@ std::optional<InputKinematics> mkInput(const vector<FourMomentum> &as,
 
     const auto p1 = ps.front(), p2 = ps.back();
     const auto q1 = bs.front(), q2 = bs.back();
-    const double scalesq = p1.msq() + p2.msq() + 2 * minv.square();
+    const double e1 = p1.e(), e2 = p2.e();
+    const double etmiss_sq = ptmiss.ptsq() + 2.0 * minv.square();
+    const double scalesq = e1 * e1 + e2 * e2 + etmiss_sq;
 
     if (scalesq <= 0.0) { return {}; }
 

@@ -29,6 +29,7 @@ public:
 
     double px() const { return x_; }
     double py() const { return y_; }
+    double ptsq() const { return x_ * x_ + y_ * y_; }
 
     TransverseMomentum operator*(double a) const { return {a * x_, a * y_}; }
 
