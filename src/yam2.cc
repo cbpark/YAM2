@@ -149,10 +149,7 @@ optional<M2Solution> m2SQP(const Constraints &cfs,
 
     const auto sol_vars = mkVariables(x);
     // the solutions will be all back to the original scale.
-    const M2Solution sol{inpv, sol_vars.value(), minf * inpv.scale(),
-                         neval_objf};
-
-    return sol;
+    return M2Solution{inpv, sol_vars.value(), minf * inpv.scale(), neval_objf};
 }
 
 optional<M2Solution> m2XXSQP(const optional<InputKinematics> &inp, double eps,
@@ -209,9 +206,7 @@ optional<M2Solution> m2AugLag(const nlopt::algorithm &subopt,
     if (result < 0) { return {}; }
 
     const auto sol_vars = mkVariables(x);
-    const M2Solution sol{inpv, sol_vars.value(), minf * inpv.scale(),
-                         neval_objf};
-    return sol;
+    return M2Solution{inpv, sol_vars.value(), minf * inpv.scale(), neval_objf};
 }
 
 optional<M2Solution> m2AugLagBFGS(const Constraints &cfs,

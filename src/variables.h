@@ -32,8 +32,7 @@ public:
 
 inline std::optional<Variables> mkVariables(const NLoptVar &ks) {
     if (ks.size() != 4) { return {}; }
-    Variables var{ks};
-    return var;
+    return Variables{ks};
 }
 }  // namespace yam2
 
