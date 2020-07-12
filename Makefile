@@ -3,7 +3,6 @@ VERSION  := 0.0.0.0
 SRCDIR 	 := src
 LIBDIR 	 := lib
 CXXFLAGS := -g -O2 -Wall -Wextra -std=c++17 -pedantic -I$(SRCDIR) $(CXXFLAGS)
-LDFLAGS  := -O2
 LIBS     := -lm
 AR       := ar crs
 MKDIR    := mkdir -p
@@ -19,7 +18,7 @@ NLOPT    ?= /usr
 CXXFLAGS += -I$(NLOPT)/include
 LIBS     += -L$(NLOPT)/lib -lnlopt -Wl,-rpath $(NLOPT)/lib
 
-.PHONY: all install clean
+.PHONY: all clean
 
 all: $(LIB)
 
