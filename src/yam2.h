@@ -54,6 +54,9 @@ std::optional<M2Solution> m2XCSQP(const std::optional<InputKinematics> &inp,
 /** M2CC variable using the SQP method */
 std::optional<M2Solution> m2CCSQP(const std::optional<InputKinematics> &inp,
                                   double eps = EPS, int neval = NEVAL);
+/** M2CR variable using the SQP method */
+std::optional<M2Solution> m2CRSQP(const std::optional<InputKinematics> &inp,
+                                  double eps = EPS, int neval = NEVAL);
 
 /** M2XX variable using the augmented Lagrangian method with the BFGS update */
 std::optional<M2Solution> m2XXAugLagBFGS(
@@ -69,6 +72,10 @@ std::optional<M2Solution> m2XCAugLagBFGS(
     int neval = NEVAL);
 /** M2CC variable using the augmented Lagrangian method with the BFGS update */
 std::optional<M2Solution> m2CCAugLagBFGS(
+    const std::optional<InputKinematics> &inp, double eps = EPS,
+    int neval = NEVAL);
+/** M2CR variable using the augmented Lagrangian method with the BFGS update */
+std::optional<M2Solution> m2CRAugLagBFGS(
     const std::optional<InputKinematics> &inp, double eps = EPS,
     int neval = NEVAL);
 
@@ -98,6 +105,14 @@ std::optional<M2Solution> m2XCAugLagNMSimplex(
  * with the Nelder-Mead simplex
  */
 std::optional<M2Solution> m2CCAugLagNMSimplex(
+    const std::optional<InputKinematics> &inp, double eps = EPS,
+    int neval = NEVAL);
+
+/**
+ * M2CR variable using the augmented Lagrangian method
+ * with the Nelder-Mead simplex
+ */
+std::optional<M2Solution> m2CRAugLagNMSimplex(
     const std::optional<InputKinematics> &inp, double eps = EPS,
     int neval = NEVAL);
 }  // namespace yam2

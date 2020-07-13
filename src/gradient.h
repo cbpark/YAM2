@@ -6,9 +6,9 @@
 #define YAM2_SRC_GRADIENT_H_
 
 #include <array>
+#include <functional>
 #include <tuple>
 #include <utility>
-
 #include "input.h"       // InputKinematics
 #include "invisibles.h"  // Invisibles
 #include "momentum.h"    // FourMomentum
@@ -58,6 +58,18 @@ public:
 };
 
 using Gradients = std::pair<Gradient, Gradient>;
+
+using GradFunc = std::function<std::pair<Gradient, double>(
+    const InputKinematics &, const FourMomentum &, const Invisibles &,
+    const Variables &)>;
+
+std::pair<Gradient, double> m2Grad1(const InputKinematics &inp,
+                                    const FourMomentum &p1,
+                                    const Invisibles &ks, const Variables &var);
+
+std::pair<Gradient, double> m2Grad2(const InputKinematics &inp,
+                                    const FourMomentum &p2,
+                                    const Invisibles &ks, const Variables &var);
 
 std::tuple<Gradients, double, double> m2Grad(const InputKinematics &inp,
                                              const FourMomentum &p1,

@@ -23,20 +23,30 @@ private:
     /** q2 = b2 */
     FourMomentum q2_;
     TransverseMomentum ptmiss_;
+    /** the input mass for the invisible particle */
     Mass minv_;
+    /** the input mass for the relative particle */
+    Mass mrel_;
     double scale_;
 
     InputKinematics(const FourMomentum &p1, const FourMomentum &p2,
                     const FourMomentum &q1, const FourMomentum &q2,
                     const TransverseMomentum &ptmiss, const Mass &minv,
-                    double scale)
+                    const Mass &mrel, double scale)
         : p1_(p1),
           p2_(p2),
           q1_(q1),
           q2_(q2),
           ptmiss_(ptmiss),
           minv_(minv),
+          mrel_(mrel),
           scale_(scale) {}
+
+    InputKinematics(const FourMomentum &p1, const FourMomentum &p2,
+                    const FourMomentum &q1, const FourMomentum &q2,
+                    const TransverseMomentum &ptmiss, const Mass &minv,
+                    double scale)
+        : InputKinematics(p1, p2, q1, q2, ptmiss, minv, Mass{0}, scale) {}
 
 public:
     InputKinematics() = delete;
@@ -50,6 +60,9 @@ public:
 
     Mass minv() const { return minv_; }
     double minv_square() const { return minv_.square(); }
+
+    Mass mrel() const { return mrel_; }
+    double mrel_square() const { return mrel_.square(); }
 
     double scale() const { return scale_; }
 
