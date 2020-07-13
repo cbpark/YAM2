@@ -18,7 +18,8 @@ namespace yam2 {
 std::optional<InputKinematics> mkInput(const vector<FourMomentum> &as,
                                        const vector<FourMomentum> &bs,
                                        const TransverseMomentum &ptmiss,
-                                       const Mass &minv) {
+                                       const Mass &minv,
+                                       const std::optional<Mass> &mrel) {
     if (as.size() != 2 || bs.size() != 2) { return {}; }
 
     vector<FourMomentum> ps;
@@ -36,7 +37,11 @@ std::optional<InputKinematics> mkInput(const vector<FourMomentum> &as,
     const double scale = std::sqrt(scalesq);  // scale > 0
     const double s = 1.0 / scale;
 
-    return {{p1 * s, p2 * s, q1 * s, q2 * s, ptmiss * s, minv * s, scale}};
+    if (!mrel) {
+        return {{p1 * s, p2 * s, q1 * s, q2 * s, ptmiss * s, minv * s, scale}};
+    }
+    return {{p1 * s, p2 * s, q1 * s, q2 * s, ptmiss * s, minv * s,
+             mrel.value() * s, scale}};
 }
 
 std::ostream &operator<<(std::ostream &os, const InputKinematics &p) {
