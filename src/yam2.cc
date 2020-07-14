@@ -131,10 +131,6 @@ optional<M2Solution> m2SQP(const Constraints &cfs,
     algorithm.set_min_objective(m2ObjF, &inpv);
     algorithm.set_maxeval(neval);
 
-    const double epsf = eps * 1.0e-3;
-    algorithm.set_ftol_rel(epsf);
-    algorithm.set_ftol_abs(epsf);
-
     for (const auto &cf : cfs) {
         algorithm.add_equality_constraint(cf, &inpv, eps);
     }
@@ -142,6 +138,7 @@ optional<M2Solution> m2SQP(const Constraints &cfs,
     // x: variables = (k1x, k1y, k1z, k2z).
     auto x0 = initialGuessMtot(inpv, eps, neval);
     optional<nlopt::opt> subproblem;
+    const double epsf = eps * 1.0e-3;
     // minf = the minimum value of the objective function.
     const auto &[result, minf, x] =
         doOptimize(inpv, algorithm, subproblem, x0, epsf);
