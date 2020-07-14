@@ -7,6 +7,7 @@
 #include <nlopt.hpp>  // for the NLopt API
 
 #include <exception>  // std::exception
+#include <functional>
 #include <optional>
 #include <ostream>
 #include <tuple>  // std::tuple
@@ -284,6 +285,49 @@ optional<M2Solution> m2CRAugLagNMSimplex(const optional<InputKinematics> &inp,
                                          double eps, int neval) {
     const Constraints constraint{constraintA, constraintR1, constraintR2};
     return m2AugLagNMSimplex(constraint, inp, eps, neval);
+}
+
+using M2Func = std::function<optional<M2Solution>(
+    const optional<InputKinematics> &, double, int)>;
+
+optional<M2Solution> m2(M2Func fSQP, M2Func fAugLagBFGS,
+                        M2Func fAugLagNMSimplex,
+                        const optional<InputKinematics> &inp, double eps,
+                        int neval) {
+    auto m2 = fSQP(inp, eps, neval);
+    if (!m2) {                              // if SQP failed,
+        m2 = fAugLagBFGS(inp, eps, neval);  // try AUGLAG + BFGS.
+        if (!m2) {                          // if AUGLAG + BFGS failed,
+            return fAugLagNMSimplex(inp, eps, neval);  // try AUGLAG + BFGS.
+        }
+        return m2;
+    }
+    return m2;
+}
+
+optional<M2Solution> m2XX(const optional<InputKinematics> &inp, double eps,
+                          int neval) {
+    return m2(m2XXSQP, m2XXAugLagBFGS, m2XXAugLagNMSimplex, inp, eps, neval);
+}
+
+optional<M2Solution> m2CX(const optional<InputKinematics> &inp, double eps,
+                          int neval) {
+    return m2(m2CXSQP, m2CXAugLagBFGS, m2CXAugLagNMSimplex, inp, eps, neval);
+}
+
+optional<M2Solution> m2XC(const optional<InputKinematics> &inp, double eps,
+                          int neval) {
+    return m2(m2XCSQP, m2XCAugLagBFGS, m2XCAugLagNMSimplex, inp, eps, neval);
+}
+
+optional<M2Solution> m2CC(const optional<InputKinematics> &inp, double eps,
+                          int neval) {
+    return m2(m2CCSQP, m2CCAugLagBFGS, m2CCAugLagNMSimplex, inp, eps, neval);
+}
+
+optional<M2Solution> m2CR(const optional<InputKinematics> &inp, double eps,
+                          int neval) {
+    return m2(m2CRSQP, m2CRAugLagBFGS, m2CRAugLagNMSimplex, inp, eps, neval);
 }
 
 std::ostream &operator<<(std::ostream &os, const M2Solution &sol) {

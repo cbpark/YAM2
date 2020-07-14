@@ -4,7 +4,6 @@
 
 #include "constraint.h"
 
-#include <functional>
 #include "gradient.h"    // m2Grad, m2Grad1, m2Grad2
 #include "input.h"       // InputKinematics
 #include "invisibles.h"  // mkInvisibles

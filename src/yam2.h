@@ -42,6 +42,26 @@ constexpr double EPS = 1.0e-3;
 /** the maximum number of interations */
 constexpr int NEVAL = 5000;
 
+/** The M2XX variable.
+ *
+ *  It tries the SQP method at first. If it fails, it tries the augmented
+ *  Lagrangian methods.
+ */
+std::optional<M2Solution> m2XX(const std::optional<InputKinematics> &inp,
+                               double eps = EPS, int neval = NEVAL);
+/** The M2CX variable */
+std::optional<M2Solution> m2CX(const std::optional<InputKinematics> &inp,
+                               double eps = EPS, int neval = NEVAL);
+/** The M2XC variable */
+std::optional<M2Solution> m2XC(const std::optional<InputKinematics> &inp,
+                               double eps = EPS, int neval = NEVAL);
+/** The M2CC variable */
+std::optional<M2Solution> m2CC(const std::optional<InputKinematics> &inp,
+                               double eps = EPS, int neval = NEVAL);
+/** The M2CR variable */
+std::optional<M2Solution> m2CR(const std::optional<InputKinematics> &inp,
+                               double eps = EPS, int neval = NEVAL);
+
 /** M2XX variable using the SQP method */
 std::optional<M2Solution> m2XXSQP(const std::optional<InputKinematics> &inp,
                                   double eps = EPS, int neval = NEVAL);
