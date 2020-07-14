@@ -44,12 +44,12 @@ double mTot(const NLoptVar &x, NLoptVar &grad, void *input) {
  *  the initial configuration that minimizes M_{tot}^2 = (p1 + p2 + k1 + k2)^2.
  */
 NLoptVar initialGuessMtot(InputKinematics &inp, double eps, int neval) {
+    // nlopt::opt algorithm{nlopt::LN_NELDERMEAD, 4};
     // nlopt::opt algorithm{nlopt::LD_SLSQP, 4};
-    // the simplex method seems to be fine enough.
-    nlopt::opt algorithm{nlopt::LN_NELDERMEAD, 4};
+    nlopt::opt algorithm{nlopt::LD_TNEWTON, 4};
     algorithm.set_min_objective(mTot, &inp);
-    const double epsf = eps * 0.1;  // we don't have to be very accurate here.
-    algorithm.set_ftol_rel(epsf);
+    const double epsf = eps * 0.1;
+    // algorithm.set_ftol_rel(epsf);
     algorithm.set_ftol_abs(epsf);
     algorithm.set_maxeval(neval);
 
@@ -288,43 +288,48 @@ using M2Func = std::function<optional<M2Solution>(
     const optional<InputKinematics> &, double, int)>;
 
 optional<M2Solution> m2(M2Func fSQP, M2Func fAugLagBFGS,
-                        M2Func fAugLagNMSimplex,
                         const optional<InputKinematics> &inp, double eps,
                         int neval) {
-    auto m2 = fSQP(inp, eps, neval);
-    if (!m2) {                              // if SQP failed,
-        m2 = fAugLagBFGS(inp, eps, neval);  // try AUGLAG + BFGS.
-        if (!m2) {                          // if AUGLAG + BFGS failed,
-            return fAugLagNMSimplex(inp, eps, neval);  // try AUGLAG + BFGS.
-        }
-        return m2;
+    auto m2_sqp = fSQP(inp, eps, neval);
+    auto m2_auglag_bfgs = fAugLagBFGS(inp, eps, neval);
+    if (!m2_sqp) {
+        return m2_auglag_bfgs;
+    } else if (!m2_auglag_bfgs) {
+        return m2_sqp;
+    } else {
+        int neval_objf_tot = m2_sqp.value().neval_objf();
+        neval_objf_tot += m2_auglag_bfgs.value().neval_objf();
+        m2_sqp.value().set_neval_objf(neval_objf_tot);
+        m2_auglag_bfgs.value().set_neval_objf(neval_objf_tot);
+
+        return m2_sqp.value() < m2_auglag_bfgs.value() ? m2_sqp
+                                                       : m2_auglag_bfgs;
     }
-    return m2;
 }
 
 optional<M2Solution> m2XX(const optional<InputKinematics> &inp, double eps,
                           int neval) {
-    return m2(m2XXSQP, m2XXAugLagBFGS, m2XXAugLagNMSimplex, inp, eps, neval);
+    return m2(m2XXSQP, m2XXAugLagBFGS, inp, eps, neval);
 }
 
 optional<M2Solution> m2CX(const optional<InputKinematics> &inp, double eps,
                           int neval) {
-    return m2(m2CXSQP, m2CXAugLagBFGS, m2CXAugLagNMSimplex, inp, eps, neval);
+    return m2(m2CXSQP, m2CXAugLagBFGS, inp, eps, neval);
 }
 
 optional<M2Solution> m2XC(const optional<InputKinematics> &inp, double eps,
                           int neval) {
-    return m2(m2XCSQP, m2XCAugLagBFGS, m2XCAugLagNMSimplex, inp, eps, neval);
+    return m2(m2XCSQP, m2XCAugLagBFGS, inp, eps, neval);
 }
 
 optional<M2Solution> m2CC(const optional<InputKinematics> &inp, double eps,
                           int neval) {
-    return m2(m2CCSQP, m2CCAugLagBFGS, m2CCAugLagNMSimplex, inp, eps, neval);
+    return m2(m2CCSQP, m2CCAugLagBFGS, inp, eps, neval);
 }
 
 optional<M2Solution> m2CR(const optional<InputKinematics> &inp, double eps,
                           int neval) {
-    return m2(m2CRSQP, m2CRAugLagBFGS, m2CRAugLagNMSimplex, inp, eps, neval);
+    return m2(m2CRSQP, m2CRAugLagBFGS, inp, eps, neval);
 }
 
 std::ostream &operator<<(std::ostream &os, const M2Solution &sol) {

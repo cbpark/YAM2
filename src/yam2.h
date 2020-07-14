@@ -32,6 +32,15 @@ public:
     FourMomentum k1() const { return ksol_.k1(); }
     FourMomentum k2() const { return ksol_.k2(); }
     int neval_objf() const { return neval_objf_; }
+    void set_neval_objf(int n) { neval_objf_ = n; }
+
+    friend bool operator<(const M2Solution &sol1, const M2Solution &sol2) {
+        return sol1.m2_ < sol2.m2_;
+    }
+
+    friend bool operator>(const M2Solution &sol1, const M2Solution &sol2) {
+        return sol2 < sol1;
+    }
 
     friend std::ostream &operator<<(std::ostream &os, const M2Solution &sol);
 };
@@ -44,8 +53,8 @@ constexpr int NEVAL = 5000;
 
 /** The M2XX variable.
  *
- *  It tries the SQP method at first. If it fails, it tries the augmented
- *  Lagrangian methods.
+ *  It returns the smaller value between the results from SQP and
+ *  augmented Lagrangian methods.
  */
 std::optional<M2Solution> m2XX(const std::optional<InputKinematics> &inp,
                                double eps = EPS, int neval = NEVAL);
