@@ -12,6 +12,8 @@
 #include "momentum.h"    // FourMomentum
 #include "variables.h"   // Variables
 
+using std::pair;
+
 namespace yam2 {
 double safeDivisor(double x) {
     const double eps0 = 1.0e-8;
@@ -19,10 +21,8 @@ double safeDivisor(double x) {
     return std::fmin(-eps0, x);
 }
 
-std::pair<Gradient, double> m2Grad1(const InputKinematics &,
-                                    const FourMomentum &p1,
-                                    const Invisibles &ks,
-                                    const Variables &var) {
+pair<Gradient, double> m2Grad1(const InputKinematics &, const FourMomentum &p1,
+                               const Invisibles &ks, const Variables &var) {
     const auto k1 = ks.k1();
     const double r1 = p1.e() / safeDivisor(k1.e());
     Gradient d1{r1 * var.k1x() - p1.px(), r1 * var.k1y() - p1.py(),
@@ -34,10 +34,9 @@ std::pair<Gradient, double> m2Grad1(const InputKinematics &,
     return {d1, m1};
 }
 
-std::pair<Gradient, double> m2Grad2(const InputKinematics &inp,
-                                    const FourMomentum &p2,
-                                    const Invisibles &ks,
-                                    const Variables &var) {
+pair<Gradient, double> m2Grad2(const InputKinematics &inp,
+                               const FourMomentum &p2, const Invisibles &ks,
+                               const Variables &var) {
     const auto k2 = ks.k2();
     const double r2 = p2.e() / safeDivisor(k2.e());
     Gradient d2{r2 * (var.k1x() - inp.ptmiss().px()) + p2.px(),

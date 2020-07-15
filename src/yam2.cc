@@ -24,6 +24,9 @@ using std::optional;
 int neval_objf = 0;
 
 namespace yam2 {
+using OptInp = optional<InputKinematics>;
+using OptM2 = optional<M2Solution>;
+
 double mTot(const NLoptVar &x, NLoptVar &grad, void *input) {
     const auto var = mkVariables(x);  // this will not be empty.
     const auto var_val = var.value();
@@ -121,9 +124,7 @@ std::tuple<nlopt::result, double, NLoptVar> doOptimize(
  *  'Constriant' type is the function pointer defined in 'constrain.h'.
  *  'InputKinematics' type is defined in 'input.h'
  */
-optional<M2Solution> m2SQP(const Constraints &cfs,
-                           const optional<InputKinematics> &inp, double eps,
-                           int neval) {
+OptM2 m2SQP(const Constraints &cfs, const OptInp &inp, double eps, int neval) {
     if (!inp) { return {}; }
 
     auto inpv = inp.value();
@@ -151,39 +152,32 @@ optional<M2Solution> m2SQP(const Constraints &cfs,
     return M2Solution{inpv, sol_vars.value(), minf * inpv.scale(), neval_objf};
 }
 
-optional<M2Solution> m2XXSQP(const optional<InputKinematics> &inp, double eps,
-                             int neval) {
+OptM2 m2XXSQP(const OptInp &inp, double eps, int neval) {
     return m2SQP(Constraints(), inp, eps, neval);
 }
 
-optional<M2Solution> m2CXSQP(const optional<InputKinematics> &inp, double eps,
-                             int neval) {
+OptM2 m2CXSQP(const OptInp &inp, double eps, int neval) {
     const Constraints constraint{constraintA};
     return m2SQP(constraint, inp, eps, neval);
 }
 
-optional<M2Solution> m2XCSQP(const optional<InputKinematics> &inp, double eps,
-                             int neval) {
+OptM2 m2XCSQP(const OptInp &inp, double eps, int neval) {
     const Constraints constraint{constraintB};
     return m2SQP(constraint, inp, eps, neval);
 }
 
-optional<M2Solution> m2CCSQP(const optional<InputKinematics> &inp, double eps,
-                             int neval) {
+OptM2 m2CCSQP(const OptInp &inp, double eps, int neval) {
     const Constraints constraint{constraintA, constraintB};
     return m2SQP(constraint, inp, eps, neval);
 }
 
-optional<M2Solution> m2CRSQP(const optional<InputKinematics> &inp, double eps,
-                             int neval) {
+OptM2 m2CRSQP(const OptInp &inp, double eps, int neval) {
     const Constraints constraint{constraintA, constraintR1, constraintR2};
     return m2SQP(constraint, inp, eps, neval);
 }
 
-optional<M2Solution> m2AugLag(const nlopt::algorithm &subopt,
-                              const Constraints &cfs,
-                              const optional<InputKinematics> &inp, double eps,
-                              int neval) {
+OptM2 m2AugLag(const nlopt::algorithm &subopt, const Constraints &cfs,
+               const OptInp &inp, double eps, int neval) {
     if (!inp) { return {}; }
 
     auto inpv = inp.value();
@@ -214,84 +208,69 @@ optional<M2Solution> m2AugLag(const nlopt::algorithm &subopt,
     return M2Solution{inpv, sol_vars.value(), minf * inpv.scale(), neval_objf};
 }
 
-optional<M2Solution> m2AugLagBFGS(const Constraints &cfs,
-                                  const optional<InputKinematics> &inp,
-                                  double eps, int neval) {
+OptM2 m2AugLagBFGS(const Constraints &cfs, const OptInp &inp, double eps,
+                   int neval) {
     // Here, the SLSQP method is the BFGS in essence.
     return m2AugLag(nlopt::LD_SLSQP, cfs, inp, eps, neval);
 }
 
-optional<M2Solution> m2XXAugLagBFGS(const optional<InputKinematics> &inp,
-                                    double eps, int neval) {
+OptM2 m2XXAugLagBFGS(const OptInp &inp, double eps, int neval) {
     return m2AugLagBFGS(Constraints(), inp, eps, neval);
 }
 
-optional<M2Solution> m2CXAugLagBFGS(const optional<InputKinematics> &inp,
-                                    double eps, int neval) {
+OptM2 m2CXAugLagBFGS(const OptInp &inp, double eps, int neval) {
     const Constraints constraint{constraintA};
     return m2AugLagBFGS(constraint, inp, eps, neval);
 }
 
-optional<M2Solution> m2XCAugLagBFGS(const optional<InputKinematics> &inp,
-                                    double eps, int neval) {
+OptM2 m2XCAugLagBFGS(const OptInp &inp, double eps, int neval) {
     const Constraints constraint{constraintB};
     return m2AugLagBFGS(constraint, inp, eps, neval);
 }
 
-optional<M2Solution> m2CCAugLagBFGS(const optional<InputKinematics> &inp,
-                                    double eps, int neval) {
+OptM2 m2CCAugLagBFGS(const OptInp &inp, double eps, int neval) {
     const Constraints constraint{constraintA, constraintB};
     return m2AugLagBFGS(constraint, inp, eps, neval);
 }
 
-optional<M2Solution> m2CRAugLagBFGS(const optional<InputKinematics> &inp,
-                                    double eps, int neval) {
+OptM2 m2CRAugLagBFGS(const OptInp &inp, double eps, int neval) {
     const Constraints constraint{constraintA, constraintR1, constraintR2};
     return m2AugLagBFGS(constraint, inp, eps, neval);
 }
 
-optional<M2Solution> m2AugLagNMSimplex(const Constraints &cfs,
-                                       const optional<InputKinematics> &inp,
-                                       double eps, int neval) {
+OptM2 m2AugLagNMSimplex(const Constraints &cfs, const OptInp &inp, double eps,
+                        int neval) {
     return m2AugLag(nlopt::LN_NELDERMEAD, cfs, inp, eps, neval);
 }
 
-optional<M2Solution> m2XXAugLagNMSimplex(const optional<InputKinematics> &inp,
-                                         double eps, int neval) {
+OptM2 m2XXAugLagNMSimplex(const OptInp &inp, double eps, int neval) {
     return m2AugLagNMSimplex(Constraints(), inp, eps, neval);
 }
 
-optional<M2Solution> m2CXAugLagNMSimplex(const optional<InputKinematics> &inp,
-                                         double eps, int neval) {
+OptM2 m2CXAugLagNMSimplex(const OptInp &inp, double eps, int neval) {
     const Constraints constraint{constraintA};
     return m2AugLagNMSimplex(constraint, inp, eps, neval);
 }
 
-optional<M2Solution> m2XCAugLagNMSimplex(const optional<InputKinematics> &inp,
-                                         double eps, int neval) {
+OptM2 m2XCAugLagNMSimplex(const OptInp &inp, double eps, int neval) {
     const Constraints constraint{constraintB};
     return m2AugLagNMSimplex(constraint, inp, eps, neval);
 }
 
-optional<M2Solution> m2CCAugLagNMSimplex(const optional<InputKinematics> &inp,
-                                         double eps, int neval) {
+OptM2 m2CCAugLagNMSimplex(const OptInp &inp, double eps, int neval) {
     const Constraints constraint{constraintA, constraintB};
     return m2AugLagNMSimplex(constraint, inp, eps, neval);
 }
 
-optional<M2Solution> m2CRAugLagNMSimplex(const optional<InputKinematics> &inp,
-                                         double eps, int neval) {
+OptM2 m2CRAugLagNMSimplex(const OptInp &inp, double eps, int neval) {
     const Constraints constraint{constraintA, constraintR1, constraintR2};
     return m2AugLagNMSimplex(constraint, inp, eps, neval);
 }
 
-using M2Func = std::function<optional<M2Solution>(
-    const optional<InputKinematics> &, double, int)>;
+using M2Func = std::function<OptM2(const OptInp &, double, int)>;
 
-optional<M2Solution> m2(M2Func fSQP, M2Func fAugLagBFGS,
-                        M2Func fAugLagNMSimplex,
-                        const optional<InputKinematics> &inp, double eps,
-                        int neval) {
+OptM2 m2(M2Func fSQP, M2Func fAugLagBFGS, M2Func fAugLagNMSimplex,
+         const OptInp &inp, double eps, int neval) {
     auto m2_sqp = fSQP(inp, eps, neval);
     auto m2_auglag_bfgs = fAugLagBFGS(inp, eps, neval);
 
@@ -319,28 +298,23 @@ optional<M2Solution> m2(M2Func fSQP, M2Func fAugLagBFGS,
     return fAugLagNMSimplex(inp, eps, neval);
 }
 
-optional<M2Solution> m2XX(const optional<InputKinematics> &inp, double eps,
-                          int neval) {
+OptM2 m2XX(const OptInp &inp, double eps, int neval) {
     return m2(m2XXSQP, m2XXAugLagBFGS, m2XXAugLagNMSimplex, inp, eps, neval);
 }
 
-optional<M2Solution> m2CX(const optional<InputKinematics> &inp, double eps,
-                          int neval) {
+OptM2 m2CX(const OptInp &inp, double eps, int neval) {
     return m2(m2CXSQP, m2CXAugLagBFGS, m2CXAugLagNMSimplex, inp, eps, neval);
 }
 
-optional<M2Solution> m2XC(const optional<InputKinematics> &inp, double eps,
-                          int neval) {
+OptM2 m2XC(const OptInp &inp, double eps, int neval) {
     return m2(m2XCSQP, m2XCAugLagBFGS, m2XCAugLagNMSimplex, inp, eps, neval);
 }
 
-optional<M2Solution> m2CC(const optional<InputKinematics> &inp, double eps,
-                          int neval) {
+OptM2 m2CC(const OptInp &inp, double eps, int neval) {
     return m2(m2CCSQP, m2CCAugLagBFGS, m2CCAugLagNMSimplex, inp, eps, neval);
 }
 
-optional<M2Solution> m2CR(const optional<InputKinematics> &inp, double eps,
-                          int neval) {
+OptM2 m2CR(const OptInp &inp, double eps, int neval) {
     return m2(m2CRSQP, m2CRAugLagBFGS, m2CRAugLagNMSimplex, inp, eps, neval);
 }
 
