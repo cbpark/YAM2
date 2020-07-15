@@ -296,13 +296,16 @@ optional<M2Solution> m2(M2Func fSQP, M2Func fAugLagBFGS,
     auto m2_auglag_bfgs = fAugLagBFGS(inp, eps, neval);
 
     // add the number of obj fn evals for both methods.
-    int neval_objf_tot = m2_sqp.value().neval_objf();
-    neval_objf_tot += m2_auglag_bfgs.value().neval_objf();
-    m2_sqp.value().set_neval_objf(neval_objf_tot);
-    m2_auglag_bfgs.value().set_neval_objf(neval_objf_tot);
+    int neval_objf_tot = 0;
+    if (m2_sqp) { neval_objf_tot += m2_sqp.value().neval_objf(); }
+    if (m2_auglag_bfgs) {
+        neval_objf_tot += m2_auglag_bfgs.value().neval_objf();
+    }
 
     // if both SQP and A-BFGS were successful
     if (m2_sqp && m2_auglag_bfgs) {
+        m2_sqp.value().set_neval_objf(neval_objf_tot);
+        m2_auglag_bfgs.value().set_neval_objf(neval_objf_tot);
         // return the one with smaller M2.
         return m2_sqp.value() < m2_auglag_bfgs.value() ? m2_sqp
                                                        : m2_auglag_bfgs;
@@ -313,12 +316,7 @@ optional<M2Solution> m2(M2Func fSQP, M2Func fAugLagBFGS,
     }
 
     // if both SQP and A-BFGS failed, use A-Simplex.
-    auto m2_auglag_nmsimplex = fAugLagNMSimplex(inp, eps, neval);
-    if (m2_auglag_nmsimplex) {  // add the number only if it's successful.
-        neval_objf_tot += m2_auglag_nmsimplex.value().neval_objf();
-        m2_auglag_nmsimplex.value().set_neval_objf(neval_objf_tot);
-    }
-    return m2_auglag_nmsimplex;
+    return fAugLagNMSimplex(inp, eps, neval);
 }
 
 optional<M2Solution> m2XX(const optional<InputKinematics> &inp, double eps,
