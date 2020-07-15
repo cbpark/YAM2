@@ -316,8 +316,10 @@ optional<M2Solution> m2(M2Func fSQP, M2Func fAugLagBFGS,
 
     // if both SQP and A-BFGS failed, use A-Simplex.
     auto m2_auglag_nmsimplex = fAugLagNMSimplex(inp, eps, neval);
-    neval_objf_tot += m2_auglag_nmsimplex.value().neval_objf();
-    m2_auglag_nmsimplex.value().set_neval_objf(neval_objf_tot);
+    if (m2_auglag_nmsimplex) {  // add the number only if it's successful.
+        neval_objf_tot += m2_auglag_nmsimplex.value().neval_objf();
+        m2_auglag_nmsimplex.value().set_neval_objf(neval_objf_tot);
+    }
     return m2_auglag_nmsimplex;
 }
 
