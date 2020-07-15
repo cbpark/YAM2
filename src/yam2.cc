@@ -117,9 +117,9 @@ std::tuple<nlopt::result, double, NLoptVar> doOptimize(
     }
     return {result, minf, x};
 }
-/*
- * 'Constriant' type is the function pointer defined in 'constrain.h'.
- * 'InputKinematics' type is defined in 'input.h'
+/**
+ *  'Constriant' type is the function pointer defined in 'constrain.h'.
+ *  'InputKinematics' type is defined in 'input.h'
  */
 optional<M2Solution> m2SQP(const Constraints &cfs,
                            const optional<InputKinematics> &inp, double eps,
@@ -292,11 +292,15 @@ optional<M2Solution> m2(M2Func fSQP, M2Func fAugLagBFGS,
                         int neval) {
     auto m2_sqp = fSQP(inp, eps, neval);
     auto m2_auglag_bfgs = fAugLagBFGS(inp, eps, neval);
+    /* If the SQP method failed or the minimum is zero (or negative),
+     * return the result from AUGLAG + BFGS.
+     */
     if (!m2_sqp || m2_sqp.value().m2() <= 0.0) {
         return m2_auglag_bfgs;
     } else if (!m2_auglag_bfgs || m2_auglag_bfgs.value().m2() <= 0.0) {
         return m2_sqp;
     } else {
+        // add the number of obj fn evals for both methods.
         int neval_objf_tot = m2_sqp.value().neval_objf();
         neval_objf_tot += m2_auglag_bfgs.value().neval_objf();
         m2_sqp.value().set_neval_objf(neval_objf_tot);
