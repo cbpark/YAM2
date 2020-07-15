@@ -116,8 +116,8 @@ std::tuple<nlopt::result, double, NLoptVar> doOptimize(
         doOptimize(inp, algorithm, subproblem, x0, epsf);
     }
 
-    // if M2 <= 0.0, it has been failed to find the minimum.
-    if (minf <= 0.0) { return {}; }
+    // if M2 <= 0, it has been failed to find the minimum.
+    if (minf <= 0) { return {}; }
     return {result, minf, x};
 }
 /**
