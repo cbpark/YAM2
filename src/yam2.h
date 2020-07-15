@@ -48,6 +48,13 @@ public:
 /** the default tolerance value */
 constexpr double EPS = 1.0e-3;
 
+/** the default tolerance value for M2XX
+ *
+ *  it needs the smaller tolerance than others as the M2XX variables is
+ *  actually obtained by unconstrained minimization.
+ */
+constexpr double EPSX = 1.0e-6;
+
 /** the maximum number of interations */
 constexpr int NEVAL = 5000;
 
@@ -57,7 +64,7 @@ constexpr int NEVAL = 5000;
  *  augmented Lagrangian methods.
  */
 std::optional<M2Solution> m2XX(const std::optional<InputKinematics> &inp,
-                               double eps = EPS, int neval = NEVAL);
+                               double eps = EPSX, int neval = NEVAL);
 /** The M2CX variable */
 std::optional<M2Solution> m2CX(const std::optional<InputKinematics> &inp,
                                double eps = EPS, int neval = NEVAL);
@@ -73,7 +80,7 @@ std::optional<M2Solution> m2CR(const std::optional<InputKinematics> &inp,
 
 /** M2XX variable using the SQP method */
 std::optional<M2Solution> m2XXSQP(const std::optional<InputKinematics> &inp,
-                                  double eps = EPS, int neval = NEVAL);
+                                  double eps = EPSX, int neval = NEVAL);
 /** M2CX variable using the SQP method */
 std::optional<M2Solution> m2CXSQP(const std::optional<InputKinematics> &inp,
                                   double eps = EPS, int neval = NEVAL);
@@ -89,7 +96,7 @@ std::optional<M2Solution> m2CRSQP(const std::optional<InputKinematics> &inp,
 
 /** M2XX variable using the augmented Lagrangian method with the BFGS update */
 std::optional<M2Solution> m2XXAugLagBFGS(
-    const std::optional<InputKinematics> &inp, double eps = EPS,
+    const std::optional<InputKinematics> &inp, double eps = EPSX,
     int neval = NEVAL);
 /** M2CX variable using the augmented Lagrangian method with the BFGS update */
 std::optional<M2Solution> m2CXAugLagBFGS(
@@ -113,7 +120,7 @@ std::optional<M2Solution> m2CRAugLagBFGS(
  * with the Nelder-Mead simplex
  */
 std::optional<M2Solution> m2XXAugLagNMSimplex(
-    const std::optional<InputKinematics> &inp, double eps = EPS,
+    const std::optional<InputKinematics> &inp, double eps = EPSX,
     int neval = NEVAL);
 /**
  * M2CX variable using the augmented Lagrangian method
