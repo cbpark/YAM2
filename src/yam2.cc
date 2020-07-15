@@ -292,9 +292,9 @@ optional<M2Solution> m2(M2Func fSQP, M2Func fAugLagBFGS,
                         int neval) {
     auto m2_sqp = fSQP(inp, eps, neval);
     auto m2_auglag_bfgs = fAugLagBFGS(inp, eps, neval);
-    if (!m2_sqp) {
+    if (!m2_sqp || m2_sqp.value().m2() <= 0.0) {
         return m2_auglag_bfgs;
-    } else if (!m2_auglag_bfgs) {
+    } else if (!m2_auglag_bfgs || m2_auglag_bfgs.value().m2() <= 0.0) {
         return m2_sqp;
     } else {
         int neval_objf_tot = m2_sqp.value().neval_objf();
