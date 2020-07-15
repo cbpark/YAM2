@@ -115,6 +115,9 @@ std::tuple<nlopt::result, double, NLoptVar> doOptimize(
         epsf *= 10.0;
         doOptimize(inp, algorithm, subproblem, x0, epsf);
     }
+
+    // if M2 <= 0.0, it has been failed to find the minimum.
+    if (minf <= 0.0) { return {}; }
     return {result, minf, x};
 }
 /**
@@ -288,52 +291,59 @@ using M2Func = std::function<optional<M2Solution>(
     const optional<InputKinematics> &, double, int)>;
 
 optional<M2Solution> m2(M2Func fSQP, M2Func fAugLagBFGS,
+                        M2Func fAugLagNMSimplex,
                         const optional<InputKinematics> &inp, double eps,
                         int neval) {
     auto m2_sqp = fSQP(inp, eps, neval);
     auto m2_auglag_bfgs = fAugLagBFGS(inp, eps, neval);
-    /* If the SQP method failed or the minimum is zero (or negative),
-     * return the result from AUGLAG + BFGS.
-     */
-    if (!m2_sqp || m2_sqp.value().m2() <= 0.0) {
-        return m2_auglag_bfgs;
-    } else if (!m2_auglag_bfgs || m2_auglag_bfgs.value().m2() <= 0.0) {
-        return m2_sqp;
-    } else {
-        // add the number of obj fn evals for both methods.
-        int neval_objf_tot = m2_sqp.value().neval_objf();
-        neval_objf_tot += m2_auglag_bfgs.value().neval_objf();
-        m2_sqp.value().set_neval_objf(neval_objf_tot);
-        m2_auglag_bfgs.value().set_neval_objf(neval_objf_tot);
 
+    // add the number of obj fn evals for both methods.
+    int neval_objf_tot = m2_sqp.value().neval_objf();
+    neval_objf_tot += m2_auglag_bfgs.value().neval_objf();
+    m2_sqp.value().set_neval_objf(neval_objf_tot);
+    m2_auglag_bfgs.value().set_neval_objf(neval_objf_tot);
+
+    // if both SQP and A-BFGS were successful
+    if (m2_sqp && m2_auglag_bfgs) {
+        // return the one with smaller M2.
         return m2_sqp.value() < m2_auglag_bfgs.value() ? m2_sqp
                                                        : m2_auglag_bfgs;
+    } else if (m2_sqp && !m2_auglag_bfgs) {
+        return m2_sqp;
+    } else if (!m2_sqp && m2_auglag_bfgs) {
+        return m2_auglag_bfgs;
     }
+
+    // if both SQP and A-BFGS failed, use A-Simplex.
+    auto m2_auglag_nmsimplex = fAugLagNMSimplex(inp, eps, neval);
+    neval_objf_tot += m2_auglag_nmsimplex.value().neval_objf();
+    m2_auglag_nmsimplex.value().set_neval_objf(neval_objf_tot);
+    return m2_auglag_nmsimplex;
 }
 
 optional<M2Solution> m2XX(const optional<InputKinematics> &inp, double eps,
                           int neval) {
-    return m2(m2XXSQP, m2XXAugLagBFGS, inp, eps, neval);
+    return m2(m2XXSQP, m2XXAugLagBFGS, m2XXAugLagNMSimplex, inp, eps, neval);
 }
 
 optional<M2Solution> m2CX(const optional<InputKinematics> &inp, double eps,
                           int neval) {
-    return m2(m2CXSQP, m2CXAugLagBFGS, inp, eps, neval);
+    return m2(m2CXSQP, m2CXAugLagBFGS, m2CXAugLagNMSimplex, inp, eps, neval);
 }
 
 optional<M2Solution> m2XC(const optional<InputKinematics> &inp, double eps,
                           int neval) {
-    return m2(m2XCSQP, m2XCAugLagBFGS, inp, eps, neval);
+    return m2(m2XCSQP, m2XCAugLagBFGS, m2XCAugLagNMSimplex, inp, eps, neval);
 }
 
 optional<M2Solution> m2CC(const optional<InputKinematics> &inp, double eps,
                           int neval) {
-    return m2(m2CCSQP, m2CCAugLagBFGS, inp, eps, neval);
+    return m2(m2CCSQP, m2CCAugLagBFGS, m2CCAugLagNMSimplex, inp, eps, neval);
 }
 
 optional<M2Solution> m2CR(const optional<InputKinematics> &inp, double eps,
                           int neval) {
-    return m2(m2CRSQP, m2CRAugLagBFGS, inp, eps, neval);
+    return m2(m2CRSQP, m2CRAugLagBFGS, m2CRAugLagNMSimplex, inp, eps, neval);
 }
 
 std::ostream &operator<<(std::ostream &os, const M2Solution &sol) {
