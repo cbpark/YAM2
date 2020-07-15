@@ -115,9 +115,6 @@ std::tuple<nlopt::result, double, NLoptVar> doOptimize(
         epsf *= 10.0;
         doOptimize(inp, algorithm, subproblem, x0, epsf);
     }
-
-    // if M2 <= 0, it has been failed to find the minimum.
-    if (minf <= 0) { return {}; }
     return {result, minf, x};
 }
 /**
@@ -146,7 +143,8 @@ optional<M2Solution> m2SQP(const Constraints &cfs,
     const auto &[result, minf, x] =
         doOptimize(inpv, algorithm, subproblem, x0, epsf);
 
-    if (result < 0) { return {}; }  // if failed, return empty.
+    // if M2 <= 0, it has been failed to find the minimum.
+    if (result < 0 || minf <= 0) { return {}; }  // if failed, return empty.
 
     const auto sol_vars = mkVariables(x);
     // the solutions will be all back to the original scale.
@@ -210,7 +208,7 @@ optional<M2Solution> m2AugLag(const nlopt::algorithm &subopt,
     const auto &[result, minf, x] =
         doOptimize(inpv, algorithm, subproblem, x0, epsf);
 
-    if (result < 0) { return {}; }
+    if (result < 0 || minf <= 0) { return {}; }
 
     const auto sol_vars = mkVariables(x);
     return M2Solution{inpv, sol_vars.value(), minf * inpv.scale(), neval_objf};
