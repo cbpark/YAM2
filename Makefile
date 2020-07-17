@@ -7,18 +7,24 @@ LIBS     := -lm
 AR       := ar crs
 MKDIR    := mkdir -p
 RM       := rm -f
+UNAME    := $(shell uname -s)
 
 LIB    := $(LIBDIR)/lib$(PKGNAME).a
 LIBSRC := $(wildcard $(SRCDIR)/*.cc)
 LIBOBJ := $(LIBSRC:.cc=.o)
 EXE    := examples/m2
+ifeq ($(UNAME), Darwin)
+SHAREDLIB  := $(LIBDIR)/lib$(PKGNAME).dylib
+else
+SHAREDLIB  := $(LIBDIR)/lib$(PKGNAME).so
+endif
 
 # NLopt (https://nlopt.readthedocs.io/
 NLOPT    ?= /usr
 CXXFLAGS += -I$(NLOPT)/include
 LIBS     += -L$(NLOPT)/lib -lnlopt -Wl,-rpath $(NLOPT)/lib
 
-.PHONY: all clean
+.PHONY: all lib clean
 
 all: $(LIB)
 
@@ -28,9 +34,19 @@ $(LIB): $(LIBOBJ)
 	$(AR) $@ $^
 	ranlib $@
 
+ifeq ($(UNAME), Darwin)
+lib: LDFLAGS += -dynamiclib -undefined dynamic_lookup
+else
+lib: LDFLAGS += -shared
+endif
+lib: CXXFLAGS += -fPIC
+lib: $(LIBOBJ)
+	$(MKDIR) $(LIBDIR)
+	$(CXX) $(LDFLAGS) -o $(SHAREDLIB) $^
+
 examples/%: examples/%.o $(LIB)
-	$(CXX) $(LDFLAGS) -o $@ $< -L$(LIBDIR) -l$(PKGNAME) $(LIBS)
+	$(CXX) $(LDFLAGS) -o $@ $< $(LIB) $(LIBS)
 
 clean::
-	$(RM) $(EXE) $(LIBOBJ) $(LIB)
+	$(RM) $(EXE) $(LIBOBJ) $(LIB) $(SHAREDLIB)
 	$(RM) -r $(LIBDIR)
