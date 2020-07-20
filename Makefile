@@ -19,12 +19,15 @@ else
 SHAREDLIB  := $(LIBDIR)/lib$(PKGNAME).so
 endif
 
+DESTDIR ?= /usr/local
+HEADERS := $(wildcard $(SRCDIR)/*.h)
+
 # NLopt (https://nlopt.readthedocs.io/
 NLOPT    ?= /usr
 CXXFLAGS += -I$(NLOPT)/include
 LIBS     += -L$(NLOPT)/lib -lnlopt -Wl,-rpath $(NLOPT)/lib
 
-.PHONY: all lib clean
+.PHONY: all lib install clean
 
 all: $(LIB)
 
@@ -46,6 +49,16 @@ lib: $(LIBOBJ)
 
 examples/%: examples/%.o $(LIB)
 	$(CXX) $(LDFLAGS) -o $@ $< $(LIB) $(LIBS)
+
+install: $(LIB) lib $(HEADERS)
+	install -d $(DESTDIR)/lib $(DESTDIR)/include/$(PKGNAME)
+	install -m755 $(SHAREDLIB) $(DESTDIR)/lib
+	install -m644 $(LIB) $(DESTDIR)/lib
+ifeq ($(UNAME), Darwin)
+	install -m644 $(HEADERS) $(DESTDIR)/include/$(PKGNAME)
+else
+	install -D -m644 $(HEADERS) $(DESTDIR)/include/$(PKGNAME)
+endif
 
 clean::
 	$(RM) $(EXE) $(LIBOBJ) $(LIB) $(SHAREDLIB)
