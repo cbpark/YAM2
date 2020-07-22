@@ -1,0 +1,29 @@
+language: cpp
+
+jobs:
+  include:
+    - os: linux
+      compiler: gcc
+    - os: linux
+      compiler: clang
+    - os: osx
+      compiler: clang
+      cache:
+        directories:
+          - $HOME/Library/Caches/Homebrew
+        before_cache:
+          - brew cleanup
+
+addons:
+  apt:
+    packages: libnlopt-dev
+  homebrew:
+    packages: nlopt
+    update: true
+
+script:
+  - make
+  - make lib
+  - make examples/m2
+  - DESTDIR="$PWD/pkg" make install
+  - ls -R "$PWD/pkg"
