@@ -110,7 +110,7 @@ if (!input) {
 const auto m2sol = yam2::m2CCSQP(input.value());
 ```
 
-The other optional inputs to the [`m2CCSQP`](./src/yam2.h) function in the above are the tolerance `eps` and the maximal number of iterations `neval`. These will be set to the default values defined in [`yam2.h`](./src/yam2.h) unless users supply any input. In the current version of YAM2, their default values are `EPS` = 10<sup>-3</sup> and `NEVAL` = 5000. We recommend users to read the example analysis code enclosed with YAM2, [`examples/m2.cc`](./examples/m2.cc), before starting to write their analysis code for the M<sub>2</sub> variables.
+The other optional inputs to the [`m2CCSQP`](./src/yam2.h) function in the above are the tolerance `eps` and the maximal number of iterations `neval`. These will be set to the default values defined in [`yam2.h`](./src/yam2.h) unless users supply any input. In the current version of YAM2, their default values are `EPS` = 10<sup>-3</sup> and `NEVAL` = 5000. We recommend users to read the example analysis code enclosed with YAM2, [`examples/m2.cc`](./examples/m2.cc), before starting to write their analysis code for the M<sub>2</sub> variables. If you want to build the example code, run `make examples/m2`.
 
 Supposing that the file name of the analysis code is `m2.cc` and the path to YAM2 is `/usr/local`, an example command for building an analysis code using YAM2 is as follows.
 
