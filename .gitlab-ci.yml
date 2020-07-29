@@ -1,0 +1,12 @@
+image: gcc
+
+build:
+  stage: build
+  before_script:
+    - apt update && apt -y install libnlopt-dev
+  script:
+    - make
+    - make lib
+    - make examples
+    - DESTDIR="$PWD/pkg" make install
+    - ls -R "$PWD/pkg"
