@@ -13,7 +13,7 @@ For building the source codes, it is required to have a C++ compiler, supporting
 
 In theory, it will work with use GCC >= 7 or Clang >= 5.
 
-Detailed instructions for installing NLopt by building the source code are given in [NLopt installation](https://nlopt.readthedocs.io/en/latest/NLopt_Installation/). For some Linux distributions, it can be installed by the system package manager. For example,
+Detailed instructions for installing NLopt by building the source code are given in [NLopt installation](https://nlopt.readthedocs.io/en/latest/NLopt_Installation/). For some Linux distributions, it can be installed by using the system package manager. For example,
 
 ```
 # For Arch Linux/Manjaro:
@@ -28,7 +28,7 @@ sudo apt-get install libnlopt-dev
 
 In macOS, one can install NLopt using [Homebrew](https://brew.sh/). We have tested our codes with the NLopt version >= 2.6.2.
 
-The YAM2 library can be built by running `make`. If the path to NLopt is `/usr/local`, append the path to the `make` command:
+The source code of the YAM2 library can be built by running `make`. If the path to NLopt is `/usr/local`, append the path to the `make` command:
 
 ```
 NLOPT=/usr/local make
