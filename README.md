@@ -11,7 +11,7 @@ For building the source codes, it is required to have a C++ compiler, supporting
 * [C++ Standards Support in GCC](https://gcc.gnu.org/projects/cxx-status.html),
 * [C++ Support in Clang](https://clang.llvm.org/cxx_status.html).
 
-In theory, it will work with use GCC >= 7 or Clang >= 5.
+In theory, it would work with GCC >= 7 or Clang >= 5.
 
 Detailed instructions for installing NLopt by building the source code are given in [NLopt installation](https://nlopt.readthedocs.io/en/latest/NLopt_Installation/). For some Linux distributions, it can be installed by using the system package manager. For example,
 
