@@ -3,7 +3,7 @@ image: gcc
 build:
   stage: build
   before_script:
-    - apt update && apt -y install libnlopt-dev
+    - apt update && apt -y install libnlopt-cxx-dev
   script:
     - make
     - make lib
