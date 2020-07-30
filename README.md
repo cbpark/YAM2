@@ -26,7 +26,7 @@ sudo dnf install NLopt-devel
 sudo apt-get install libnlopt-cxx-dev
 ```
 
-For Ubuntu prior to 20.04 LTS (Focal Fossa), install `libnlopt-dev`. In CentOS, the [EPEL](https://fedoraproject.org/wiki/EPEL) repository must be installed and enabled. In macOS, one can install NLopt using [Homebrew](https://brew.sh/). We have tested our codes with the NLopt version >= 2.6.2.
+For Ubuntu prior to 20.04 LTS (Focal Fossa), install `libnlopt-dev`. (Check whether there exists `/usr/include/nlopt.hpp`.) In CentOS, the [EPEL](https://fedoraproject.org/wiki/EPEL) repository must be installed and enabled. In macOS, one can install NLopt using [Homebrew](https://brew.sh/). We have tested our codes with the NLopt version >= 2.6.2.
 
 The source code of the YAM2 library can be built by running `make`. If the path to NLopt is `/usr/local`, append the path to the `make` command:
 
