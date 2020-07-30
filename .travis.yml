@@ -6,6 +6,7 @@ jobs:
       dist: bionic
       compiler: gcc
     - os: linux
+      dist: bionic
       compiler: clang
     - os: osx
       compiler: clang
