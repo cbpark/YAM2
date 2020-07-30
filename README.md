@@ -1,6 +1,7 @@
 # YAM2: Yet another library for the M2 variables
 
 [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
+[![Build Status](https://travis-ci.com/cbpark/YAM2.svg?branch=master)](https://travis-ci.com/cbpark/YAM2)
 
 YAM2 is free software library for calculating a set of kinematic variables M<sub>2</sub> using several numerical optimization algorithms.
 
@@ -11,7 +12,7 @@ For building the source codes, it is required to have a C++ compiler, supporting
 * [C++ Standards Support in GCC](https://gcc.gnu.org/projects/cxx-status.html),
 * [C++ Support in Clang](https://clang.llvm.org/cxx_status.html).
 
-In theory, it would work with GCC >= 7 or Clang >= 5.
+In theory, it would work with GCC >= 7 or Clang >= 5. In macOS, the required C++17 headers have been supported since [Xcode 10](https://developer.apple.com/documentation/xcode-release-notes/xcode-10-release-notes).
 
 Detailed instructions for installing NLopt by building the source code are given in [NLopt installation](https://nlopt.readthedocs.io/en/latest/NLopt_Installation/). For some Linux distributions, it can be installed by using the system package manager. For example,
 
