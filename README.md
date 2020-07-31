@@ -118,6 +118,22 @@ Supposing that the file name of the analysis code is `m2.cc` and the path to YAM
 ```
 c++ -o m2.exe m2.cc -I/usr/local/include/YAM2 -L/usr/local/lib -lYAM2 -lnlopt
 ```
+## Citation
+
+If you use YAM2 for your analysis, please cite the paper given below:
+
+``` bibtex
+@article{Park:2020bsu,
+    author = "Park, Chan Beom",
+    title = "{YAM2: Yet another library for the $M_2$ variables using sequential quadratic programming}",
+    eprint = "2007.15537",
+    archivePrefix = "arXiv",
+    primaryClass = "hep-ph",
+    reportNumber = "CTPU-PTC-20-18",
+    month = "7",
+    year = "2020"
+}
+```
 
 ## References
 

@@ -1,5 +1,5 @@
 PKGNAME  := YAM2
-VERSION  := 0.0.0.0
+VERSION  := 0.1.0.0
 SRCDIR 	 := src
 LIBDIR 	 := lib
 CXXFLAGS := -g -O2 -Wall -Wextra -std=c++17 -pedantic -I$(SRCDIR) $(CXXFLAGS)
