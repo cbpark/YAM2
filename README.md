@@ -121,6 +121,8 @@ c++ -o m2.exe m2.cc -I/usr/local/include/YAM2 -L/usr/local/lib -lYAM2 -lnlopt
 
 ## References
 
+* C.B. Park, YAM2: Yet another library for the M2 variables using sequential quadratic programming, [arXiv:2007.15537](https://arxiv.org/abs/2007.15537).
+
 * W.S. Cho et al, On-shell constrained M<sub>2</sub>​ variables with applications to mass measurements and topology disambiguation, JHEP 08 (2014) 070, [arXiv:1401.1449](https://arxiv.org/abs/1401.1449).
 
 * W.S. Cho et al, OPTIMASS: A Package for the Minimization of Kinematic Mass Functions with Constraints, JHEP 01 (2016) 026, [arXiv:1508.00589](https://arxiv.org/abs/1508.00589).
