@@ -14,8 +14,8 @@ jobs:
       cache:
         directories:
           - $HOME/Library/Caches/Homebrew
-        before_cache:
-          - brew cleanup
+      before_cache:
+        - brew cleanup
 
 addons:
   apt:
