@@ -5,6 +5,7 @@
 *.html
 *PATH
 *TAGS
+*cache
 bin
 lib
 examples/m2
