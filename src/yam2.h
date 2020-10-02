@@ -55,7 +55,7 @@ constexpr double EPS = 1.0e-3;
  */
 constexpr double EPSX = 1.0e-6;
 
-/** the maximum number of interations */
+/** the maximum number of iterations */
 constexpr int NEVAL = 5000;
 
 /** The M2XX variable.
