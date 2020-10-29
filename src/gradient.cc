@@ -6,7 +6,6 @@
 
 #include <cmath>
 #include <tuple>
-#include <utility>
 #include "input.h"       // InputKinematics
 #include "invisibles.h"  // Invisibles
 #include "momentum.h"    // FourMomentum
@@ -14,11 +13,12 @@
 
 using std::pair;
 
+constexpr double EPS0 = 1.0e-20;
+
 namespace yam2 {
 double safeDivisor(double x) {
-    const double eps0 = 1.0e-8;
-    if (x >= 0.0) { return std::fmax(eps0, x); }
-    return std::fmin(-eps0, x);
+    if (x >= 0.0) { return std::fmax(EPS0, x); }
+    return std::fmin(-EPS0, x);
 }
 
 pair<Gradient, double> m2Grad1(const InputKinematics &, const FourMomentum &p1,
@@ -56,7 +56,7 @@ std::tuple<Gradients, double, double> m2Grad(const InputKinematics &inp,
                                              const Variables &var) {
     const auto &[d1, m1] = m2Grad1(inp, p1, ks, var);
     const auto &[d2, m2] = m2Grad2(inp, p2, ks, var);
-    return {std::make_pair(d1, d2), m1, m2};
+    return {{d1, d2}, m1, m2};
 }
 
 Gradient mtotGrad(const InputKinematics &inp, const FourMomentum &p1,
