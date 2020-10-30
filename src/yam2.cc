@@ -21,7 +21,7 @@
 using std::optional;
 
 /** to count the number of object function evaluations. */
-int neval_objf = 0;
+unsigned int neval_objf = 0;
 
 namespace yam2 {
 using OptInp = optional<InputKinematics>;
@@ -46,7 +46,8 @@ double mTot(const NLoptVar &x, NLoptVar &grad, void *input) {
 /**
  *  the initial configuration that minimizes M_{tot}^2 = (p1 + p2 + k1 + k2)^2.
  */
-NLoptVar initialGuessMtot(InputKinematics &inp, double eps, int neval) {
+NLoptVar initialGuessMtot(InputKinematics &inp, double eps,
+                          unsigned int neval) {
     // nlopt::opt algorithm{nlopt::LN_NELDERMEAD, 4};
     // nlopt::opt algorithm{nlopt::LD_SLSQP, 4};
     nlopt::opt algorithm{nlopt::LD_TNEWTON, 4};
@@ -124,7 +125,8 @@ std::tuple<nlopt::result, double, NLoptVar> doOptimize(
  *  'Constriant' type is the function pointer defined in 'constrain.h'.
  *  'InputKinematics' type is defined in 'input.h'
  */
-OptM2 m2SQP(const Constraints &cfs, const OptInp &inp, double eps, int neval) {
+OptM2 m2SQP(const Constraints &cfs, const OptInp &inp, double eps,
+            unsigned int neval) {
     if (!inp) { return {}; }
 
     auto inpv = inp.value();
@@ -152,32 +154,32 @@ OptM2 m2SQP(const Constraints &cfs, const OptInp &inp, double eps, int neval) {
     return M2Solution{inpv, sol_vars.value(), minf * inpv.scale(), neval_objf};
 }
 
-OptM2 m2XXSQP(const OptInp &inp, double eps, int neval) {
+OptM2 m2XXSQP(const OptInp &inp, double eps, unsigned int neval) {
     return m2SQP(Constraints(), inp, eps, neval);
 }
 
-OptM2 m2CXSQP(const OptInp &inp, double eps, int neval) {
+OptM2 m2CXSQP(const OptInp &inp, double eps, unsigned int neval) {
     const Constraints constraint{constraintA};
     return m2SQP(constraint, inp, eps, neval);
 }
 
-OptM2 m2XCSQP(const OptInp &inp, double eps, int neval) {
+OptM2 m2XCSQP(const OptInp &inp, double eps, unsigned int neval) {
     const Constraints constraint{constraintB};
     return m2SQP(constraint, inp, eps, neval);
 }
 
-OptM2 m2CCSQP(const OptInp &inp, double eps, int neval) {
+OptM2 m2CCSQP(const OptInp &inp, double eps, unsigned int neval) {
     const Constraints constraint{constraintA, constraintB};
     return m2SQP(constraint, inp, eps, neval);
 }
 
-OptM2 m2CRSQP(const OptInp &inp, double eps, int neval) {
+OptM2 m2CRSQP(const OptInp &inp, double eps, unsigned int neval) {
     const Constraints constraint{constraintA, constraintR1, constraintR2};
     return m2SQP(constraint, inp, eps, neval);
 }
 
 OptM2 m2AugLag(const nlopt::algorithm &subopt, const Constraints &cfs,
-               const OptInp &inp, double eps, int neval) {
+               const OptInp &inp, double eps, unsigned int neval) {
     if (!inp) { return {}; }
 
     auto inpv = inp.value();
@@ -209,60 +211,60 @@ OptM2 m2AugLag(const nlopt::algorithm &subopt, const Constraints &cfs,
 }
 
 OptM2 m2AugLagBFGS(const Constraints &cfs, const OptInp &inp, double eps,
-                   int neval) {
+                   unsigned int neval) {
     // Here, the SLSQP method is the BFGS in essence.
     return m2AugLag(nlopt::LD_SLSQP, cfs, inp, eps, neval);
 }
 
-OptM2 m2XXAugLagBFGS(const OptInp &inp, double eps, int neval) {
+OptM2 m2XXAugLagBFGS(const OptInp &inp, double eps, unsigned int neval) {
     return m2AugLagBFGS(Constraints(), inp, eps, neval);
 }
 
-OptM2 m2CXAugLagBFGS(const OptInp &inp, double eps, int neval) {
+OptM2 m2CXAugLagBFGS(const OptInp &inp, double eps, unsigned int neval) {
     const Constraints constraint{constraintA};
     return m2AugLagBFGS(constraint, inp, eps, neval);
 }
 
-OptM2 m2XCAugLagBFGS(const OptInp &inp, double eps, int neval) {
+OptM2 m2XCAugLagBFGS(const OptInp &inp, double eps, unsigned int neval) {
     const Constraints constraint{constraintB};
     return m2AugLagBFGS(constraint, inp, eps, neval);
 }
 
-OptM2 m2CCAugLagBFGS(const OptInp &inp, double eps, int neval) {
+OptM2 m2CCAugLagBFGS(const OptInp &inp, double eps, unsigned int neval) {
     const Constraints constraint{constraintA, constraintB};
     return m2AugLagBFGS(constraint, inp, eps, neval);
 }
 
-OptM2 m2CRAugLagBFGS(const OptInp &inp, double eps, int neval) {
+OptM2 m2CRAugLagBFGS(const OptInp &inp, double eps, unsigned int neval) {
     const Constraints constraint{constraintA, constraintR1, constraintR2};
     return m2AugLagBFGS(constraint, inp, eps, neval);
 }
 
 OptM2 m2AugLagNMSimplex(const Constraints &cfs, const OptInp &inp, double eps,
-                        int neval) {
+                        unsigned int neval) {
     return m2AugLag(nlopt::LN_NELDERMEAD, cfs, inp, eps, neval);
 }
 
-OptM2 m2XXAugLagNMSimplex(const OptInp &inp, double eps, int neval) {
+OptM2 m2XXAugLagNMSimplex(const OptInp &inp, double eps, unsigned int neval) {
     return m2AugLagNMSimplex(Constraints(), inp, eps, neval);
 }
 
-OptM2 m2CXAugLagNMSimplex(const OptInp &inp, double eps, int neval) {
+OptM2 m2CXAugLagNMSimplex(const OptInp &inp, double eps, unsigned int neval) {
     const Constraints constraint{constraintA};
     return m2AugLagNMSimplex(constraint, inp, eps, neval);
 }
 
-OptM2 m2XCAugLagNMSimplex(const OptInp &inp, double eps, int neval) {
+OptM2 m2XCAugLagNMSimplex(const OptInp &inp, double eps, unsigned int neval) {
     const Constraints constraint{constraintB};
     return m2AugLagNMSimplex(constraint, inp, eps, neval);
 }
 
-OptM2 m2CCAugLagNMSimplex(const OptInp &inp, double eps, int neval) {
+OptM2 m2CCAugLagNMSimplex(const OptInp &inp, double eps, unsigned int neval) {
     const Constraints constraint{constraintA, constraintB};
     return m2AugLagNMSimplex(constraint, inp, eps, neval);
 }
 
-OptM2 m2CRAugLagNMSimplex(const OptInp &inp, double eps, int neval) {
+OptM2 m2CRAugLagNMSimplex(const OptInp &inp, double eps, unsigned int neval) {
     const Constraints constraint{constraintA, constraintR1, constraintR2};
     return m2AugLagNMSimplex(constraint, inp, eps, neval);
 }
@@ -270,12 +272,12 @@ OptM2 m2CRAugLagNMSimplex(const OptInp &inp, double eps, int neval) {
 using M2Func = std::function<OptM2(const OptInp &, double, int)>;
 
 OptM2 m2(M2Func fSQP, M2Func fAugLagBFGS, M2Func fAugLagNMSimplex,
-         const OptInp &inp, double eps, int neval) {
+         const OptInp &inp, double eps, unsigned int neval) {
     auto m2_sqp = fSQP(inp, eps, neval);
     auto m2_auglag_bfgs = fAugLagBFGS(inp, eps, neval);
 
     // add the number of obj fn evals for both methods.
-    int neval_objf_tot = 0;
+    unsigned int neval_objf_tot = 0;
     if (m2_sqp) { neval_objf_tot += m2_sqp.value().neval_objf(); }
     if (m2_auglag_bfgs) {
         neval_objf_tot += m2_auglag_bfgs.value().neval_objf();
@@ -298,23 +300,23 @@ OptM2 m2(M2Func fSQP, M2Func fAugLagBFGS, M2Func fAugLagNMSimplex,
     return fAugLagNMSimplex(inp, eps, neval);
 }
 
-OptM2 m2XX(const OptInp &inp, double eps, int neval) {
+OptM2 m2XX(const OptInp &inp, double eps, unsigned int neval) {
     return m2(m2XXSQP, m2XXAugLagBFGS, m2XXAugLagNMSimplex, inp, eps, neval);
 }
 
-OptM2 m2CX(const OptInp &inp, double eps, int neval) {
+OptM2 m2CX(const OptInp &inp, double eps, unsigned int neval) {
     return m2(m2CXSQP, m2CXAugLagBFGS, m2CXAugLagNMSimplex, inp, eps, neval);
 }
 
-OptM2 m2XC(const OptInp &inp, double eps, int neval) {
+OptM2 m2XC(const OptInp &inp, double eps, unsigned int neval) {
     return m2(m2XCSQP, m2XCAugLagBFGS, m2XCAugLagNMSimplex, inp, eps, neval);
 }
 
-OptM2 m2CC(const OptInp &inp, double eps, int neval) {
+OptM2 m2CC(const OptInp &inp, double eps, unsigned int neval) {
     return m2(m2CCSQP, m2CCAugLagBFGS, m2CCAugLagNMSimplex, inp, eps, neval);
 }
 
-OptM2 m2CR(const OptInp &inp, double eps, int neval) {
+OptM2 m2CR(const OptInp &inp, double eps, unsigned int neval) {
     return m2(m2CRSQP, m2CRAugLagBFGS, m2CRAugLagNMSimplex, inp, eps, neval);
 }
 

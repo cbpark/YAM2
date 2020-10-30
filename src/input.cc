@@ -39,7 +39,7 @@ std::optional<InputKinematics> mkInput(const vector<FourMomentum> &as,
         return {};
     }
 
-    const double scale = 8 * std::sqrt(scalesq);  // scale > 0
+    const double scale = 8.0 * std::sqrt(scalesq);  // scale > 0
 
     if (!mrel) {
         return {{p1 / scale, p2 / scale, q1 / scale, q2 / scale, ptmiss / scale,

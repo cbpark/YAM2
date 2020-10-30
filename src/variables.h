@@ -5,6 +5,7 @@
 #ifndef YAM2_SRC_VARIABLES_H_
 #define YAM2_SRC_VARIABLES_H_
 
+#include <iostream>
 #include <optional>
 #include <vector>
 
@@ -31,7 +32,10 @@ public:
 };
 
 inline std::optional<Variables> mkVariables(const NLoptVar &ks) {
-    if (ks.size() != 4) { return {}; }
+    if (ks.size() != 4) {
+        std::cerr << "mkVariables: invalid number of variables.\n";
+        return {};
+    }
     return Variables{ks};
 }
 }  // namespace yam2
