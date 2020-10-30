@@ -42,10 +42,13 @@ public:
 
 class FourMomentum {
 private:
-    double t_, x_, y_, z_;
+    double t_ = 0.0;
+    double x_ = 0.0;
+    double y_ = 0.0;
+    double z_ = 0.0;
 
 public:
-    FourMomentum() = delete;
+    FourMomentum() = default;
 
     FourMomentum(double t, double x, double y, double z)
         : t_(t), x_(x), y_(y), z_(z) {}

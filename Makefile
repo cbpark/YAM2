@@ -1,5 +1,5 @@
 PKGNAME  := YAM2
-VERSION  := 0.1.0.1
+VERSION  := 0.2.0.0
 SRCDIR 	 := src
 LIBDIR 	 := lib
 CXXFLAGS := -g -O2 -Wall -Wextra -std=c++17 -pedantic -I$(SRCDIR) $(CXXFLAGS)
@@ -12,7 +12,8 @@ UNAME    := $(shell uname -s)
 LIB    := $(LIBDIR)/lib$(PKGNAME).a
 LIBSRC := $(wildcard $(SRCDIR)/*.cc)
 LIBOBJ := $(LIBSRC:.cc=.o)
-EXE    := examples/m2
+EXE    := examples/m2 \
+	  examples/m2cons
 ifeq ($(UNAME), Darwin)
 SHAREDLIB  := $(LIBDIR)/lib$(PKGNAME).dylib
 else

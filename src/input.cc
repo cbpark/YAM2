@@ -27,7 +27,7 @@ NLoptVar InputKinematics::initial_guess(double eps, unsigned int neval) {
     nlopt::opt algorithm{nlopt::LD_TNEWTON, 4};
     algorithm.set_min_objective(deltaSqrtS, this);
     const double epsf = eps * 0.1;
-    // algorithm.set_ftol_rel(epsf);
+    algorithm.set_ftol_rel(epsf);
     algorithm.set_ftol_abs(epsf);
     algorithm.set_maxeval(neval);
 
@@ -81,7 +81,8 @@ std::ostream &operator<<(std::ostream &os, const InputKinematics &p) {
        << "q2: " << p.q2_ << '\n'
        << "ptmiss: " << p.ptmiss_ << '\n'
        << "m(invisible): " << p.minv_.value << '\n'
-       << "sqrt(s): " << p.sqrt_s_;
+       << "sqrt(s): " << p.sqrt_s_ << '\n'
+       << "scale: " << p.scale_;
     return os;
 }
 

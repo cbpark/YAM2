@@ -28,5 +28,6 @@ script:
   - make
   - make lib
   - make examples/m2
+  - make examples/m2cons
   - DESTDIR="$PWD/pkg" make install
   - ls -R "$PWD/pkg"

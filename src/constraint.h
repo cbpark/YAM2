@@ -19,11 +19,14 @@ double constraintA(const NLoptVar &x, NLoptVar &grad, void *input);
 /** constraint: (q1 + k1)^2 = (q2 + k2)^2 */
 double constraintB(const NLoptVar &x, NLoptVar &grad, void *input);
 
-//** constraint: (q1 + k1)^2 = M_{R}^2 */
+/** constraint: (q1 + k1)^2 = M_{R}^2 */
 double constraintR1(const NLoptVar &x, NLoptVar &grad, void *input);
 
-//** constraint: (q2 + k2)^2 = M_{R}^2 */
+/** constraint: (q2 + k2)^2 = M_{R}^2 */
 double constraintR2(const NLoptVar &x, NLoptVar &grad, void *input);
+
+/** constraint: (p1 + p2 + k1 + k2)^2 = s */
+double constraintSqrtS(const NLoptVar &x, NLoptVar &grad, void *input);
 }  // namespace yam2
 
 #endif  // YAM2_SRC_CONSTRAINT_H_

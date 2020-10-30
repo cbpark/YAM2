@@ -139,6 +139,11 @@ OptM2 m2CRSQP(const OptInp &inp, double eps, unsigned int neval) {
     return m2SQP(constraint, inp, eps, neval);
 }
 
+OptM2 m2ConsSQP(const OptInp &inp, double eps, unsigned int neval) {
+    const Constraints constraint{constraintSqrtS};
+    return m2SQP(constraint, inp, eps, neval);
+}
+
 OptM2 m2AugLag(const nlopt::algorithm &subopt, const Constraints &cfs,
                const OptInp &inp, double eps, unsigned int neval) {
     if (!inp) { return {}; }
@@ -201,6 +206,11 @@ OptM2 m2CRAugLagBFGS(const OptInp &inp, double eps, unsigned int neval) {
     return m2AugLagBFGS(constraint, inp, eps, neval);
 }
 
+OptM2 m2ConsAugLagBFGS(const OptInp &inp, double eps, unsigned int neval) {
+    const Constraints constraint{constraintSqrtS};
+    return m2AugLagBFGS(constraint, inp, eps, neval);
+}
+
 OptM2 m2AugLagNMSimplex(const Constraints &cfs, const OptInp &inp, double eps,
                         unsigned int neval) {
     return m2AugLag(nlopt::LN_NELDERMEAD, cfs, inp, eps, neval);
@@ -227,6 +237,11 @@ OptM2 m2CCAugLagNMSimplex(const OptInp &inp, double eps, unsigned int neval) {
 
 OptM2 m2CRAugLagNMSimplex(const OptInp &inp, double eps, unsigned int neval) {
     const Constraints constraint{constraintA, constraintR1, constraintR2};
+    return m2AugLagNMSimplex(constraint, inp, eps, neval);
+}
+
+OptM2 m2ConsAugLagNMSimplex(const OptInp &inp, double eps, unsigned int neval) {
+    const Constraints constraint{constraintSqrtS};
     return m2AugLagNMSimplex(constraint, inp, eps, neval);
 }
 
@@ -279,6 +294,11 @@ OptM2 m2CC(const OptInp &inp, double eps, unsigned int neval) {
 
 OptM2 m2CR(const OptInp &inp, double eps, unsigned int neval) {
     return m2(m2CRSQP, m2CRAugLagBFGS, m2CRAugLagNMSimplex, inp, eps, neval);
+}
+
+OptM2 m2Cons(const OptInp &inp, double eps, unsigned int neval) {
+    return m2(m2ConsSQP, m2ConsAugLagBFGS, m2ConsAugLagNMSimplex, inp, eps,
+              neval);
 }
 
 std::ostream &operator<<(std::ostream &os, const M2Solution &sol) {

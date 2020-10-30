@@ -5,7 +5,7 @@
 #include "constraint.h"
 
 #include "gradient.h"    // m2Func, m2Func1, m2Func2
-#include "input.h"       // InputKinematics
+#include "input.h"       // InputKinematics, deltaSqrtS
 #include "invisibles.h"  // mkInvisibles
 #include "variables.h"   // mkVariables, NLoptVar
 
@@ -55,5 +55,9 @@ double constraintR1(const NLoptVar &x, NLoptVar &grad, void *input) {
 double constraintR2(const NLoptVar &x, NLoptVar &grad, void *input) {
     auto *const inp = reinterpret_cast<InputKinematics *>(input);
     return constraintR(*inp, inp->q2(), m2Func2, x, grad);
+}
+
+double constraintSqrtS(const NLoptVar &x, NLoptVar &grad, void *input) {
+    return deltaSqrtS(x, grad, input);
 }
 }  // namespace yam2
