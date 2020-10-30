@@ -27,45 +27,6 @@ namespace yam2 {
 using OptInp = optional<InputKinematics>;
 using OptM2 = optional<M2Solution>;
 
-double mTot(const NLoptVar &x, NLoptVar &grad, void *input) {
-    const auto var = mkVariables(x);  // this will not be empty.
-    const auto var_val = var.value();
-    auto *const inp = reinterpret_cast<InputKinematics *>(input);
-    const auto ks = mkInvisibles(*inp, var_val);
-
-    const auto p1 = inp->p1(), p2 = inp->p2();
-    const auto ptot = p1 + p2 + ks.k1() + ks.k2();
-    const double m_tot = ptot.m();
-    if (!grad.empty()) {
-        const auto grad_mtot = mtotGrad(*inp, p1, p2, ks, var_val, m_tot);
-        grad = grad_mtot.gradient();
-    }
-    return m_tot;
-}
-
-/**
- *  the initial configuration that minimizes M_{tot}^2 = (p1 + p2 + k1 + k2)^2.
- */
-NLoptVar initialGuessMtot(InputKinematics &inp, double eps,
-                          unsigned int neval) {
-    // nlopt::opt algorithm{nlopt::LN_NELDERMEAD, 4};
-    // nlopt::opt algorithm{nlopt::LD_SLSQP, 4};
-    nlopt::opt algorithm{nlopt::LD_TNEWTON, 4};
-    algorithm.set_min_objective(mTot, &inp);
-    const double epsf = eps * 0.1;
-    // algorithm.set_ftol_rel(epsf);
-    algorithm.set_ftol_abs(epsf);
-    algorithm.set_maxeval(neval);
-
-    const NLoptVar x0{0.5 * inp.ptmiss().px(), 0.5 * inp.ptmiss().py(), 0.0,
-                      0.0};
-    auto x{x0};
-    double minf;
-    auto result = algorithm.optimize(x, minf);
-    if (result < 0) { return x0; }
-    return x;
-}
-
 /**
  * The objective function for the M2 variable
  */
@@ -139,7 +100,7 @@ OptM2 m2SQP(const Constraints &cfs, const OptInp &inp, double eps,
     }
 
     // x: variables = (k1x, k1y, k1z, k2z).
-    auto x0 = initialGuessMtot(inpv, eps, neval);
+    auto x0 = inpv.initial_guess(eps, neval);
     optional<nlopt::opt> subproblem;
     const double epsf = eps * 1.0e-3;
     // minf = the minimum value of the objective function.
@@ -200,7 +161,7 @@ OptM2 m2AugLag(const nlopt::algorithm &subopt, const Constraints &cfs,
         algorithm.add_equality_constraint(cf, &inpv, eps);
     }
 
-    auto x0 = initialGuessMtot(inpv, eps, neval);
+    auto x0 = inpv.initial_guess(eps, neval);
     const auto &[result, minf, x] =
         doOptimize(inpv, algorithm, subproblem, x0, epsf);
 

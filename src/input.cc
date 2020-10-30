@@ -3,17 +3,42 @@
  */
 
 #include "input.h"
+
+#include <nlopt.hpp>  // for the NLopt API
+
 #include <algorithm>
 #include <cmath>
 #include <iostream>
 #include <iterator>
 #include <optional>
 #include <vector>
-#include "momentum.h"  // FourMomentum, TransverseMomentum, Mass
+
+#include "gradient.h"    // mTotGrad
+#include "invisibles.h"  // mkInvisibles
+#include "momentum.h"    // FourMomentum, TransverseMomentum, Mass
+#include "variables.h"   // NLoptVar, mkVariables
 
 using std::vector;
 
 namespace yam2 {
+NLoptVar InputKinematics::initial_guess(double eps, unsigned int neval) {
+    // nlopt::opt algorithm{nlopt::LN_NELDERMEAD, 4};
+    // nlopt::opt algorithm{nlopt::LD_SLSQP, 4};
+    nlopt::opt algorithm{nlopt::LD_TNEWTON, 4};
+    algorithm.set_min_objective(deltaSqrtS, this);
+    const double epsf = eps * 0.1;
+    // algorithm.set_ftol_rel(epsf);
+    algorithm.set_ftol_abs(epsf);
+    algorithm.set_maxeval(neval);
+
+    const NLoptVar x0{0.5 * ptmiss_.px(), 0.5 * ptmiss_.py(), 0.0, 0.0};
+    auto x{x0};
+    double minf;
+    auto result = algorithm.optimize(x, minf);
+    if (result < 0) { return x0; }
+    return x;
+}
+
 std::optional<InputKinematics> mkInput(const vector<FourMomentum> &as,
                                        const vector<FourMomentum> &bs,
                                        const TransverseMomentum &ptmiss,
@@ -58,5 +83,21 @@ std::ostream &operator<<(std::ostream &os, const InputKinematics &p) {
        << "m(invisible): " << p.minv_.value << '\n'
        << "sqrt(s): " << p.sqrt_s_;
     return os;
+}
+
+double deltaSqrtS(const NLoptVar &x, NLoptVar &grad, void *input) {
+    const auto var = mkVariables(x);  // this will not be empty.
+    const auto var_val = var.value();
+    auto *const inp = reinterpret_cast<InputKinematics *>(input);
+    const auto ks = mkInvisibles(*inp, var_val);
+
+    const auto p1 = inp->p1(), p2 = inp->p2();
+    const auto ptot = p1 + p2 + ks.k1() + ks.k2();
+    const double m_tot = ptot.m();
+    if (!grad.empty()) {
+        const auto grad_mtot = mtotGrad(*inp, p1, p2, ks, var_val, m_tot);
+        grad = grad_mtot.gradient();
+    }
+    return m_tot - inp->sqrt_s();
 }
 }  // namespace yam2

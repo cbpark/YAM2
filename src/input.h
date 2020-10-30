@@ -10,6 +10,7 @@
 #include <vector>
 
 #include "momentum.h"
+#include "variables.h"
 
 namespace yam2 {
 class InputKinematics {
@@ -74,6 +75,9 @@ public:
 
     double scale() const { return scale_; }
 
+    /** the initial guess configuration */
+    NLoptVar initial_guess(double eps, unsigned int neval);
+
     friend std::optional<InputKinematics> mkInput(
         const std::vector<FourMomentum> &as,
         const std::vector<FourMomentum> &bs, const TransverseMomentum &ptmiss,
@@ -86,6 +90,9 @@ std::optional<InputKinematics> mkInput(
     const std::vector<FourMomentum> &as, const std::vector<FourMomentum> &bs,
     const TransverseMomentum &ptmiss, const Mass &minv,
     const double sqrt_s = 0.0, const std::optional<Mass> &mrel = Mass{0.0});
+
+/** the difference between the total invariant mass and the collision energy */
+double deltaSqrtS(const NLoptVar &x, NLoptVar &grad, void *input);
 }  // namespace yam2
 
 #endif  // YAM2_SRC_INPUT_H_
