@@ -4,7 +4,7 @@
 
 #include "constraint.h"
 
-#include "gradient.h"    // m2Grad, m2Grad1, m2Grad2
+#include "gradient.h"    // m2Func, m2Func1, m2Func2
 #include "input.h"       // InputKinematics
 #include "invisibles.h"  // mkInvisibles
 #include "variables.h"   // mkVariables, NLoptVar
@@ -16,7 +16,7 @@ double constraint(const InputKinematics &inp, const FourMomentum &p1,
     const auto var_val = var.value();
     const auto ks = mkInvisibles(inp, var_val);
 
-    const auto &[grads, m1, m2] = m2Grad(inp, p1, p2, ks, var_val);
+    const auto &[grads, m1, m2] = m2Func(inp, p1, p2, ks, var_val);
     const auto &[grad1, grad2] = grads;
 
     if (!grad.empty()) {
@@ -49,11 +49,11 @@ double constraintR(const InputKinematics &inp, const FourMomentum &q,
 
 double constraintR1(const NLoptVar &x, NLoptVar &grad, void *input) {
     auto *const inp = reinterpret_cast<InputKinematics *>(input);
-    return constraintR(*inp, inp->q1(), m2Grad1, x, grad);
+    return constraintR(*inp, inp->q1(), m2Func1, x, grad);
 }
 
 double constraintR2(const NLoptVar &x, NLoptVar &grad, void *input) {
     auto *const inp = reinterpret_cast<InputKinematics *>(input);
-    return constraintR(*inp, inp->q2(), m2Grad2, x, grad);
+    return constraintR(*inp, inp->q2(), m2Func2, x, grad);
 }
 }  // namespace yam2

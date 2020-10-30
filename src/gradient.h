@@ -63,15 +63,15 @@ using GradFunc = std::function<std::pair<Gradient, double>(
     const InputKinematics &, const FourMomentum &, const Invisibles &,
     const Variables &)>;
 
-std::pair<Gradient, double> m2Grad1(const InputKinematics &inp,
+std::pair<Gradient, double> m2Func1(const InputKinematics &inp,
                                     const FourMomentum &p1,
                                     const Invisibles &ks, const Variables &var);
 
-std::pair<Gradient, double> m2Grad2(const InputKinematics &inp,
+std::pair<Gradient, double> m2Func2(const InputKinematics &inp,
                                     const FourMomentum &p2,
                                     const Invisibles &ks, const Variables &var);
 
-std::tuple<Gradients, double, double> m2Grad(const InputKinematics &inp,
+std::tuple<Gradients, double, double> m2Func(const InputKinematics &inp,
                                              const FourMomentum &p1,
                                              const FourMomentum &p2,
                                              const Invisibles &ks,

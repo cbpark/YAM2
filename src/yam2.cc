@@ -13,7 +13,7 @@
 #include <tuple>  // std::tuple
 
 #include "constraint.h"  // Constraints
-#include "gradient.h"    // m2Grad
+#include "gradient.h"    // m2Func
 #include "input.h"       // InputKinematics
 #include "invisibles.h"  // mkInvisibles
 #include "variables.h"   // Variables, mkVariables, NLoptVar
@@ -77,7 +77,7 @@ double m2ObjF(const NLoptVar &x, NLoptVar &grad, void *input) {
     const auto ks = mkInvisibles(*inp, var_val);
 
     const auto &[grads, m1, m2] =
-        m2Grad(*inp, inp->p1(), inp->p2(), ks, var_val);
+        m2Func(*inp, inp->p1(), inp->p2(), ks, var_val);
     const auto &[grad1, grad2] = grads;
 
     if (!grad.empty()) {

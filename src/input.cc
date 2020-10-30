@@ -3,14 +3,12 @@
  */
 
 #include "input.h"
-
 #include <algorithm>
 #include <cmath>
 #include <iostream>
 #include <iterator>
 #include <optional>
 #include <vector>
-
 #include "momentum.h"  // FourMomentum, TransverseMomentum, Mass
 
 using std::vector;

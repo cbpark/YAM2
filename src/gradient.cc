@@ -21,7 +21,7 @@ double safeDivisor(double x) {
     return std::fmin(-EPS0, x);
 }
 
-pair<Gradient, double> m2Grad1(const InputKinematics &, const FourMomentum &p1,
+pair<Gradient, double> m2Func1(const InputKinematics &, const FourMomentum &p1,
                                const Invisibles &ks, const Variables &var) {
     const auto k1 = ks.k1();
     const double r1 = p1.e() / safeDivisor(k1.e());
@@ -34,7 +34,7 @@ pair<Gradient, double> m2Grad1(const InputKinematics &, const FourMomentum &p1,
     return {d1, m1};
 }
 
-pair<Gradient, double> m2Grad2(const InputKinematics &inp,
+pair<Gradient, double> m2Func2(const InputKinematics &inp,
                                const FourMomentum &p2, const Invisibles &ks,
                                const Variables &var) {
     const auto k2 = ks.k2();
@@ -49,13 +49,13 @@ pair<Gradient, double> m2Grad2(const InputKinematics &inp,
     return {d2, m2};
 }
 
-std::tuple<Gradients, double, double> m2Grad(const InputKinematics &inp,
+std::tuple<Gradients, double, double> m2Func(const InputKinematics &inp,
                                              const FourMomentum &p1,
                                              const FourMomentum &p2,
                                              const Invisibles &ks,
                                              const Variables &var) {
-    const auto &[d1, m1] = m2Grad1(inp, p1, ks, var);
-    const auto &[d2, m2] = m2Grad2(inp, p2, ks, var);
+    const auto &[d1, m1] = m2Func1(inp, p1, ks, var);
+    const auto &[d2, m2] = m2Func2(inp, p2, ks, var);
     return {{d1, d2}, m1, m2};
 }
 
