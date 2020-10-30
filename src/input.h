@@ -22,17 +22,21 @@ private:
     FourMomentum q1_;
     /** q2 = b2 */
     FourMomentum q2_;
+    /** missing transverse momentum */
     TransverseMomentum ptmiss_;
     /** the input mass for the invisible particle */
     Mass minv_;
     /** the input mass for the relative particle */
     Mass mrel_;
+    /** collision energy (sqrt(s)) */
+    double sqrt_s_;
+    /** an energy scale of the process */
     double scale_;
 
     InputKinematics(const FourMomentum &p1, const FourMomentum &p2,
                     const FourMomentum &q1, const FourMomentum &q2,
                     const TransverseMomentum &ptmiss, const Mass &minv,
-                    const Mass &mrel, double scale)
+                    const Mass &mrel, const double sqrt_s, const double scale)
         : p1_(p1),
           p2_(p2),
           q1_(q1),
@@ -40,13 +44,15 @@ private:
           ptmiss_(ptmiss),
           minv_(minv),
           mrel_(mrel),
+          sqrt_s_(sqrt_s),
           scale_(scale) {}
 
     InputKinematics(const FourMomentum &p1, const FourMomentum &p2,
                     const FourMomentum &q1, const FourMomentum &q2,
                     const TransverseMomentum &ptmiss, const Mass &minv,
-                    double scale)
-        : InputKinematics(p1, p2, q1, q2, ptmiss, minv, Mass{0}, scale) {}
+                    const double sqrt_s, const double scale)
+        : InputKinematics(p1, p2, q1, q2, ptmiss, minv, Mass{0.0}, sqrt_s,
+                          scale) {}
 
 public:
     InputKinematics() = delete;
@@ -64,12 +70,14 @@ public:
     Mass mrel() const { return mrel_; }
     double mrel_square() const { return mrel_.square(); }
 
+    double sqrt_s() const { return sqrt_s_; }
+
     double scale() const { return scale_; }
 
     friend std::optional<InputKinematics> mkInput(
         const std::vector<FourMomentum> &as,
         const std::vector<FourMomentum> &bs, const TransverseMomentum &ptmiss,
-        const Mass &minv, const std::optional<Mass> &mrel);
+        const Mass &minv, const double sqrt_s, const std::optional<Mass> &mrel);
 
     friend std::ostream &operator<<(std::ostream &os, const InputKinematics &p);
 };
@@ -77,7 +85,7 @@ public:
 std::optional<InputKinematics> mkInput(
     const std::vector<FourMomentum> &as, const std::vector<FourMomentum> &bs,
     const TransverseMomentum &ptmiss, const Mass &minv,
-    const std::optional<Mass> &mrel = Mass{0.0});
+    const double sqrt_s = 0.0, const std::optional<Mass> &mrel = Mass{0.0});
 }  // namespace yam2
 
 #endif  // YAM2_SRC_INPUT_H_

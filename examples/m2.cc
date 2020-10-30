@@ -25,6 +25,7 @@ int main() {
         std::cerr << "Invalid input.\n";
         return 1;
     }
+    std::cout << "-- the process information:\n" << input.value() << '\n';
 
     // the default tolerance is 1.0e-3.
     // auto m2sol = yam2::m2CCSQP(input.value(), 1.0e-3);

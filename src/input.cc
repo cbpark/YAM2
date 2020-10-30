@@ -18,7 +18,7 @@ namespace yam2 {
 std::optional<InputKinematics> mkInput(const vector<FourMomentum> &as,
                                        const vector<FourMomentum> &bs,
                                        const TransverseMomentum &ptmiss,
-                                       const Mass &minv,
+                                       const Mass &minv, const double sqrt_s,
                                        const std::optional<Mass> &mrel) {
     if (as.size() != 2 || bs.size() != 2) { return {}; }
 
@@ -38,10 +38,11 @@ std::optional<InputKinematics> mkInput(const vector<FourMomentum> &as,
     const double s = 1.0 / scale;
 
     if (!mrel) {
-        return {{p1 * s, p2 * s, q1 * s, q2 * s, ptmiss * s, minv * s, scale}};
+        return {{p1 * s, p2 * s, q1 * s, q2 * s, ptmiss * s, minv * s,
+                 sqrt_s * s, scale}};
     }
     return {{p1 * s, p2 * s, q1 * s, q2 * s, ptmiss * s, minv * s,
-             mrel.value() * s, scale}};
+             mrel.value() * s, sqrt_s * s, scale}};
 }
 
 std::ostream &operator<<(std::ostream &os, const InputKinematics &p) {
@@ -50,7 +51,8 @@ std::ostream &operator<<(std::ostream &os, const InputKinematics &p) {
        << "q1: " << p.q1_ << '\n'
        << "q2: " << p.q2_ << '\n'
        << "ptmiss: " << p.ptmiss_ << '\n'
-       << "m(invisible): " << p.minv_.value;
+       << "m(invisible): " << p.minv_.value << '\n'
+       << "sqrt(s): " << p.sqrt_s_;
     return os;
 }
 }  // namespace yam2
