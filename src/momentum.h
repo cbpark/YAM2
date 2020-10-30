@@ -17,6 +17,7 @@ struct Mass {
 
     double square() const { return value * value; }
     Mass operator*(double a) const { return Mass{value * a}; }
+    Mass operator/(double a) const { return Mass{value / a}; }
 };
 
 class TransverseMomentum {
@@ -32,6 +33,8 @@ public:
     double ptsq() const { return x_ * x_ + y_ * y_; }
 
     TransverseMomentum operator*(double a) const { return {a * x_, a * y_}; }
+
+    TransverseMomentum operator/(double a) const { return {x_ / a, y_ / a}; }
 
     friend std::ostream &operator<<(std::ostream &os,
                                     const TransverseMomentum &p);
@@ -60,10 +63,8 @@ public:
 
     double m() const {
         const double mSq = msq();
-        return mSq >= 0 ? std::sqrt(mSq) : std::sqrt(-mSq);
+        return mSq >= 0.0 ? std::sqrt(mSq) : std::sqrt(-mSq);
     }
-
-    TransverseMomentum transverseVector() const { return {x_, y_}; }
 
     FourMomentum &operator*=(double a) {
         this->t_ *= a;
@@ -75,6 +76,10 @@ public:
 
     FourMomentum operator*(double a) const {
         return {a * t_, a * x_, a * y_, a * z_};
+    }
+
+    FourMomentum operator/(double a) const {
+        return {t_ / a, x_ / a, y_ / a, z_ / a};
     }
 
     FourMomentum &operator+=(const FourMomentum &p) {

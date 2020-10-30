@@ -6,6 +6,7 @@
 
 #include <algorithm>
 #include <cmath>
+#include <iostream>
 #include <iterator>
 #include <optional>
 #include <vector>
@@ -20,7 +21,10 @@ std::optional<InputKinematics> mkInput(const vector<FourMomentum> &as,
                                        const TransverseMomentum &ptmiss,
                                        const Mass &minv, const double sqrt_s,
                                        const std::optional<Mass> &mrel) {
-    if (as.size() != 2 || bs.size() != 2) { return {}; }
+    if (as.size() != 2 || bs.size() != 2) {
+        std::cerr << "mkInput: Invalid number of visible particles.\n";
+        return {};
+    }
 
     vector<FourMomentum> ps;
     std::transform(as.cbegin(), as.cend(), bs.cbegin(), std::back_inserter(ps),
@@ -32,17 +36,19 @@ std::optional<InputKinematics> mkInput(const vector<FourMomentum> &as,
     const double etmiss_sq = ptmiss.ptsq() + 2.0 * minv.square();
     const double scalesq = e1 * e1 + e2 * e2 + etmiss_sq;
 
-    if (scalesq <= 0.0) { return {}; }
+    if (scalesq <= 0.0) {
+        std::cerr << "mkInput: found zero or negative energy scale.\n";
+        return {};
+    }
 
     const double scale = 8 * std::sqrt(scalesq);  // scale > 0
-    const double s = 1.0 / scale;
 
     if (!mrel) {
-        return {{p1 * s, p2 * s, q1 * s, q2 * s, ptmiss * s, minv * s,
-                 sqrt_s * s, scale}};
+        return {{p1 / scale, p2 / scale, q1 / scale, q2 / scale, ptmiss / scale,
+                 minv / scale, sqrt_s / scale, scale}};
     }
-    return {{p1 * s, p2 * s, q1 * s, q2 * s, ptmiss * s, minv * s,
-             mrel.value() * s, sqrt_s * s, scale}};
+    return {{p1 / scale, p2 / scale, q1 / scale, q2 / scale, ptmiss / scale,
+             minv / scale, mrel.value() / scale, sqrt_s / scale, scale}};
 }
 
 std::ostream &operator<<(std::ostream &os, const InputKinematics &p) {
