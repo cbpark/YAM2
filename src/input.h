@@ -91,13 +91,6 @@ std::optional<InputKinematics> mkInput(
     const TransverseMomentum &ptmiss, const Mass &minv,
     const std::optional<Mass> &mrel = {Mass{0.0}}, const double sqrt_s = 0.0);
 
-inline std::optional<InputKinematics> mkInput(
-    const std::vector<FourMomentum> &as, const std::vector<FourMomentum> &bs,
-    const TransverseMomentum &ptmiss, const Mass &minv,
-    const double sqrt_s = 0.0) {
-    return mkInput(as, bs, ptmiss, minv, {Mass{0.0}}, sqrt_s);
-}
-
 /** the difference between the total invariant mass and the collision energy */
 double deltaSqrtS(const NLoptVar &x, NLoptVar &grad, void *input);
 

@@ -24,8 +24,10 @@ int main() {
     // we have only one-step decay, so it's necessary to fake the second step.
     const auto zero = yam2::FourMomentum();
 
+    // `{}` corresponds to the relative particle mass. In the decay topology
+    // of interest, we don't have a relative particle.
     const auto input =
-        yam2::mkInput({a1, a2}, {zero, zero}, ptmiss, m_invis,  mY);
+        yam2::mkInput({a1, a2}, {zero, zero}, ptmiss, m_invis, {}, mY);
     if (!input) {
         std::cerr << "Invalid input.\n";
         return 1;
