@@ -21,7 +21,8 @@ int main() {
     const yam2::TransverseMomentum ptmiss{-14.1090, -93.3111};
     const yam2::Mass m_invis{0.0};  // M_{C1} = M_{C2} = 0.
 
-    const auto input = yam2::mkInput({a1, a2}, {b1, b2}, ptmiss, m_invis);
+    const auto input =
+        yam2::mkInput({a1, a2}, {b1, b2}, ptmiss, m_invis);
     if (!input) {
         std::cerr << "Invalid input.\n";
         return 1;

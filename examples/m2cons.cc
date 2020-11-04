@@ -25,7 +25,7 @@ int main() {
     const auto zero = yam2::FourMomentum();
 
     const auto input =
-        yam2::mkInput({a1, a2}, {zero, zero}, ptmiss, m_invis, mY);
+        yam2::mkInput({a1, a2}, {zero, zero}, ptmiss, m_invis,  mY);
     if (!input) {
         std::cerr << "Invalid input.\n";
         return 1;

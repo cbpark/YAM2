@@ -42,8 +42,9 @@ NLoptVar InputKinematics::initial_guess(double eps, unsigned int neval) {
 std::optional<InputKinematics> mkInput(const vector<FourMomentum> &as,
                                        const vector<FourMomentum> &bs,
                                        const TransverseMomentum &ptmiss,
-                                       const Mass &minv, const double sqrt_s,
-                                       const std::optional<Mass> &mrel) {
+                                       const Mass &minv,
+                                       const std::optional<Mass> &mrel,
+                                       const double sqrt_s) {
     if (as.size() != 2 || bs.size() != 2) {
         std::cerr << "mkInput: Invalid number of visible particles.\n";
         return {};
@@ -66,12 +67,9 @@ std::optional<InputKinematics> mkInput(const vector<FourMomentum> &as,
 
     const double scale = 8.0 * std::sqrt(scalesq);  // scale > 0
 
-    if (!mrel) {
-        return {{p1 / scale, p2 / scale, q1 / scale, q2 / scale, ptmiss / scale,
-                 minv / scale, sqrt_s / scale, scale}};
-    }
     return {{p1 / scale, p2 / scale, q1 / scale, q2 / scale, ptmiss / scale,
-             minv / scale, mrel.value() / scale, sqrt_s / scale, scale}};
+             minv / scale, scaleIfExists(mrel, 1.0 / scale), sqrt_s / scale,
+             scale}};
 }
 
 std::ostream &operator<<(std::ostream &os, const InputKinematics &p) {
