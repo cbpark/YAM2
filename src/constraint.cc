@@ -16,7 +16,7 @@ double constraint(const InputKinematics &inp, const FourMomentum &p1,
     const auto var_val = var.value();
     const auto ks = mkInvisibles(inp, var_val);
 
-    const auto &[grads, m1, m2] = m2Func(inp, p1, p2, ks, var_val);
+    const auto &[grads, m1, m2] = m2Func(inp, p1, p2, ks);
     const auto &[grad1, grad2] = grads;
 
     if (!grad.empty()) {
@@ -41,7 +41,7 @@ double constraintR(const InputKinematics &inp, const FourMomentum &q,
     const auto var = mkVariables(x);
     const auto var_val = var.value();
     const auto ks = mkInvisibles(inp, var_val);
-    const auto &[gradi, mi] = fmGrad(inp, q, ks, var_val);
+    const auto &[gradi, mi] = fmGrad(inp, q, ks);
 
     if (!grad.empty()) { grad = gradi.gradient(); }
     return mi - inp.mrel().value;

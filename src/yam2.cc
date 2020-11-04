@@ -38,8 +38,7 @@ double m2ObjF(const NLoptVar &x, NLoptVar &grad, void *input) {
     auto *const inp = reinterpret_cast<InputKinematics *>(input);
     const auto ks = mkInvisibles(*inp, var_val);
 
-    const auto &[grads, m1, m2] =
-        m2Func(*inp, inp->p1(), inp->p2(), ks, var_val);
+    const auto &[grads, m1, m2] = m2Func(*inp, inp->p1(), inp->p2(), ks);
     const auto &[grad1, grad2] = grads;
 
     if (!grad.empty()) {

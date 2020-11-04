@@ -22,11 +22,11 @@ double safeDivisor(double x) {
 }
 
 pair<Gradient, double> m2Func1(const InputKinematics &, const FourMomentum &p1,
-                               const Invisibles &ks, const Variables &var) {
+                               const Invisibles &ks) {
     const auto k1 = ks.k1();
     const double r1 = p1.e() / safeDivisor(k1.e());
-    Gradient d1{r1 * var.k1x() - p1.px(), r1 * var.k1y() - p1.py(),
-                r1 * var.k1z() - p1.pz(), 0.0};
+    Gradient d1{r1 * k1.px() - p1.px(), r1 * k1.py() - p1.py(),
+                r1 * k1.pz() - p1.pz(), 0.0};
 
     const double m1 = invariantMass(p1, k1);
     d1 *= 1.0 / safeDivisor(m1);
@@ -35,13 +35,13 @@ pair<Gradient, double> m2Func1(const InputKinematics &, const FourMomentum &p1,
 }
 
 pair<Gradient, double> m2Func2(const InputKinematics &inp,
-                               const FourMomentum &p2, const Invisibles &ks,
-                               const Variables &var) {
+                               const FourMomentum &p2, const Invisibles &ks) {
+    const auto k1 = ks.k1();
     const auto k2 = ks.k2();
     const double r2 = p2.e() / safeDivisor(k2.e());
-    Gradient d2{r2 * (var.k1x() - inp.ptmiss().px()) + p2.px(),
-                r2 * (var.k1y() - inp.ptmiss().py()) + p2.py(), 0.0,
-                r2 * var.k2z() - p2.pz()};
+    Gradient d2{r2 * (k1.px() - inp.ptmiss().px()) + p2.px(),
+                r2 * (k1.py() - inp.ptmiss().py()) + p2.py(), 0.0,
+                r2 * k2.pz() - p2.pz()};
 
     const double m2 = invariantMass(p2, k2);
     d2 *= 1.0 / safeDivisor(m2);
@@ -52,10 +52,9 @@ pair<Gradient, double> m2Func2(const InputKinematics &inp,
 std::tuple<Gradients, double, double> m2Func(const InputKinematics &inp,
                                              const FourMomentum &p1,
                                              const FourMomentum &p2,
-                                             const Invisibles &ks,
-                                             const Variables &var) {
-    const auto &[d1, m1] = m2Func1(inp, p1, ks, var);
-    const auto &[d2, m2] = m2Func2(inp, p2, ks, var);
+                                             const Invisibles &ks) {
+    const auto &[d1, m1] = m2Func1(inp, p1, ks);
+    const auto &[d2, m2] = m2Func2(inp, p2, ks);
     return {{d1, d2}, m1, m2};
 }
 

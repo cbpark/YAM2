@@ -60,22 +60,20 @@ public:
 using Gradients = std::pair<Gradient, Gradient>;
 
 using GradFunc = std::function<std::pair<Gradient, double>(
-    const InputKinematics &, const FourMomentum &, const Invisibles &,
-    const Variables &)>;
+    const InputKinematics &, const FourMomentum &, const Invisibles &)>;
 
 std::pair<Gradient, double> m2Func1(const InputKinematics &inp,
                                     const FourMomentum &p1,
-                                    const Invisibles &ks, const Variables &var);
+                                    const Invisibles &ks);
 
 std::pair<Gradient, double> m2Func2(const InputKinematics &inp,
                                     const FourMomentum &p2,
-                                    const Invisibles &ks, const Variables &var);
+                                    const Invisibles &ks);
 
 std::tuple<Gradients, double, double> m2Func(const InputKinematics &inp,
                                              const FourMomentum &p1,
                                              const FourMomentum &p2,
-                                             const Invisibles &ks,
-                                             const Variables &var);
+                                             const Invisibles &ks);
 
 Gradient mtotGrad(const InputKinematics &inp, const FourMomentum &p1,
                   const FourMomentum &p2, const Invisibles &ks,
