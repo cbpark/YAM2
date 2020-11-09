@@ -25,8 +25,13 @@ pair<Gradient, double> m2Func1(const InputKinematics &, const FourMomentum &p1,
                                const Invisibles &ks) {
     const auto k1 = ks.k1();
     const double r1 = p1.e() / safeDivisor(k1.e());
-    Gradient d1{r1 * k1.px() - p1.px(), r1 * k1.py() - p1.py(),
-                r1 * k1.pz() - p1.pz(), 0.0};
+
+    const double dk1x = r1 * k1.px() - p1.px();
+    const double dk1y = r1 * k1.py() - p1.py();
+    const double dk1z = r1 * k1.pz() - p1.pz();
+    const double dk2z = 0.0;
+
+    Gradient d1{dk1x, dk1y, dk1z, dk2z};
 
     const double m1 = invariantMass(p1, k1);
     d1 *= 1.0 / safeDivisor(m1);
@@ -38,9 +43,19 @@ pair<Gradient, double> m2Func2(const InputKinematics &inp,
                                const FourMomentum &p2, const Invisibles &ks) {
     const auto k1 = ks.k1(), k2 = ks.k2();
     const double r2 = p2.e() / safeDivisor(k2.e());
-    Gradient d2{r2 * (k1.px() - inp.ptmiss().px()) + p2.px(),
-                r2 * (k1.py() - inp.ptmiss().py()) + p2.py(), 0.0,
-                r2 * k2.pz() - p2.pz()};
+
+    const double dk1x = r2 * (k1.px() - inp.ptmiss().px()) + p2.px();
+    const double dk1y = r2 * (k1.py() - inp.ptmiss().py()) + p2.py();
+    double dk1z, dk2z;
+    if (!inp.ptot_z()) {
+        dk1z = 0.0;
+        dk2z = r2 * k2.pz() - p2.pz();
+    } else {
+        dk1z = -r2 * k2.pz() + p2.pz();
+        dk2z = 0.0;
+    }
+
+    Gradient d2{dk1x, dk1y, dk1z, dk2z};
 
     const double m2 = invariantMass(p2, k2);
     d2 *= 1.0 / safeDivisor(m2);
@@ -71,8 +86,14 @@ Gradient mtotGrad(const InputKinematics &inp, const FourMomentum &p1,
 
     const double dk1x = fac * (e1 * inp.ptmiss().px() - (e1 + e2) * k1.px());
     const double dk1y = fac * (e1 * inp.ptmiss().py() - (e1 + e2) * k1.py());
-    const double dk1z = ((eV + e2) * k1z - (pz + k2z) * e1) / e1m;
-    const double dk2z = ((eV + e1) * k2z - (pz + k1z) * e2) / e2m;
+    double dk1z, dk2z;
+    if (!inp.ptot_z()) {
+        dk1z = ((eV + e2) * k1z - (pz + k2z) * e1) / e1m;
+        dk2z = ((eV + e1) * k2z - (pz + k1z) * e2) / e2m;
+    } else {
+        dk1z = fac * (e1 * (k1z + k2z) - (e1 + e2) * k1z);
+        dk2z = 0.0;
+    }
 
     return {dk1x, dk1y, dk1z, dk2z};
 }
