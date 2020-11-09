@@ -13,11 +13,16 @@ namespace yam2 {
 using NLoptVar = std::vector<double>;
 
 class Variables {
+public:
+    enum class Dim { THREE, FOUR };
+
 private:
     double k1x_, k1y_, k1z_, k2z_;
+    Variables::Dim dim_;
 
-    explicit Variables(const NLoptVar &ks)
-        : k1x_(ks[0]), k1y_(ks[1]), k1z_(ks[2]), k2z_(ks[3]) {}
+    Variables(const double k1x, const double k1y, const double k1z,
+              const double k2z, const Variables::Dim dim)
+        : k1x_(k1x), k1y_(k1y), k1z_(k1z), k2z_(k2z), dim_(dim) {}
 
 public:
     Variables() = delete;
@@ -26,17 +31,24 @@ public:
     double k1y() const { return k1y_; }
     double k1z() const { return k1z_; }
     double k2z() const { return k2z_; }
-    NLoptVar variables() const { return {k1x_, k1y_, k1z_, k2z_}; }
+
+    Variables::Dim dimension() const { return dim_; }
 
     friend std::optional<Variables> mkVariables(const NLoptVar &ks);
 };
 
 inline std::optional<Variables> mkVariables(const NLoptVar &ks) {
-    if (ks.size() != 4) {
+    switch (ks.size()) {
+    case 3:
+        return {{ks[0], ks[1], ks[2], 0.0, Variables::Dim::THREE}};
+
+    case 4:
+        return {{ks[0], ks[1], ks[2], ks[3], Variables::Dim::FOUR}};
+
+    default:
         std::cerr << "mkVariables: invalid number of variables.\n";
         return {};
     }
-    return Variables{ks};
 }
 }  // namespace yam2
 
