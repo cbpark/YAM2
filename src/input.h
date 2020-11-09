@@ -69,7 +69,7 @@ public:
 
     double sqrt_s() const { return sqrt_s_; }
 
-    double ptot_z() const { return ptot_z_.value_or(0.0); }
+    std::optional<double> ptot_z() const { return ptot_z_; }
 
     double scale() const { return scale_; }
 
