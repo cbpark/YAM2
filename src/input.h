@@ -31,6 +31,8 @@ private:
     std::optional<Mass> mrel_;
     /** collision energy (sqrt(s)) */
     double sqrt_s_;
+    /** the longitudinal momentum of the total system */
+    std::optional<double> ptot_z_;
     /** an energy scale of the process */
     double scale_;
 
@@ -38,7 +40,7 @@ private:
                     const FourMomentum &q1, const FourMomentum &q2,
                     const TransverseMomentum &ptmiss, const Mass &minv,
                     const std::optional<Mass> &mrel, const double sqrt_s,
-                    const double scale)
+                    const std::optional<double> ptot_z, const double scale)
         : p1_(p1),
           p2_(p2),
           q1_(q1),
@@ -47,14 +49,8 @@ private:
           minv_(minv),
           mrel_(mrel),
           sqrt_s_(sqrt_s),
+          ptot_z_(ptot_z),
           scale_(scale) {}
-
-    // InputKinematics(const FourMomentum &p1, const FourMomentum &p2,
-    //                 const FourMomentum &q1, const FourMomentum &q2,
-    //                 const TransverseMomentum &ptmiss, const Mass &minv,
-    //                 const double sqrt_s, const double scale)
-    //     : InputKinematics(p1, p2, q1, q2, ptmiss, minv, {Mass{0.0}}, sqrt_s,
-    //                       scale) {}
 
 public:
     InputKinematics() = delete;
@@ -73,6 +69,8 @@ public:
 
     double sqrt_s() const { return sqrt_s_; }
 
+    double ptot_z() const { return ptot_z_.value_or(0.0); }
+
     double scale() const { return scale_; }
 
     /** the initial guess configuration */
@@ -81,7 +79,8 @@ public:
     friend std::optional<InputKinematics> mkInput(
         const std::vector<FourMomentum> &as,
         const std::vector<FourMomentum> &bs, const TransverseMomentum &ptmiss,
-        const Mass &minv, const std::optional<Mass> &mrel, const double sqrt_s);
+        const Mass &minv, const std::optional<Mass> &mrel, const double sqrt_s,
+        const std::optional<double> ptot_z);
 
     friend std::ostream &operator<<(std::ostream &os, const InputKinematics &p);
 };
@@ -89,7 +88,8 @@ public:
 std::optional<InputKinematics> mkInput(
     const std::vector<FourMomentum> &as, const std::vector<FourMomentum> &bs,
     const TransverseMomentum &ptmiss, const Mass &minv,
-    const std::optional<Mass> &mrel = {Mass{0.0}}, const double sqrt_s = 0.0);
+    const std::optional<Mass> &mrel = {Mass{0.0}}, const double sqrt_s = 0.0,
+    const std::optional<double> ptot_z = {});
 
 /** the difference between the total invariant mass and the collision energy */
 double deltaSqrtS(const NLoptVar &x, NLoptVar &grad, void *input);

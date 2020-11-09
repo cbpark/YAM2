@@ -44,7 +44,8 @@ std::optional<InputKinematics> mkInput(const vector<FourMomentum> &as,
                                        const TransverseMomentum &ptmiss,
                                        const Mass &minv,
                                        const std::optional<Mass> &mrel,
-                                       const double sqrt_s) {
+                                       const double sqrt_s,
+                                       const std::optional<double> ptot_z) {
     if (as.size() != 2 || bs.size() != 2) {
         std::cerr << "mkInput: Invalid number of visible particles.\n";
         return {};
@@ -69,7 +70,7 @@ std::optional<InputKinematics> mkInput(const vector<FourMomentum> &as,
 
     return {{p1 / scale, p2 / scale, q1 / scale, q2 / scale, ptmiss / scale,
              minv / scale, scaleIfExists(mrel, 1.0 / scale), sqrt_s / scale,
-             scale}};
+             scaleIfExists(ptot_z, 1.0 / scale), scale}};
 }
 
 std::ostream &operator<<(std::ostream &os, const InputKinematics &p) {
@@ -78,9 +79,13 @@ std::ostream &operator<<(std::ostream &os, const InputKinematics &p) {
        << "q1: " << p.q1_ << '\n'
        << "q2: " << p.q2_ << '\n'
        << "ptmiss: " << p.ptmiss_ << '\n'
-       << "m(invisible): " << p.minv_.value << '\n'
-       << "sqrt(s): " << p.sqrt_s_ << '\n'
-       << "scale: " << p.scale_;
+       << "m(invisible): " << p.minv_.value << '\n';
+
+    if (p.mrel_) { os << "Mrel: " << p.mrel_.value().value << '\n'; }
+    if (p.sqrt_s_ > 0.0) { os << "sqrt(s): " << p.sqrt_s_ << '\n'; }
+    if (p.ptot_z_) { os << "Pz: " << p.ptot_z_.value() << '\n'; }
+
+    os << "scale: " << p.scale_;
     return os;
 }
 
