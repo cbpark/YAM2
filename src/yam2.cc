@@ -75,7 +75,9 @@ std::tuple<nlopt::result, double, NLoptVar> doOptimize(
     try {
         neval_objf = 0;  // reset the number of evaluations
         result = algorithm.optimize(x, minf);
-    } catch (std::exception &) {
+    } catch (std::exception &e) {
+        std::cerr << "doOptimize: exception from NLopt (" << e.what() << ")\n";
+
         epsf *= 10.0;
         doOptimize(inp, algorithm, subproblem, x0, epsf);
     }
@@ -90,7 +92,14 @@ OptM2 m2SQP(const Constraints &cfs, const OptInp &inp, double eps,
     if (!inp) { return {}; }
 
     auto inpv = inp.value();
-    nlopt::opt algorithm{nlopt::LD_SLSQP, 4};  // the subproblem is BFGS.
+    unsigned int dim;
+    if (!inpv.ptot_z()) {
+        dim = 4;
+    } else {
+        dim = 3;
+    }
+
+    nlopt::opt algorithm{nlopt::LD_SLSQP, dim};  // the subproblem is BFGS.
     algorithm.set_min_objective(m2ObjF, &inpv);
     algorithm.set_maxeval(neval);
 
@@ -100,6 +109,7 @@ OptM2 m2SQP(const Constraints &cfs, const OptInp &inp, double eps,
 
     // x: variables = (k1x, k1y, k1z, k2z).
     auto x0 = inpv.initial_guess(eps, neval);
+    x0.resize(dim);
     optional<nlopt::opt> subproblem;
     const double epsf = eps * 1.0e-3;
     // minf = the minimum value of the objective function.
@@ -148,11 +158,18 @@ OptM2 m2AugLag(const nlopt::algorithm &subopt, const Constraints &cfs,
     if (!inp) { return {}; }
 
     auto inpv = inp.value();
-    auto subproblem = std::make_optional<nlopt::opt>(subopt, 4);
+    unsigned int dim;
+    if (!inpv.ptot_z()) {
+        dim = 4;
+    } else {
+        dim = 3;
+    }
+
+    auto subproblem = std::make_optional<nlopt::opt>(subopt, dim);
     subproblem.value().set_min_objective(m2ObjF, &inpv);
     subproblem.value().set_maxeval(neval * 10);
 
-    nlopt::opt algorithm{nlopt::AUGLAG_EQ, 4};
+    nlopt::opt algorithm{nlopt::AUGLAG_EQ, dim};
     algorithm.set_min_objective(m2ObjF, &inpv);
     algorithm.set_local_optimizer(subproblem.value());
     algorithm.set_maxeval(neval);
@@ -166,6 +183,7 @@ OptM2 m2AugLag(const nlopt::algorithm &subopt, const Constraints &cfs,
     }
 
     auto x0 = inpv.initial_guess(eps, neval);
+    x0.resize(dim);
     const auto &[result, minf, x] =
         doOptimize(inpv, algorithm, subproblem, x0, epsf);
 

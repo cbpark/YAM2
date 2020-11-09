@@ -28,14 +28,19 @@ int main() {
     // of interest, we don't have a relative particle.
     const auto input =
         yam2::mkInput({a1, a2}, {zero, zero}, ptmiss, m_invis, {}, mY);
+    // If you want set the longitudinal momentum of the total system (say 10
+    // GeV), the input should be given by
+    // const auto input =
+    //     yam2::mkInput({a1, a2}, {zero, zero}, ptmiss, m_invis, {}, mY,
+    //     {10.0});
     if (!input) {
         std::cerr << "Invalid input.\n";
         return 1;
     }
-    std::cout << "-- the process information:\n" << input.value() << '\n';
+    std::cout << "-- process information (scaled):\n" << input.value() << '\n';
 
     // the default tolerance is 1.0e-8.
-    // auto m2sol = yam2::m2ConsSQP(input.value(), 1.0e-8);
+    // const auto m2sol = yam2::m2ConsSQP(input.value(), 1.0e-8);
     const auto m2sol = yam2::m2ConsSQP(input.value());
 
     // the other available methods are:
