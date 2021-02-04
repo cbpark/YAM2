@@ -10,3 +10,4 @@ bin
 lib
 examples/m2
 examples/m2cons
+*.gz

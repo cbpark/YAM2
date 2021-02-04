@@ -1,11 +1,13 @@
 PKGNAME  := YAM2
-VERSION  := 0.2.0.1
+VERSION  := 0.2.0.2
+ARCHIVE  := $(PKGNAME)-$(VERSION)
 SRCDIR 	 := src
 LIBDIR 	 := lib
 CXXFLAGS := -g -O2 -Wall -Wextra -std=c++17 -pedantic -I$(SRCDIR) $(CXXFLAGS)
 LIBS     := -lm
 AR       := ar crs
 MKDIR    := mkdir -p
+CP       := cp -r
 RM       := rm -f
 UNAME    := $(shell uname -s)
 
@@ -25,14 +27,13 @@ HEADERS := $(wildcard $(SRCDIR)/*.h)
 
 # NLopt (https://nlopt.readthedocs.io/
 NLOPT    ?= /usr
-CXXFLAGS += -I$(NLOPT)/include
 LIBS     += -L$(NLOPT)/lib -lnlopt -Wl,-rpath $(NLOPT)/lib
 
-.PHONY: all lib install clean
+.PHONY: all lib install dist clean
 
 all: $(LIB)
 
-$(LIB): CXXFLAGS += -fPIC
+$(LIB): CXXFLAGS += -I$(NLOPT)/include -fPIC
 $(LIB): $(LIBOBJ)
 	$(MKDIR) $(LIBDIR)
 	$(AR) $@ $^
@@ -60,6 +61,16 @@ ifeq ($(UNAME), Darwin)
 else
 	install -D -m644 $(HEADERS) $(DESTDIR)/include/$(PKGNAME)
 endif
+
+dist:
+	@$(MKDIR) $(ARCHIVE)
+	@$(CP) LICENSE Makefile README.md $(ARCHIVE)
+	@$(MKDIR) $(ARCHIVE)/{examples,src}
+	@$(CP) examples/*.cc $(ARCHIVE)/examples
+	@$(CP) src/*.cc src/*.h $(ARCHIVE)/src
+	@tar -czf $(ARCHIVE).tar.gz $(ARCHIVE)
+	@$(RM) -r $(ARCHIVE)
+	@echo dist tarball created: $(ARCHIVE).tar.gz
 
 clean::
 	$(RM) $(EXE) $(LIBOBJ) $(LIB) $(SHAREDLIB)
