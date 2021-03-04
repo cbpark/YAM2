@@ -1,5 +1,5 @@
 PKGNAME  := YAM2
-VERSION  := 0.2.0.2
+VERSION  := 0.2.0.3
 ARCHIVE  := $(PKGNAME)-$(VERSION)
 SRCDIR 	 := src
 LIBDIR 	 := lib
