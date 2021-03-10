@@ -40,16 +40,16 @@ int main() {
     std::cout << "-- process information (scaled):\n" << input.value() << '\n';
 
     // the default tolerance is 1.0e-8.
-    // const auto m2sol = yam2::m2ConsSQP(input.value(), 1.0e-8);
-    const auto m2sol = yam2::m2ConsSQP(input.value());
+    // const auto m2sol = yam2::m2ConsSQP(input, 1.0e-8);
+    const auto m2sol = yam2::m2ConsSQP(input);
 
     // the other available methods are:
     // - the augmented Lagrangian method with BFGS:
-    // const auto m2sol = yam2::m2ConsAugLagBFGS(input.value());
+    // const auto m2sol = yam2::m2ConsAugLagBFGS(input);
     // - the augmented Lagrangian method with Nelder-Mead simplex:
-    // const auto m2sol = yam2::m2ConsAugLagNMSimplex(input.value());
+    // const auto m2sol = yam2::m2ConsAugLagNMSimplex(input);
     // - the combination of all the methods (caution: slow but more accurate):
-    // const auto m2sol = yam2::m2Cons(input.value());
+    // const auto m2sol = yam2::m2Cons(input);
     if (!m2sol) {
         std::cerr << "Failed to find minimum.\n";
         return 1;
