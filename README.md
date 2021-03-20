@@ -38,13 +38,32 @@ The source code of the YAM2 library can be built by running `make`. If the path 
 NLOPT=/usr/local make
 ```
 
-The command will build all the source codes, and then generate a static library file, `libYAM2.a`, in the `lib` directory. If the shared library is necessary, run `make lib`. See [`Makefile`](./Makefile) for the detail of the compilation flags and path settings.
+The command will build all the source codes, and then generate a static library file, `libYAM2.a`, in the `lib` directory.
 
 The header and library files can also be installed to the other destination path outside build directory. If the path to be installed is `/usr/local`, run the command as follows.
 
 ```
 DESTDIR=/usr/local make install
 ```
+
+### Shared library
+
+If the shared library is necessary (for instance, for loading in a ROOT macro file), run
+
+```
+make lib
+```
+
+In Linux, `libYAM2.so`, while in macOS, `libYAM2.dylib` will be generated in the `lib` directory. See [`Makefile`](./Makefile) for the detail of the compilation flags and path settings. In the ROOT macro, add the following lines:
+
+``` c++
+R__LOAD_LIBRARY(/usr/local/lib/libYAM2.so)
+R__LOAD_LIBRARY(/usr/lib/libnlopt.so)
+
+gSystem->AddIncludePath("/usr/local/include");
+```
+
+Modify the lines appropriately to adjust the paths to the shared library and the include path.
 
 ## How to use
 
