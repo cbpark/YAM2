@@ -48,7 +48,7 @@ DESTDIR=/usr/local make install
 
 ### Shared library
 
-If the shared library is necessary (for instance, for loading in a ROOT macro file), run
+If the shared library is necessary (for instance, for loading in a [ROOT](https://root.cern.ch/) macro), run
 
 ```
 make lib
