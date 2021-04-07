@@ -152,14 +152,17 @@ If you use YAM2 for your analysis, please cite the paper given below:
     archivePrefix = "arXiv",
     primaryClass = "hep-ph",
     reportNumber = "CTPU-PTC-20-18",
-    month = "7",
-    year = "2020"
+    doi = "10.1016/j.cpc.2021.107967",
+    journal = "Comput. Phys. Commun.",
+    volume = "264",
+    pages = "107967",
+    year = "2021"
 }
 ```
 
 ## References
 
-* C.B. Park, YAM2: Yet another library for the M2 variables using sequential quadratic programming, [arXiv:2007.15537](https://arxiv.org/abs/2007.15537).
+* C.B. Park, YAM2: Yet another library for the M2 variables using sequential quadratic programming, [Comput. Phys. Commun. 264 (2021) 107967](https://doi.org/10.1016/j.cpc.2021.107967), [arXiv:2007.15537](https://arxiv.org/abs/2007.15537).
 
 * W.S. Cho et al, On-shell constrained M<sub>2</sub>​ variables with applications to mass measurements and topology disambiguation, JHEP 08 (2014) 070, [arXiv:1401.1449](https://arxiv.org/abs/1401.1449).
 
