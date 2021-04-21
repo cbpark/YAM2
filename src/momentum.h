@@ -8,6 +8,9 @@
 #include <cmath>  // std::sqrt
 #include <ostream>
 #include <vector>
+#ifdef HAS_ROOT
+#include "Math/LorentzVector.h"
+#endif
 
 namespace yam2 {
 struct Mass {
@@ -111,6 +114,13 @@ inline FourMomentum sum(const std::vector<FourMomentum> &ps) {
     for (const auto &p : ps) { psum += p; }
     return psum;
 }
+
+#ifdef HAS_ROOT
+inline ROOT::Math::LorentzVector<ROOT::Math::PxPyPzE4D<double>> toLorentzVector(
+    const FourMomentum &p) {
+    return {p.px(), p.py(), p.pz(), p.e()};
+}
+#endif
 }  // namespace yam2
 
 #endif  // YAM2_SRC_MOMENTUM_H_

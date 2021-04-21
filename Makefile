@@ -29,6 +29,11 @@ HEADERS := $(wildcard $(SRCDIR)/*.h)
 NLOPT    ?= /usr
 LIBS     += -L$(NLOPT)/lib -lnlopt -Wl,-rpath $(NLOPT)/lib
 
+ROOT := $(shell command -v root-config 2> /dev/null)
+ifdef ROOT
+	CXXFLAGS += -I$(shell root-config --incdir) -DHAS_ROOT
+endif
+
 .PHONY: all lib install dist clean
 
 all: $(LIB)
