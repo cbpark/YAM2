@@ -51,6 +51,12 @@ std::optional<InputKinematics> mkInput(const vector<FourMomentum> &as,
         return {};
     }
 
+    if (as[0].msq() < -1.0e-10 || as[1].msq() < -1.0e-10 ||
+        bs[0].msq() < -1.0e-10 || bs[1].msq() < -1.0e-10) {
+        std::cerr << "mkInput: Unphysical input.\n";
+        return {};
+    }
+
     vector<FourMomentum> ps;
     std::transform(as.cbegin(), as.cend(), bs.cbegin(), std::back_inserter(ps),
                    [](const auto &a, const auto &b) { return a + b; });
