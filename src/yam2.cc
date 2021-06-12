@@ -89,7 +89,7 @@ std::tuple<nlopt::result, double, NLoptVar> doOptimize(
     if (nan_sol) {
         std::cerr
             << "doOptimize: error (NaN solution)! we increase tolerance ...\n";
-        doOptimize(inp, algorithm, subproblem, x0, epsf *= 10.0);
+        doOptimize(inp, algorithm, subproblem, x0, epsf * 10.0);
     }
 
     // unphysical solution?
@@ -98,7 +98,7 @@ std::tuple<nlopt::result, double, NLoptVar> doOptimize(
     if (invalid_sol) {
         std::cerr << "doOptimize: error (invalid solution)! we increase "
                      "tolerance ...\n";
-        doOptimize(inp, algorithm, subproblem, x0, epsf *= 10.0);
+        doOptimize(inp, algorithm, subproblem, x0, epsf * 10.0);
     }
 
     return {result, minf, x};
