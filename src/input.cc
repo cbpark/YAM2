@@ -23,15 +23,19 @@ using std::vector;
 namespace yam2 {
 NLoptVar InputKinematics::initial_guess(double eps, unsigned int neval) {
     // nlopt::opt algorithm{nlopt::LN_NELDERMEAD, 4};
-    // nlopt::opt algorithm{nlopt::LD_SLSQP, 4};
-    nlopt::opt algorithm{nlopt::LD_TNEWTON, 4};
+    nlopt::opt algorithm{nlopt::LD_SLSQP, 4};
+    // nlopt::opt algorithm{nlopt::LD_TNEWTON, 4};
     algorithm.set_min_objective(deltaSqrtS, this);
     const double epsf = eps * 0.1;
     // algorithm.set_ftol_rel(epsf);
     algorithm.set_ftol_abs(epsf);
     algorithm.set_maxeval(neval);
 
-    const NLoptVar x0{0.5 * ptmiss_.px(), 0.5 * ptmiss_.py(), 0.0, 0.0};
+    double pz_guess = 0.0;
+    if (this->ptot_z_) { pz_guess = 0.5 * this->ptot_z_.value(); }
+    const NLoptVar x0{0.5 * ptmiss_.px(), 0.5 * ptmiss_.py(), pz_guess,
+                      pz_guess};
+
     auto x{x0};
     double minf;
     auto result = algorithm.optimize(x, minf);
