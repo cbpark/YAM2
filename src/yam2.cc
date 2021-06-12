@@ -6,6 +6,8 @@
 
 #include <nlopt.hpp>  // for the NLopt API
 
+#include <algorithm>  // std::any_of
+#include <cmath>      // std::is_nan, std::fabs
 #include <exception>  // std::exception
 #include <functional>
 #include <optional>
@@ -77,10 +79,28 @@ std::tuple<nlopt::result, double, NLoptVar> doOptimize(
         result = algorithm.optimize(x, minf);
     } catch (std::exception &e) {
         std::cerr << "doOptimize: exception from NLopt (" << e.what() << ")\n";
-
         epsf *= 10.0;
         doOptimize(inp, algorithm, subproblem, x0, epsf);
     }
+
+    // the solution has NaN?
+    bool nan_sol = std::any_of(x.cbegin(), x.cend(),
+                               [](double xv) { return std::isnan(xv); });
+    if (nan_sol) {
+        std::cerr
+            << "doOptimize: error (NaN solution)! we increase tolerance ...\n";
+        doOptimize(inp, algorithm, subproblem, x0, epsf *= 10.0);
+    }
+
+    // unphysical solution?
+    bool invalid_sol = std::any_of(
+        x.cbegin(), x.cend(), [](double xv) { return std::fabs(xv) > 1.0e10; });
+    if (invalid_sol) {
+        std::cerr << "doOptimize: error (invalid solution)! we increase "
+                     "tolerance ...\n";
+        doOptimize(inp, algorithm, subproblem, x0, epsf *= 10.0);
+    }
+
     return {result, minf, x};
 }
 /**
