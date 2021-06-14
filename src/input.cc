@@ -31,10 +31,7 @@ NLoptVar InputKinematics::initial_guess(double eps, unsigned int neval) {
     algorithm.set_ftol_abs(epsf);
     algorithm.set_maxeval(neval);
 
-    double pz_guess = 0.0;
-    if (this->ptot_z_) { pz_guess = 0.5 * this->ptot_z_.value(); }
-    const NLoptVar x0{0.5 * ptmiss_.px(), 0.5 * ptmiss_.py(), pz_guess,
-                      pz_guess};
+    const NLoptVar x0{0.5 * ptmiss_.px(), 0.5 * ptmiss_.py(), 0.0, 0.0};
 
     auto x{x0};
     double minf;
