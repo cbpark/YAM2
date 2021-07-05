@@ -1,33 +1,32 @@
-PKGNAME  := YAM2
-VERSION  := 0.2.2
-ARCHIVE  := $(PKGNAME)-$(VERSION)
-SRCDIR 	 := src
-LIBDIR 	 := lib
-CXXFLAGS := -g -O2 -Wall -Wextra -std=c++17 -pedantic -I$(SRCDIR) $(CXXFLAGS)
-LIBS     := -lm
-AR       := ar crs
-MKDIR    := mkdir -p
-CP       := cp -r
-RM       := rm -f
-UNAME    := $(shell uname -s)
+PKGNAME   := YAM2
+VERSION   := 0.2.2
+ARCHIVE   := $(PKGNAME)-$(VERSION)
+SRCDIR    := src
+LIBDIR    := lib
+CXXFLAGS  := -g -O2 -Wall -Wextra -std=c++17 -pedantic -I$(SRCDIR) $(CXXFLAGS)
+LIBS      := -lm
+AR        := ar crs
+MKDIR     := mkdir -p
+CP        := cp -r
+RM        := rm -f
+UNAME     := $(shell uname -s)
 
-LIB    := $(LIBDIR)/lib$(PKGNAME).a
-LIBSRC := $(wildcard $(SRCDIR)/*.cc)
-LIBOBJ := $(LIBSRC:.cc=.o)
-EXE    := examples/m2 \
-	  examples/m2cons
+LIB    	  := $(LIBDIR)/lib$(PKGNAME).a
+LIBSRC 	  := $(wildcard $(SRCDIR)/*.cc)
+LIBOBJ 	  := $(LIBSRC:.cc=.o)
+EXE    	  := examples/m2 examples/m2cons
 ifeq ($(UNAME), Darwin)
-SHAREDLIB  := $(LIBDIR)/lib$(PKGNAME).dylib
+SHAREDLIB := $(LIBDIR)/lib$(PKGNAME).dylib
 else
-SHAREDLIB  := $(LIBDIR)/lib$(PKGNAME).so
+SHAREDLIB := $(LIBDIR)/lib$(PKGNAME).so
 endif
 
-DESTDIR ?= /usr/local
-HEADERS := $(wildcard $(SRCDIR)/*.h)
+DESTDIR   ?= /usr/local
+HEADERS   := $(wildcard $(SRCDIR)/*.h)
 
-# NLopt (https://nlopt.readthedocs.io/
-NLOPT    ?= /usr
-LIBS     += -L$(NLOPT)/lib -lnlopt -Wl,-rpath $(NLOPT)/lib
+# NLopt (https://nlopt.readthedocs.io/)
+NLOPT ?= /usr
+LIBS  += -L$(NLOPT)/lib -lnlopt -Wl,-rpath $(NLOPT)/lib
 
 ROOT := $(shell command -v root-config 2> /dev/null)
 ifdef ROOT
