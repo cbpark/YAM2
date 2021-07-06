@@ -10,6 +10,7 @@
 #include <vector>
 #ifdef HAS_ROOT
 #include "Math/LorentzVector.h"
+#include "TLorentzVector.h"
 #endif
 
 namespace yam2 {
@@ -118,6 +119,10 @@ inline FourMomentum sum(const std::vector<FourMomentum> &ps) {
 #ifdef HAS_ROOT
 inline ROOT::Math::LorentzVector<ROOT::Math::PxPyPzE4D<double>> toLorentzVector(
     const FourMomentum &p) {
+    return {p.px(), p.py(), p.pz(), p.e()};
+}
+
+inline TLorentzVector toTLorentzVector(const FourMomentum &p) {
     return {p.px(), p.py(), p.pz(), p.e()};
 }
 #endif

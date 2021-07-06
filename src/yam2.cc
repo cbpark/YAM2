@@ -103,6 +103,7 @@ std::tuple<nlopt::result, double, NLoptVar> doOptimize(
 
     return {result, minf, x};
 }
+
 /**
  *  'Constriant' type is the function pointer defined in 'constrain.h'.
  *  'InputKinematics' type is defined in 'input.h'
