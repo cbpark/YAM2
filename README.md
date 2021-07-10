@@ -140,6 +140,41 @@ Supposing that the file name of the analysis code is `m2.cc` and the path to YAM
 ```
 c++ -o m2.exe m2.cc -I/usr/local/include/YAM2 -L/usr/local/lib -lYAM2 -lnlopt
 ```
+
+### M2Cons
+
+As of version 0.2, YAM2 can calculate the [M<sub>2Cons</sub>](https://arxiv.org/abs/1509.00298) variable. It is a variant of the M<sub>2</sub> variable, which can be used to reconstruct the resonant decay process of
+
+```
+Y --> A1 + A2 --> a1 B1 + a2 B2,
+```
+
+e.g., the Higgs boson decay to a pair of tau leptons, where each tau decays into visible (charged lepton or pions) + invisible particles (neutrinos). In this case, the on-shell mass constraint for the resonance (`Y`) is added. An example code for calculating the M<sub>2Cons</sub> variable is
+
+``` c++
+const auto zero = yam2::FourMomentum();
+
+const auto input =
+        yam2::mkInput({a1, a2}, {zero, zero}, ptmiss, m_invis, {}, mY);
+
+const auto m2sol = yam2::m2Cons(input);
+```
+
+See [`m2cons.cc`](examples/m2cons.cc) for a more complete example code.
+
+It has also been used in the study of the tau decay to lepton + invisible particle(s) at Belle II. See [arXiv:2106.16236](https://arxiv.org/abs/2106.16236). In the Belle II experiment, the center-of-mass energy (`sqrt_s`) and the three-momenta of the overall system are fixed for all events. Therefore, one can add more constraints to the invisible particle momenta.
+
+``` c++
+const auto zero = yam2::FourMomentum();
+
+const auto input =
+        yam2::mkInput({a1, a2}, {zero, zero}, ptmiss, m_invis, {}, sqrt_s, {pz});
+
+const auto m2sol = yam2::m2Cons(input);
+```
+
+Here, `pz` is the longitudinal momentum of the total system. In the case of Belle II, it is 3 GeV. `sqrt_s` is 10.58 GeV. More complete example code is given in [YAM2-ditau](https://github.com/cbpark/YAM2-ditau).
+
 ## Citation
 
 If you use YAM2 for your analysis, please cite the paper given below:
