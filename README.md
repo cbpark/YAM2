@@ -162,7 +162,7 @@ const auto m2sol = yam2::m2Cons(input);
 
 See [`m2cons.cc`](examples/m2cons.cc) for a more complete example code.
 
-It has also been used in the study of the tau decay to lepton + invisible particle(s) at Belle II. See [arXiv:2106.16236](https://arxiv.org/abs/2106.16236). In the Belle II experiment, the center-of-mass energy (`sqrt_s`) and the three-momenta of the overall system are fixed for all events. Therefore, one can add more constraints to the invisible particle momenta.
+It has also been used in the study of the tau decay to lepton + invisible particle(s) at Belle II. See [arXiv:2106.16236](https://arxiv.org/abs/2106.16236). At Belle II, the center-of-mass energy (`sqrt_s`) and the three-momenta of the overall system are fixed for all events. Therefore, one can add more constraints to the invisible particle momenta.
 
 ``` c++
 const auto zero = yam2::FourMomentum();
@@ -199,7 +199,7 @@ If you use YAM2 for your analysis, please cite the paper given below:
 
 * C.B. Park, YAM2: Yet another library for the M2 variables using sequential quadratic programming, [Comput. Phys. Commun. 264 (2021) 107967](https://doi.org/10.1016/j.cpc.2021.107967), [arXiv:2007.15537](https://arxiv.org/abs/2007.15537).
 
-* W.S. Cho et al, On-shell constrained M<sub>2</sub>​ variables with applications to mass measurements and topology disambiguation, JHEP 08 (2014) 070, [arXiv:1401.1449](https://arxiv.org/abs/1401.1449).
+* W.S. Cho et al, On-shell constrained M<sub>2</sub>​ variables with applications to mass measurements and topology disambiguation, JHEP 08 (2014) 070, [arXiv:1401.1449](https://arxiv.org/abs/1401.1449), [GitHub repository](https://github.com/hepkosmos/OptiMass).
 
 * W.S. Cho et al, OPTIMASS: A Package for the Minimization of Kinematic Mass Functions with Constraints, JHEP 01 (2016) 026, [arXiv:1508.00589](https://arxiv.org/abs/1508.00589).
 
