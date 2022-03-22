@@ -10,4 +10,5 @@ bin
 lib
 examples/m2
 examples/m2cons
+examples/m2vertex
 *.gz
