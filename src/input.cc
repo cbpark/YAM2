@@ -40,13 +40,27 @@ NLoptVar InputKinematics::initial_guess(double eps, unsigned int neval) {
     return x;
 }
 
-std::optional<InputKinematics> mkInput(const vector<FourMomentum> &as,
-                                       const vector<FourMomentum> &bs,
-                                       const TransverseMomentum &ptmiss,
-                                       const Mass &minv,
-                                       const std::optional<Mass> &mrel,
-                                       const double sqrt_s,
-                                       const std::optional<double> ptot_z) {
+void InputKinematics::show(std::ostream& os) const {
+    os << "p1: " << p1_ << '\n'
+       << "p2: " << p2_ << '\n'
+       << "q1: " << q1_ << '\n'
+       << "q2: " << q2_ << '\n'
+       << "ptmiss: " << ptmiss_ << '\n'
+       << "m(invisible): " << minv_.value << '\n';
+
+    if (mrel_) { os << "Mrel: " << mrel_.value().value << '\n'; }
+    if (mparent_) { os << "Mparent: " << mparent_.value().value << '\n'; }
+    if (sqrt_s_ > 0.0) { os << "sqrt(s): " << sqrt_s_ << '\n'; }
+    if (ptot_z_) { os << "Pz: " << ptot_z_.value() << '\n'; }
+
+    os << "scale: " << scale_;
+}
+
+std::optional<InputKinematics> mkInput(
+    const vector<FourMomentum> &as, const vector<FourMomentum> &bs,
+    const TransverseMomentum &ptmiss, const Mass &minv,
+    const std::optional<Mass> &mparent, const std::optional<Mass> &mrel,
+    double sqrt_s, const std::optional<double> ptot_z) {
     if (as.size() != 2 || bs.size() != 2) {
         std::cerr << "mkInput: Invalid number of visible particles.\n";
         return {};
@@ -76,23 +90,13 @@ std::optional<InputKinematics> mkInput(const vector<FourMomentum> &as,
     const double scale = 8.0 * std::sqrt(scalesq);  // scale > 0
 
     return {{p1 / scale, p2 / scale, q1 / scale, q2 / scale, ptmiss / scale,
-             minv / scale, scaleIfExists(mrel, 1.0 / scale), sqrt_s / scale,
-             scaleIfExists(ptot_z, 1.0 / scale), scale}};
+             minv / scale, scaleIfExists(mrel, scale),
+             scaleIfExists(mparent, scale), sqrt_s / scale,
+             scaleIfExists(ptot_z, scale), scale}};
 }
 
 std::ostream &operator<<(std::ostream &os, const InputKinematics &p) {
-    os << "p1: " << p.p1_ << '\n'
-       << "p2: " << p.p2_ << '\n'
-       << "q1: " << p.q1_ << '\n'
-       << "q2: " << p.q2_ << '\n'
-       << "ptmiss: " << p.ptmiss_ << '\n'
-       << "m(invisible): " << p.minv_.value << '\n';
-
-    if (p.mrel_) { os << "Mrel: " << p.mrel_.value().value << '\n'; }
-    if (p.sqrt_s_ > 0.0) { os << "sqrt(s): " << p.sqrt_s_ << '\n'; }
-    if (p.ptot_z_) { os << "Pz: " << p.ptot_z_.value() << '\n'; }
-
-    os << "scale: " << p.scale_;
+    p.show(os);
     return os;
 }
 

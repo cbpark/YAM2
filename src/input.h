@@ -27,6 +27,8 @@ private:
     TransverseMomentum ptmiss_;
     /** the input mass for the invisible particle */
     Mass minv_;
+    /** the input mass for the parent particle */
+    std::optional<Mass> mparent_;
     /** the input mass for the relative particle */
     std::optional<Mass> mrel_;
     /** collision energy (sqrt(s)) */
@@ -36,17 +38,20 @@ private:
     /** an energy scale of the process */
     double scale_;
 
+protected:
     InputKinematics(const FourMomentum &p1, const FourMomentum &p2,
                     const FourMomentum &q1, const FourMomentum &q2,
                     const TransverseMomentum &ptmiss, const Mass &minv,
-                    const std::optional<Mass> &mrel, const double sqrt_s,
-                    const std::optional<double> ptot_z, const double scale)
+                    const std::optional<Mass> &mparent,
+                    const std::optional<Mass> &mrel, double sqrt_s,
+                    const std::optional<double> ptot_z, double scale)
         : p1_(p1),
           p2_(p2),
           q1_(q1),
           q2_(q2),
           ptmiss_(ptmiss),
           minv_(minv),
+          mparent_(mparent),
           mrel_(mrel),
           sqrt_s_(sqrt_s),
           ptot_z_(ptot_z),
@@ -54,6 +59,7 @@ private:
 
 public:
     InputKinematics() = delete;
+    virtual ~InputKinematics() {}
 
     FourMomentum p1() const { return p1_; }
     FourMomentum p2() const { return p2_; }
@@ -64,6 +70,8 @@ public:
 
     Mass minv() const { return minv_; }
     double minv_square() const { return minv_.square(); }
+
+    Mass mparent() const { return mparent_.value_or(Mass{0.0}); }
 
     Mass mrel() const { return mrel_.value_or(Mass{0.0}); }
 
@@ -76,10 +84,13 @@ public:
     /** the initial guess configuration */
     NLoptVar initial_guess(double eps, unsigned int neval);
 
+    virtual void show(std::ostream &os) const;
+
     friend std::optional<InputKinematics> mkInput(
         const std::vector<FourMomentum> &as,
         const std::vector<FourMomentum> &bs, const TransverseMomentum &ptmiss,
-        const Mass &minv, const std::optional<Mass> &mrel, const double sqrt_s,
+        const Mass &minv, const std::optional<Mass> &mparent,
+        const std::optional<Mass> &mrel, double sqrt_s,
         const std::optional<double> ptot_z);
 
     friend std::ostream &operator<<(std::ostream &os, const InputKinematics &p);
@@ -88,7 +99,8 @@ public:
 std::optional<InputKinematics> mkInput(
     const std::vector<FourMomentum> &as, const std::vector<FourMomentum> &bs,
     const TransverseMomentum &ptmiss, const Mass &minv,
-    const std::optional<Mass> &mrel = {Mass{0.0}}, const double sqrt_s = 0.0,
+    const std::optional<Mass> &mparent = {Mass{0.0}},
+    const std::optional<Mass> &mrel = {Mass{0.0}}, double sqrt_s = 0.0,
     const std::optional<double> ptot_z = {});
 
 /** the difference between the total invariant mass and the collision energy */
@@ -97,7 +109,7 @@ double deltaSqrtS(const NLoptVar &x, NLoptVar &grad, void *input);
 template <typename T>
 std::optional<T> scaleIfExists(const std::optional<T> &x, const double scale) {
     if (x) {
-        return {x.value() * scale};
+        return {x.value() / scale};
     } else {
         return x;
     }
