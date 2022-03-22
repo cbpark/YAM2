@@ -44,6 +44,21 @@ public:
                                     const TransverseMomentum &p);
 };
 
+class SpatialMomentum {
+private:
+    double x_, y_, z_;
+
+public:
+    SpatialMomentum() = delete;
+    SpatialMomentum(double x, double y, double z) : x_(x), y_(y), z_(z) {}
+
+    double px() const { return x_; }
+    double py() const { return y_; }
+    double pz() const { return z_; }
+
+    friend std::ostream &operator<<(std::ostream &os, const SpatialMomentum &p);
+};
+
 class FourMomentum {
 private:
     double t_ = 0.0;
