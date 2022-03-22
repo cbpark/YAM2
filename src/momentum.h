@@ -5,7 +5,7 @@
 #ifndef YAM2_SRC_MOMENTUM_H_
 #define YAM2_SRC_MOMENTUM_H_
 
-#include <cmath>  // std::sqrt
+#include <cmath>  // std::sqrt, std::hypot
 #include <ostream>
 #include <vector>
 #ifdef HAS_ROOT
@@ -55,6 +55,12 @@ public:
     double px() const { return x_; }
     double py() const { return y_; }
     double pz() const { return z_; }
+
+    SpatialMomentum normalize() const {
+        double norm = std::hypot(x_, y_, z_);
+        if (norm < 1.0e-10) { norm = 1.0e-10; }
+        return {x_ / norm, y_ / norm, z_ / norm};
+    }
 
     friend std::ostream &operator<<(std::ostream &os, const SpatialMomentum &p);
 };

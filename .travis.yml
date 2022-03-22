@@ -29,5 +29,6 @@ script:
   - make lib
   - make examples/m2
   - make examples/m2cons
+  - make exmaples/m2vertex
   - DESTDIR="$PWD/pkg" make install
   - ls -R "$PWD/pkg"

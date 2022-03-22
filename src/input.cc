@@ -40,16 +40,16 @@ NLoptVar InputKinematics::initial_guess(double eps, unsigned int neval) {
     return x;
 }
 
-void InputKinematics::show(std::ostream& os) const {
+void InputKinematics::show(std::ostream &os) const {
     os << "p1: " << p1_ << '\n'
        << "p2: " << p2_ << '\n'
        << "q1: " << q1_ << '\n'
        << "q2: " << q2_ << '\n'
        << "ptmiss: " << ptmiss_ << '\n'
-       << "m(invisible): " << minv_.value << '\n';
+       << "M(invisible): " << minv_.value << '\n';
 
-    if (mrel_) { os << "Mrel: " << mrel_.value().value << '\n'; }
-    if (mparent_) { os << "Mparent: " << mparent_.value().value << '\n'; }
+    if (mparent_) { os << "M(parent): " << mparent_.value().value << '\n'; }
+    if (mrel_) { os << "M(relative): " << mrel_.value().value << '\n'; }
     if (sqrt_s_ > 0.0) { os << "sqrt(s): " << sqrt_s_ << '\n'; }
     if (ptot_z_) { os << "Pz: " << ptot_z_.value() << '\n'; }
 
@@ -90,14 +90,66 @@ std::optional<InputKinematics> mkInput(
     const double scale = 8.0 * std::sqrt(scalesq);  // scale > 0
 
     return {{p1 / scale, p2 / scale, q1 / scale, q2 / scale, ptmiss / scale,
-             minv / scale, scaleIfExists(mrel, scale),
-             scaleIfExists(mparent, scale), sqrt_s / scale,
+             minv / scale, scaleIfExists(mparent, scale),
+             scaleIfExists(mrel, scale), sqrt_s / scale,
              scaleIfExists(ptot_z, scale), scale}};
 }
 
 std::ostream &operator<<(std::ostream &os, const InputKinematics &p) {
     p.show(os);
     return os;
+}
+
+void InputKinematicsWithVertex::show(std::ostream &os) const {
+    InputKinematics::show(os);
+    os << "\nvertex1: " << vertex1_ << '\n';
+    os << "vertex2: " << vertex2_ << '\n';
+    os << "delta_theta_max: " << delta_theta_max_;
+}
+
+std::optional<InputKinematicsWithVertex> mkInput(
+    const vector<FourMomentum> &as, const vector<FourMomentum> &bs,
+    const TransverseMomentum &ptmiss, const Mass &minv,
+    const SpatialMomentum &vertex1, const SpatialMomentum &vertex2,
+    double delta_theta_max, const std::optional<Mass> &mparent,
+    const std::optional<Mass> &mrel, double sqrt_s,
+    const std::optional<double> ptot_z) {
+    auto input_kinematics =
+        mkInput(as, bs, ptmiss, minv, mparent, mrel, sqrt_s, ptot_z);
+    if (!input_kinematics) {
+        std::cerr << "mkInput: invalid input kinematics.\n";
+        return {};
+    } else {
+        return mkInput(input_kinematics.value(), vertex1, vertex2,
+                       delta_theta_max);
+    }
+}
+
+std::optional<InputKinematicsWithVertex> mkInput(
+    const InputKinematics &input_kinematics, const SpatialMomentum &vertex1,
+    const SpatialMomentum &vertex2, double delta_theta_max) {
+    if (delta_theta_max < 0.0) {
+        std::cerr << "mkInput: delta_theta_max must be positive.\n";
+        return {};
+    }
+
+    const auto v1 = vertex1.normalize();
+    const auto v2 = vertex2.normalize();
+
+    return {{input_kinematics.p1(),
+             input_kinematics.p2(),
+             input_kinematics.q1(),
+             input_kinematics.q2(),
+             input_kinematics.ptmiss(),
+             input_kinematics.minv(),
+             v1,
+             v2,
+             delta_theta_max,
+             {input_kinematics.mparent()},
+             {input_kinematics.mrel()},
+             input_kinematics.sqrt_s(),
+             input_kinematics.ptot_z(),
+             input_kinematics.scale()}};
 }
 
 double deltaSqrtS(const NLoptVar &x, NLoptVar &grad, void *input) {
