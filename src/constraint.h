@@ -19,6 +19,12 @@ double constraintA(const NLoptVar &x, NLoptVar &grad, void *input);
 /** constraint: (q1 + k1)^2 = (q2 + k2)^2 */
 double constraintB(const NLoptVar &x, NLoptVar &grad, void *input);
 
+/** constraint: (p1 + k1)^2 = M_{A1}^2 */
+double constraintA1(const NLoptVar &x, NLoptVar &grad, void *input);
+
+/** constraint: (p2 + k2)^2 = M_{A2}^2 */
+double constraintA2(const NLoptVar &x, NLoptVar &grad, void *input);
+
 /** constraint: (q1 + k1)^2 = M_{R}^2 */
 double constraintR1(const NLoptVar &x, NLoptVar &grad, void *input);
 
