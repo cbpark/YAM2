@@ -174,6 +174,11 @@ OptM2 m2ConsSQP(const OptInp &inp, double eps, unsigned int neval) {
     return m2SQP(constraint, inp, eps, neval);
 }
 
+OptM2 m2CConsSQP(const OptInp &inp, double eps, unsigned int neval) {
+    const Constraints constraint{constraintSqrtS, constraintA1, constraintA2};
+    return m2SQP(constraint, inp, eps, neval);
+}
+
 OptM2 m2AugLag(const nlopt::algorithm &subopt, const Constraints &cfs,
                const OptInp &inp, double eps, unsigned int neval) {
     if (!inp) { return {}; }

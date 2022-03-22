@@ -87,7 +87,8 @@ std::optional<M2Solution> m2CR(const std::optional<InputKinematics> &inp,
 
 /** The M2Cons variable */
 std::optional<M2Solution> m2Cons(const std::optional<InputKinematics> &inp,
-                                 double eps = EPSCONS, unsigned int neval = NEVAL);
+                                 double eps = EPSCONS,
+                                 unsigned int neval = NEVAL);
 
 /** M2XX variable using the SQP method */
 std::optional<M2Solution> m2XXSQP(const std::optional<InputKinematics> &inp,
@@ -114,6 +115,11 @@ std::optional<M2Solution> m2CRSQP(const std::optional<InputKinematics> &inp,
 std::optional<M2Solution> m2ConsSQP(const std::optional<InputKinematics> &inp,
                                     double eps = EPSCONS,
                                     unsigned int neval = NEVAL);
+
+/** M2CCons variable using the SQP method */
+std::optional<M2Solution> m2CConsSQP(const std::optional<InputKinematics> &inp,
+                                     double eps = EPSCONS,
+                                     unsigned int neval = NEVAL);
 
 /** M2XX variable using the augmented Lagrangian method with the BFGS update */
 std::optional<M2Solution> m2XXAugLagBFGS(
