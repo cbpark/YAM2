@@ -17,7 +17,7 @@ Invisibles mkInvisibles(const InputKinematics &inp, const Variables &var,
     const double k2x = inp.ptmiss().px() - k1x;
     const double k2y = inp.ptmiss().py() - k1y;
     double k2z;
-    if (inp.ptot_z() && var.dimension() == Variables::Dim::THREE) {
+    if (inp.ptot_z()) {
         k2z = inp.ptot_z().value_or(0.0) - inp.p1().pz() - inp.p2().pz() - k1z;
     } else {
         k2z = var.k2z();
