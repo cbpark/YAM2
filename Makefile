@@ -14,7 +14,7 @@ UNAME     := $(shell uname -s)
 LIB    	  := $(LIBDIR)/lib$(PKGNAME).a
 LIBSRC 	  := $(wildcard $(SRCDIR)/*.cc)
 LIBOBJ 	  := $(LIBSRC:.cc=.o)
-EXE    	  := examples/m2 examples/m2cons
+EXE    	  := examples/m2 examples/m2cons examples/m2vertex
 ifeq ($(UNAME), Darwin)
 SHAREDLIB := $(LIBDIR)/lib$(PKGNAME).dylib
 else
