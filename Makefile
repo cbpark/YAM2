@@ -53,6 +53,9 @@ lib: $(LIBOBJ)
 	$(MKDIR) $(LIBDIR)
 	$(CXX) $(LDFLAGS) -o $(SHAREDLIB) $^
 
+ifdef ROOT
+examples/%: LIBS += $(shell root-config --libs)
+endif
 examples/%: examples/%.o $(LIB)
 	$(CXX) $(LDFLAGS) -o $@ $< $(LIB) $(LIBS)
 
