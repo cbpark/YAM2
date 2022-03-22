@@ -107,7 +107,7 @@ void InputKinematicsWithVertex::show(std::ostream &os) const {
     os << "delta_theta_max: " << delta_theta_max_;
 }
 
-std::optional<InputKinematicsWithVertex> mkInput(
+std::optional<InputKinematicsWithVertex> mkInputWithVertex(
     const vector<FourMomentum> &as, const vector<FourMomentum> &bs,
     const TransverseMomentum &ptmiss, const Mass &minv,
     const SpatialMomentum &vertex1, const SpatialMomentum &vertex2,
@@ -116,20 +116,21 @@ std::optional<InputKinematicsWithVertex> mkInput(
     const std::optional<double> ptot_z) {
     auto input_kinematics =
         mkInput(as, bs, ptmiss, minv, mparent, mrel, sqrt_s, ptot_z);
-    return mkInput(input_kinematics.value(), vertex1, vertex2, delta_theta_max);
+    return mkInputWithVertex(input_kinematics.value(), vertex1, vertex2,
+                             delta_theta_max);
 }
 
-std::optional<InputKinematicsWithVertex> mkInput(
+std::optional<InputKinematicsWithVertex> mkInputWithVertex(
     const std::optional<InputKinematics> &input_kinematics,
     const SpatialMomentum &vertex1, const SpatialMomentum &vertex2,
     double delta_theta_max) {
     if (!input_kinematics) {
-        std::cerr << "mkInput: invalid input kinematics.\n";
+        std::cerr << "mkInputWithVertex: invalid input kinematics.\n";
         return {};
     }
 
     if (delta_theta_max < 0.0) {
-        std::cerr << "mkInput: delta_theta_max must be positive.\n";
+        std::cerr << "mkInputWithVertex: delta_theta_max must be positive.\n";
         return {};
     }
 

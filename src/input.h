@@ -71,9 +71,9 @@ public:
     Mass minv() const { return minv_; }
     double minv_square() const { return minv_.square(); }
 
-    Mass mparent() const { return mparent_.value_or(Mass{0.0}); }
+    std::optional<Mass> mparent() const { return mparent_; }
 
-    Mass mrel() const { return mrel_.value_or(Mass{0.0}); }
+    std::optional<Mass> mrel() const { return mrel_; }
 
     double sqrt_s() const { return sqrt_s_; }
 
@@ -130,7 +130,7 @@ public:
 
     virtual void show(std::ostream &os) const;
 
-    friend std::optional<InputKinematicsWithVertex> mkInput(
+    friend std::optional<InputKinematicsWithVertex> mkInputWithVertex(
         const std::vector<FourMomentum> &as,
         const std::vector<FourMomentum> &bs, const TransverseMomentum &ptmiss,
         const Mass &minv, const SpatialMomentum &vertex1,
@@ -138,13 +138,13 @@ public:
         const std::optional<Mass> &mparent, const std::optional<Mass> &mrel,
         double sqrt_s, const std::optional<double> ptot_z);
 
-    friend std::optional<InputKinematicsWithVertex> mkInput(
+    friend std::optional<InputKinematicsWithVertex> mkInputWithVertex(
         const std::optional<InputKinematics> &input_kinematics,
         const SpatialMomentum &vertex1, const SpatialMomentum &vertex2,
         double delta_theta_max);
 };
 
-std::optional<InputKinematicsWithVertex> mkInput(
+std::optional<InputKinematicsWithVertex> mkInputWithVertex(
     const std::vector<FourMomentum> &as, const std::vector<FourMomentum> &bs,
     const TransverseMomentum &ptmiss, const Mass &minv,
     const SpatialMomentum &vertex1, const SpatialMomentum &vertex2,
@@ -153,7 +153,7 @@ std::optional<InputKinematicsWithVertex> mkInput(
     const std::optional<Mass> &mrel = {Mass{0.0}}, double sqrt_s = 0.0,
     const std::optional<double> ptot_z = {});
 
-std::optional<InputKinematicsWithVertex> mkInput(
+std::optional<InputKinematicsWithVertex> mkInputWithVertex(
     const std::optional<InputKinematics> &input_kinematics,
     const SpatialMomentum &vertex1, const SpatialMomentum &vertex2,
     double delta_theta_max);
