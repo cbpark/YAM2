@@ -116,18 +116,18 @@ std::optional<InputKinematicsWithVertex> mkInput(
     const std::optional<double> ptot_z) {
     auto input_kinematics =
         mkInput(as, bs, ptmiss, minv, mparent, mrel, sqrt_s, ptot_z);
-    if (!input_kinematics) {
-        std::cerr << "mkInput: invalid input kinematics.\n";
-        return {};
-    } else {
-        return mkInput(input_kinematics.value(), vertex1, vertex2,
-                       delta_theta_max);
-    }
+    return mkInput(input_kinematics.value(), vertex1, vertex2, delta_theta_max);
 }
 
 std::optional<InputKinematicsWithVertex> mkInput(
-    const InputKinematics &input_kinematics, const SpatialMomentum &vertex1,
-    const SpatialMomentum &vertex2, double delta_theta_max) {
+    const std::optional<InputKinematics> &input_kinematics,
+    const SpatialMomentum &vertex1, const SpatialMomentum &vertex2,
+    double delta_theta_max) {
+    if (!input_kinematics) {
+        std::cerr << "mkInput: invalid input kinematics.\n";
+        return {};
+    }
+
     if (delta_theta_max < 0.0) {
         std::cerr << "mkInput: delta_theta_max must be positive.\n";
         return {};
@@ -136,20 +136,20 @@ std::optional<InputKinematicsWithVertex> mkInput(
     const auto v1 = vertex1.normalize();
     const auto v2 = vertex2.normalize();
 
-    return {{input_kinematics.p1(),
-             input_kinematics.p2(),
-             input_kinematics.q1(),
-             input_kinematics.q2(),
-             input_kinematics.ptmiss(),
-             input_kinematics.minv(),
+    return {{input_kinematics.value().p1(),
+             input_kinematics.value().p2(),
+             input_kinematics.value().q1(),
+             input_kinematics.value().q2(),
+             input_kinematics.value().ptmiss(),
+             input_kinematics.value().minv(),
              v1,
              v2,
              delta_theta_max,
-             {input_kinematics.mparent()},
-             {input_kinematics.mrel()},
-             input_kinematics.sqrt_s(),
-             input_kinematics.ptot_z(),
-             input_kinematics.scale()}};
+             {input_kinematics.value().mparent()},
+             {input_kinematics.value().mrel()},
+             input_kinematics.value().sqrt_s(),
+             input_kinematics.value().ptot_z(),
+             input_kinematics.value().scale()}};
 }
 
 double deltaSqrtS(const NLoptVar &x, NLoptVar &grad, void *input) {
