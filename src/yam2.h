@@ -56,7 +56,7 @@ constexpr double EPS = 1.0e-3;
 constexpr double EPSX = 1.0e-6;
 
 /** the default tolerance value for M2Cons */
-constexpr double EPSCONS = 1.0e-8;
+constexpr double EPSCONS = 1.0e-9;
 
 /** the maximum number of iterations */
 constexpr int NEVAL = 5000;

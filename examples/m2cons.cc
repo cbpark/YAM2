@@ -27,11 +27,11 @@ int main() {
     // `{}` corresponds to the relative particle mass. In the decay topology
     // of interest, we don't have a relative particle.
     const auto input =
-        yam2::mkInput({a1, a2}, {zero, zero}, ptmiss, m_invis, {}, mY);
+        yam2::mkInput({a1, a2}, {zero, zero}, ptmiss, m_invis, {}, {}, mY);
     // If you want set the longitudinal momentum of the total system (say 10
     // GeV), the input should be given by
     // const auto input =
-    //     yam2::mkInput({a1, a2}, {zero, zero}, ptmiss, m_invis, {}, mY,
+    //     yam2::mkInput({a1, a2}, {zero, zero}, ptmiss, m_invis, {}, {}, mY,
     //     {10.0});
     if (!input) {
         std::cerr << "Invalid input.\n";
@@ -39,8 +39,8 @@ int main() {
     }
     std::cout << "-- process information (scaled):\n" << input.value() << '\n';
 
-    // the default tolerance is 1.0e-8.
-    // const auto m2sol = yam2::m2ConsSQP(input, 1.0e-8);
+    // the default tolerance is 1.0e-9.
+    // const auto m2sol = yam2::m2ConsSQP(input, 1.0e-9);
     const auto m2sol = yam2::m2ConsSQP(input);
 
     // the other available methods are:
