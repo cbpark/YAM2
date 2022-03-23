@@ -5,6 +5,7 @@
 #include "gradient.h"
 
 #include <cmath>
+#include <ostream>
 #include <tuple>
 #include "input.h"       // InputKinematics
 #include "invisibles.h"  // Invisibles
@@ -96,5 +97,11 @@ Gradient mtotGrad(const InputKinematics &inp, const FourMomentum &p1,
     }
 
     return {dk1x, dk1y, dk1z, dk2z};
+}
+
+std::ostream &operator<<(std::ostream &os, const Gradient &g) {
+    os << "dk1x = " << g.dk1x_ << ", dk1y = " << g.dk1y_
+       << ", dk1z = " << g.dk1z_ << ", dk2z = " << g.dk2z_;
+    return os;
 }
 }  // namespace yam2

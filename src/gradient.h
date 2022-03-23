@@ -7,6 +7,7 @@
 
 #include <array>
 #include <functional>
+#include <ostream>
 #include <tuple>
 #include <utility>
 #include "input.h"       // InputKinematics
@@ -55,6 +56,8 @@ public:
         g1 -= g2;
         return g1;
     }
+
+    friend std::ostream &operator<<(std::ostream &os, const Gradient &g);
 };
 
 using Gradients = std::pair<Gradient, Gradient>;
