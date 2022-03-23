@@ -6,13 +6,14 @@
 
 #include <nlopt.hpp>  // for the NLopt API
 
-#include <algorithm>  // std::any_of
+#include <algorithm>  // std::any_of, std::copy_if
 #include <cmath>      // std::is_nan, std::fabs
 #include <exception>  // std::exception
 #include <functional>
 #include <optional>
 #include <ostream>
 #include <tuple>  // std::tuple
+#include <vector>
 
 #include "constraint.h"  // Constraints
 #include "gradient.h"    // m2Func
@@ -254,6 +255,11 @@ OptM2 m2ConsAugLagBFGS(const OptInp &inp, double eps, unsigned int neval) {
     return m2AugLagBFGS(constraint, inp, eps, neval);
 }
 
+OptM2 m2CConsAugLagBFGS(const OptInp &inp, double eps, unsigned int neval) {
+    const Constraints constraint{constraintSqrtS, constraintA1, constraintA2};
+    return m2AugLagBFGS(constraint, inp, eps, neval);
+}
+
 OptM2 m2AugLagNMSimplex(const Constraints &cfs, const OptInp &inp, double eps,
                         unsigned int neval) {
     return m2AugLag(nlopt::LN_NELDERMEAD, cfs, inp, eps, neval);
@@ -285,6 +291,12 @@ OptM2 m2CRAugLagNMSimplex(const OptInp &inp, double eps, unsigned int neval) {
 
 OptM2 m2ConsAugLagNMSimplex(const OptInp &inp, double eps, unsigned int neval) {
     const Constraints constraint{constraintSqrtS};
+    return m2AugLagNMSimplex(constraint, inp, eps, neval);
+}
+
+OptM2 m2CConsAugLagNMSimplex(const OptInp &inp, double eps,
+                             unsigned int neval) {
+    const Constraints constraint{constraintSqrtS, constraintA1, constraintA2};
     return m2AugLagNMSimplex(constraint, inp, eps, neval);
 }
 
@@ -342,6 +354,40 @@ OptM2 m2CR(const OptInp &inp, double eps, unsigned int neval) {
 OptM2 m2Cons(const OptInp &inp, double eps, unsigned int neval) {
     return m2(m2ConsSQP, m2ConsAugLagBFGS, m2ConsAugLagNMSimplex, inp, eps,
               neval);
+}
+
+OptM2 m2CConsCombine(const std::vector<OptM2> &m2sols, const OptInp &inp) {
+    std::vector<OptM2> m2sols_;
+    std::copy_if(
+        m2sols.cbegin(), m2sols.cend(), std::back_inserter(m2sols_),
+        [&](OptM2 m2sol) {
+            if (m2sol && inp) {
+                auto inp_ = inp.value();
+                auto p_parent1 = inp_.p1() + m2sol.value().k1();
+                auto p_parent2 = inp_.p2() + m2sol.value().k2();
+                return p_parent1.m() <
+                           inp_.mparent().value_or(Mass{1.0e+10}).value *
+                               inp_.scale() * 1.05 &&
+                       p_parent2.m() <
+                           inp_.mparent().value_or(Mass{1.0e+10}).value *
+                               inp_.scale() * 1.05;
+            }
+            return false;
+        });
+
+    if (!m2sols_.empty()) {
+        return {m2sols_[0]};
+    } else {
+        return {};
+    }
+}
+
+OptM2 m2CCons(const OptInp &inp, double eps, unsigned int neval) {
+    std::vector<OptM2> m2sols;
+    m2sols.push_back(m2CConsSQP(inp, eps, neval));
+    m2sols.push_back(m2CConsAugLagBFGS(inp, eps, neval));
+    m2sols.push_back(m2CConsAugLagNMSimplex(inp, eps, neval));
+    return m2CConsCombine(m2sols, inp);
 }
 
 std::ostream &operator<<(std::ostream &os, const M2Solution &sol) {
