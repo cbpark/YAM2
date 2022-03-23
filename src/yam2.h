@@ -95,6 +95,11 @@ std::optional<M2Solution> m2CCons(const std::optional<InputKinematics> &inp,
                                   double eps = EPSCONS,
                                   unsigned int neval = NEVAL);
 
+/** The M2 variable with the vertex constraints */
+std::optional<M2Solution> m2VertexEq(
+    const std::optional<InputKinematicsWithVertex> &inp, double eps = EPSCONS,
+    unsigned int neval = NEVAL);
+
 /** M2XX variable using the SQP method */
 std::optional<M2Solution> m2XXSQP(const std::optional<InputKinematics> &inp,
                                   double eps = EPSX,

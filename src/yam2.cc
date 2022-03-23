@@ -47,9 +47,9 @@ double m2ObjF(const NLoptVar &x, NLoptVar &grad, void *input) {
 
     if (!grad.empty()) {
         if (m1 < m2) {
-            grad = grad2.gradient();
+            grad2.set_gradient(grad);
         } else {
-            grad = grad1.gradient();
+            grad1.set_gradient(grad);
         }
     }
     return m1 < m2 ? m2 : m1;
@@ -148,13 +148,12 @@ OptM2 m2SQP(const Constraints &cfs, const optional<Input> &inp, double eps,
     return M2Solution{inpv, sol_vars.value(), minf * inpv.scale(), neval_objf};
 }
 
-template OptM2 m2SQP<InputKinematics>(const Constraints &cfs,
-                                      const optional<InputKinematics> &inp,
+template OptM2 m2SQP<InputKinematics>(const Constraints &cfs, const OptInp &inp,
                                       double eps, unsigned int neval);
 
-template OptM2 m2SQP<InputKinematicsWithVertex>(
-    const Constraints &cfs, const optional<InputKinematicsWithVertex> &inp,
-    double eps, unsigned int neval);
+template OptM2 m2SQP<InputKinematicsWithVertex>(const Constraints &cfs,
+                                                const OptInpWithVertex &inp,
+                                                double eps, unsigned int neval);
 
 OptM2 m2XXSQP(const OptInp &inp, double eps, unsigned int neval) {
     return m2SQP(Constraints(), inp, eps, neval);
@@ -196,8 +195,9 @@ OptM2 m2VertexEqSQP(const OptInpWithVertex &inp, double eps,
     return m2SQP(constraint, inp, eps, neval);
 }
 
+template <typename Input>
 OptM2 m2AugLag(const nlopt::algorithm &subopt, const Constraints &cfs,
-               const OptInp &inp, double eps, unsigned int neval) {
+               const optional<Input> &inp, double eps, unsigned int neval) {
     if (!inp) { return {}; }
 
     auto inpv = inp.value();
@@ -212,7 +212,7 @@ OptM2 m2AugLag(const nlopt::algorithm &subopt, const Constraints &cfs,
     subproblem.value().set_min_objective(m2ObjF, &inpv);
     subproblem.value().set_maxeval(neval * 10);
 
-    nlopt::opt algorithm{nlopt::AUGLAG_EQ, dim};
+    nlopt::opt algorithm{nlopt::AUGLAG, dim};
     algorithm.set_min_objective(m2ObjF, &inpv);
     algorithm.set_local_optimizer(subproblem.value());
     algorithm.set_maxeval(neval);
@@ -235,6 +235,15 @@ OptM2 m2AugLag(const nlopt::algorithm &subopt, const Constraints &cfs,
     const auto sol_vars = mkVariables(x);
     return M2Solution{inpv, sol_vars.value(), minf * inpv.scale(), neval_objf};
 }
+
+template OptM2 m2AugLag<InputKinematics>(const nlopt::algorithm &subopt,
+                                         const Constraints &cfs,
+                                         const OptInp &inp, double eps,
+                                         unsigned int neval);
+
+template OptM2 m2AugLag<InputKinematicsWithVertex>(
+    const nlopt::algorithm &subopt, const Constraints &cfs,
+    const OptInpWithVertex &inp, double eps, unsigned int neval);
 
 OptM2 m2AugLagBFGS(const Constraints &cfs, const OptInp &inp, double eps,
                    unsigned int neval) {
@@ -276,6 +285,12 @@ OptM2 m2CConsAugLagBFGS(const OptInp &inp, double eps, unsigned int neval) {
     return m2AugLagBFGS(constraint, inp, eps, neval);
 }
 
+OptM2 m2VertexEqAugLagBFGS(const OptInpWithVertex &inp, double eps,
+                           unsigned int neval) {
+    const Constraints constraint{constraintVertex1Theta, constraintVertex1Phi};
+    return m2AugLagBFGS(constraint, inp, eps, neval);
+}
+
 OptM2 m2AugLagNMSimplex(const Constraints &cfs, const OptInp &inp, double eps,
                         unsigned int neval) {
     return m2AugLag(nlopt::LN_NELDERMEAD, cfs, inp, eps, neval);
@@ -313,6 +328,12 @@ OptM2 m2ConsAugLagNMSimplex(const OptInp &inp, double eps, unsigned int neval) {
 OptM2 m2CConsAugLagNMSimplex(const OptInp &inp, double eps,
                              unsigned int neval) {
     const Constraints constraint{constraintSqrtS, constraintA1, constraintA2};
+    return m2AugLagNMSimplex(constraint, inp, eps, neval);
+}
+
+OptM2 m2VertexEqAugLagNMSimplex(const OptInpWithVertex &inp, double eps,
+                                unsigned int neval) {
+    const Constraints constraint{constraintVertex1Theta, constraintVertex1Phi};
     return m2AugLagNMSimplex(constraint, inp, eps, neval);
 }
 
@@ -408,6 +429,14 @@ OptM2 m2CCons(const OptInp &inp, double eps, unsigned int neval) {
     m2sols.push_back(m2CConsSQP(inp, eps, neval));
     m2sols.push_back(m2CConsAugLagBFGS(inp, eps, neval));
     m2sols.push_back(m2CConsAugLagNMSimplex(inp, eps, neval));
+    return m2MinStrategy2(m2sols, inp);
+}
+
+OptM2 m2VertexEq(const OptInpWithVertex &inp, double eps, unsigned int neval) {
+    std::vector<OptM2> m2sols;
+    m2sols.push_back(m2VertexEqSQP(inp, eps, neval));
+    m2sols.push_back(m2VertexEqAugLagBFGS(inp, eps, neval));
+    m2sols.push_back(m2VertexEqAugLagNMSimplex(inp, eps, neval));
     return m2MinStrategy2(m2sols, inp);
 }
 
