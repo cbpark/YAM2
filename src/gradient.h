@@ -30,7 +30,14 @@ public:
     double dk1z() const { return dk1z_; }
     double dk2z() const { return dk2z_; }
 
-    NLoptVar gradient() const { return {dk1x_, dk1y_, dk1z_, dk2z_}; }
+    // NLoptVar gradient() const { return {dk1x_, dk1y_, dk1z_, dk2z_}; }
+
+    void set_gradient(NLoptVar &grad) const {
+        grad[0] = dk1x_;
+        grad[1] = dk1y_;
+        grad[2] = dk1z_;
+        if (grad.size() > 3) { grad[3] = dk2z_; }
+    }
 
     Gradient &operator*=(double a) {
         this->dk1x_ *= a;
