@@ -33,6 +33,12 @@ double constraintR2(const NLoptVar &x, NLoptVar &grad, void *input);
 
 /** constraint: (p1 + p2 + k1 + k2)^2 = s */
 double constraintSqrtS(const NLoptVar &x, NLoptVar &grad, void *input);
+
+/** constraint: \hat theta */
+double constraintVertex1Theta(const NLoptVar &x, NLoptVar &grad, void *input);
+
+/** constraint: \hat phi */
+double constraintVertex1Phi(const NLoptVar &x, NLoptVar &grad, void *input);
 }  // namespace yam2
 
 #endif  // YAM2_SRC_CONSTRAINT_H_

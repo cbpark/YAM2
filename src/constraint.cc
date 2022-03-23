@@ -4,9 +4,11 @@
 
 #include "constraint.h"
 
+#include <cmath>         // std::pow, std::tan
 #include "gradient.h"    // m2Func, m2Func1, m2Func2
 #include "input.h"       // InputKinematics, deltaSqrtS
 #include "invisibles.h"  // mkInvisibles
+#include "momentum.h"    // SpatialMomentum
 #include "variables.h"   // mkVariables, NLoptVar
 
 namespace yam2 {
@@ -21,7 +23,7 @@ double constraintEq(const InputKinematics &inp, const FourMomentum &p1,
 
     if (!grad.empty()) {
         const auto dgrad = grad1 - grad2;
-        grad = dgrad.gradient();
+        dgrad.set_gradient(grad);
     }
     return m1 - m2;
 }
@@ -42,9 +44,9 @@ double constraintAP(const InputKinematics &inp, const FourMomentum &p,
     const auto var_val = var.value();
     const auto ks = mkInvisibles(inp, var_val);
 
-    const auto &[gradi, mi] = fmGrad(inp, p, ks);
-    if (!grad.empty()) { grad = gradi.gradient(); }
-    return mi - inp.mparent().value_or(Mass{mi}).value;
+    const auto &[grad_, m_] = fmGrad(inp, p, ks);
+    if (!grad.empty()) { grad_.set_gradient(grad); }
+    return m_ - inp.mparent().value_or(Mass{m_}).value;
 }
 
 double constraintA1(const NLoptVar &x, NLoptVar &grad, void *input) {
@@ -62,10 +64,10 @@ double constraintR(const InputKinematics &inp, const FourMomentum &q,
     const auto var = mkVariables(x);
     const auto var_val = var.value();
     const auto ks = mkInvisibles(inp, var_val);
-    const auto &[gradi, mi] = fmGrad(inp, q, ks);
+    const auto &[grad_, m_] = fmGrad(inp, q, ks);
 
-    if (!grad.empty()) { grad = gradi.gradient(); }
-    return mi - inp.mrel().value_or(Mass{mi}).value;
+    if (!grad.empty()) { grad_.set_gradient(grad); }
+    return m_ - inp.mrel().value_or(Mass{m_}).value;
 }
 
 double constraintR1(const NLoptVar &x, NLoptVar &grad, void *input) {
@@ -80,5 +82,54 @@ double constraintR2(const NLoptVar &x, NLoptVar &grad, void *input) {
 
 double constraintSqrtS(const NLoptVar &x, NLoptVar &grad, void *input) {
     return deltaSqrtS(x, grad, input);
+}
+
+SpatialMomentum getParent1(const NLoptVar &x, const InputKinematics &inp) {
+    const auto var = mkVariables(x);
+    const auto var_val = var.value();
+    const auto ks = mkInvisibles(inp, var_val);
+    return (inp.p1() + ks.k1()).three_momentum();
+}
+
+double constraintVertex1Theta(const NLoptVar &x, NLoptVar &grad, void *input) {
+    auto *const inp = reinterpret_cast<InputKinematicsWithVertex *>(input);
+    auto parent1 = getParent1(x, *inp);
+    double theta = parent1.theta();
+
+    if (!grad.empty()) {
+        double pt = parent1.pt();
+        double r = std::pow(std::tan(theta), 2);
+        double denom = (1.0 + r) * parent1.pz();
+
+        double dk1x = parent1.px() / (pt * denom);
+        double dk1y = parent1.py() / (pt * denom);
+        double dk1z = -pt / (denom * parent1.pz());
+        double dk2z = 0.0;
+
+        auto grad_ = Gradient(dk1x, dk1y, dk1z, dk2z);
+        grad_.set_gradient(grad);
+    }
+
+    return theta - inp->vertex1().theta();
+}
+
+double constraintVertex1Phi(const NLoptVar &x, NLoptVar &grad, void *input) {
+    auto *const inp = reinterpret_cast<InputKinematicsWithVertex *>(input);
+    auto parent1 = getParent1(x, *inp);
+
+    if (!grad.empty()) {
+        double px2 = std::pow(parent1.px(), 2);
+        double py2px2 = 1.0 + std::pow(parent1.py(), 2) / px2;
+
+        double dk1x = -parent1.py() / px2 / py2px2;
+        double dk1y = 1.0 / parent1.px() / py2px2;
+        double dk1z = 0.0;
+        double dk2z = 0.0;
+
+        auto grad_ = Gradient(dk1x, dk1y, dk1z, dk2z);
+        grad_.set_gradient(grad);
+    }
+
+    return parent1.phi() - inp->vertex1().phi();
 }
 }  // namespace yam2
