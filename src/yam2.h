@@ -126,6 +126,11 @@ std::optional<M2Solution> m2CConsSQP(const std::optional<InputKinematics> &inp,
                                      double eps = EPSCONS,
                                      unsigned int neval = NEVAL);
 
+/** M2VertexEq variable using the SQP method */
+std::optional<M2Solution> m2VertexEqSQP(
+    const std::optional<InputKinematicsWithVertex> &inp, double eps = EPSCONS,
+    unsigned int neval = NEVAL);
+
 /** M2XX variable using the augmented Lagrangian method with the BFGS update */
 std::optional<M2Solution> m2XXAugLagBFGS(
     const std::optional<InputKinematics> &inp, double eps = EPSX,
@@ -162,6 +167,14 @@ std::optional<M2Solution> m2ConsAugLagBFGS(
  * M2CCons variable using the augmented Lagrangian method with the BFGS update
  */
 std::optional<M2Solution> m2CConsAugLagBFGS(
+    const std::optional<InputKinematics> &inp, double eps = EPSCONS,
+    unsigned int neval = NEVAL);
+
+/**
+ * M2VertexEq variable using the augmented Lagrangian method with the BFGS
+ * update
+ */
+std::optional<M2Solution> m2VertexEqAugLagBFGS(
     const std::optional<InputKinematics> &inp, double eps = EPSCONS,
     unsigned int neval = NEVAL);
 
@@ -218,6 +231,14 @@ std::optional<M2Solution> m2ConsAugLagNMSimplex(
  * with the Nelder-Mead simplex
  */
 std::optional<M2Solution> m2CConsAugLagNMSimplex(
+    const std::optional<InputKinematics> &inp, double eps = EPSCONS,
+    unsigned int neval = NEVAL);
+
+/**
+ * M2VertexEq variable using the augmented Lagrangian method
+ * with the Nelder-Mead simplex
+ */
+std::optional<M2Solution> m2VertexEqAugLagNMSimplex(
     const std::optional<InputKinematics> &inp, double eps = EPSCONS,
     unsigned int neval = NEVAL);
 }  // namespace yam2

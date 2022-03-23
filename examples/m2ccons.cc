@@ -52,7 +52,7 @@ int main() {
         /* k1 and k2 are the M2 solutions to the momenta of the invisible
          * particles X1 and X2.
          */
-        std::cout << "M2Cons = " << m2sol.value().m2() << '\n'
+        std::cout << "M2CCons = " << m2sol.value().m2() << '\n'
                   << "where \n"
                   << "  k1: " << m2sol.value().k1() << '\n'
                   << "  k2: " << m2sol.value().k2() << '\n'

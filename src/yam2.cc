@@ -28,6 +28,7 @@ unsigned int neval_objf = 0;
 
 namespace yam2 {
 using OptInp = optional<InputKinematics>;
+using OptInpWithVertex = optional<InputKinematicsWithVertex>;
 using OptM2 = optional<M2Solution>;
 
 /**
@@ -109,7 +110,8 @@ std::tuple<nlopt::result, double, NLoptVar> doOptimize(
  *  'Constriant' type is the function pointer defined in 'constrain.h'.
  *  'InputKinematics' type is defined in 'input.h'
  */
-OptM2 m2SQP(const Constraints &cfs, const OptInp &inp, double eps,
+template <typename Input>
+OptM2 m2SQP(const Constraints &cfs, const optional<Input> &inp, double eps,
             unsigned int neval) {
     if (!inp) { return {}; }
 
@@ -146,6 +148,14 @@ OptM2 m2SQP(const Constraints &cfs, const OptInp &inp, double eps,
     return M2Solution{inpv, sol_vars.value(), minf * inpv.scale(), neval_objf};
 }
 
+template OptM2 m2SQP<InputKinematics>(const Constraints &cfs,
+                                      const optional<InputKinematics> &inp,
+                                      double eps, unsigned int neval);
+
+template OptM2 m2SQP<InputKinematicsWithVertex>(
+    const Constraints &cfs, const optional<InputKinematicsWithVertex> &inp,
+    double eps, unsigned int neval);
+
 OptM2 m2XXSQP(const OptInp &inp, double eps, unsigned int neval) {
     return m2SQP(Constraints(), inp, eps, neval);
 }
@@ -177,6 +187,12 @@ OptM2 m2ConsSQP(const OptInp &inp, double eps, unsigned int neval) {
 
 OptM2 m2CConsSQP(const OptInp &inp, double eps, unsigned int neval) {
     const Constraints constraint{constraintSqrtS, constraintA1, constraintA2};
+    return m2SQP(constraint, inp, eps, neval);
+}
+
+OptM2 m2VertexEqSQP(const OptInpWithVertex &inp, double eps,
+                    unsigned int neval) {
+    const Constraints constraint{constraintVertex1Theta, constraintVertex1Phi};
     return m2SQP(constraint, inp, eps, neval);
 }
 
@@ -302,8 +318,8 @@ OptM2 m2CConsAugLagNMSimplex(const OptInp &inp, double eps,
 
 using M2Func = std::function<OptM2(const OptInp &, double, int)>;
 
-OptM2 m2(M2Func fSQP, M2Func fAugLagBFGS, M2Func fAugLagNMSimplex,
-         const OptInp &inp, double eps, unsigned int neval) {
+OptM2 m2MinStrategy1(M2Func fSQP, M2Func fAugLagBFGS, M2Func fAugLagNMSimplex,
+                     const OptInp &inp, double eps, unsigned int neval) {
     auto m2_sqp = fSQP(inp, eps, neval);
     auto m2_auglag_bfgs = fAugLagBFGS(inp, eps, neval);
 
@@ -332,31 +348,36 @@ OptM2 m2(M2Func fSQP, M2Func fAugLagBFGS, M2Func fAugLagNMSimplex,
 }
 
 OptM2 m2XX(const OptInp &inp, double eps, unsigned int neval) {
-    return m2(m2XXSQP, m2XXAugLagBFGS, m2XXAugLagNMSimplex, inp, eps, neval);
+    return m2MinStrategy1(m2XXSQP, m2XXAugLagBFGS, m2XXAugLagNMSimplex, inp,
+                          eps, neval);
 }
 
 OptM2 m2CX(const OptInp &inp, double eps, unsigned int neval) {
-    return m2(m2CXSQP, m2CXAugLagBFGS, m2CXAugLagNMSimplex, inp, eps, neval);
+    return m2MinStrategy1(m2CXSQP, m2CXAugLagBFGS, m2CXAugLagNMSimplex, inp,
+                          eps, neval);
 }
 
 OptM2 m2XC(const OptInp &inp, double eps, unsigned int neval) {
-    return m2(m2XCSQP, m2XCAugLagBFGS, m2XCAugLagNMSimplex, inp, eps, neval);
+    return m2MinStrategy1(m2XCSQP, m2XCAugLagBFGS, m2XCAugLagNMSimplex, inp,
+                          eps, neval);
 }
 
 OptM2 m2CC(const OptInp &inp, double eps, unsigned int neval) {
-    return m2(m2CCSQP, m2CCAugLagBFGS, m2CCAugLagNMSimplex, inp, eps, neval);
+    return m2MinStrategy1(m2CCSQP, m2CCAugLagBFGS, m2CCAugLagNMSimplex, inp,
+                          eps, neval);
 }
 
 OptM2 m2CR(const OptInp &inp, double eps, unsigned int neval) {
-    return m2(m2CRSQP, m2CRAugLagBFGS, m2CRAugLagNMSimplex, inp, eps, neval);
+    return m2MinStrategy1(m2CRSQP, m2CRAugLagBFGS, m2CRAugLagNMSimplex, inp,
+                          eps, neval);
 }
 
 OptM2 m2Cons(const OptInp &inp, double eps, unsigned int neval) {
-    return m2(m2ConsSQP, m2ConsAugLagBFGS, m2ConsAugLagNMSimplex, inp, eps,
-              neval);
+    return m2MinStrategy1(m2ConsSQP, m2ConsAugLagBFGS, m2ConsAugLagNMSimplex,
+                          inp, eps, neval);
 }
 
-OptM2 m2CConsCombine(const std::vector<OptM2> &m2sols, const OptInp &inp) {
+OptM2 m2MinStrategy2(const std::vector<OptM2> &m2sols, const OptInp &inp) {
     std::vector<OptM2> m2sols_;
     std::copy_if(
         m2sols.cbegin(), m2sols.cend(), std::back_inserter(m2sols_),
@@ -387,7 +408,7 @@ OptM2 m2CCons(const OptInp &inp, double eps, unsigned int neval) {
     m2sols.push_back(m2CConsSQP(inp, eps, neval));
     m2sols.push_back(m2CConsAugLagBFGS(inp, eps, neval));
     m2sols.push_back(m2CConsAugLagNMSimplex(inp, eps, neval));
-    return m2CConsCombine(m2sols, inp);
+    return m2MinStrategy2(m2sols, inp);
 }
 
 std::ostream &operator<<(std::ostream &os, const M2Solution &sol) {
