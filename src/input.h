@@ -128,6 +128,10 @@ public:
     InputKinematicsWithVertex() = delete;
     virtual ~InputKinematicsWithVertex() {}
 
+    SpatialMomentum vertex1() const { return vertex1_; }
+    SpatialMomentum vertex2() const { return vertex2_; }
+    double delta_theta_max() const { return delta_theta_max_; }
+
     virtual void show(std::ostream &os) const;
 
     friend std::optional<InputKinematicsWithVertex> mkInputWithVertex(

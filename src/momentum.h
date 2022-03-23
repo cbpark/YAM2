@@ -5,7 +5,7 @@
 #ifndef YAM2_SRC_MOMENTUM_H_
 #define YAM2_SRC_MOMENTUM_H_
 
-#include <cmath>  // std::sqrt, std::hypot
+#include <cmath>  // std::sqrt, std::hypot, std::atan2
 #include <ostream>
 #include <vector>
 #ifdef HAS_ROOT
@@ -56,6 +56,12 @@ public:
     double py() const { return y_; }
     double pz() const { return z_; }
 
+    double pt() const { return std::hypot(x_, y_); }
+
+    double theta() const { return std::atan2(pt(), z_); }
+
+    double phi() const { return std::atan2(y_, x_); }
+
     SpatialMomentum normalize() const {
         double norm = std::hypot(x_, y_, z_);
         if (norm < 1.0e-10) { norm = 1.0e-10; }
@@ -93,6 +99,8 @@ public:
         const double mSq = msq();
         return mSq >= 0.0 ? std::sqrt(mSq) : std::sqrt(-mSq);
     }
+
+    SpatialMomentum three_momentum() const { return {x_, y_, z_}; }
 
     FourMomentum &operator*=(double a) {
         this->t_ *= a;
