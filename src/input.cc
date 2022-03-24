@@ -162,10 +162,12 @@ double deltaSqrtS(const NLoptVar &x, NLoptVar &grad, void *input) {
     const auto p1 = inp->p1(), p2 = inp->p2();
     const auto ptot = p1 + p2 + ks.k1() + ks.k2();
     const double m_tot = ptot.m();
+
     if (!grad.empty()) {
         const auto grad_mtot = mtotGrad(*inp, p1, p2, ks, m_tot);
-        grad = grad_mtot.gradient();
+        grad_mtot.set_gradient(grad);
     }
+
     return m_tot - inp->sqrt_s();
 }
 }  // namespace yam2
