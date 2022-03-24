@@ -1,7 +1,7 @@
 # YAM2: Yet another library for the M2 variables
 
 [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
-[![Build Status](https://travis-ci.com/cbpark/YAM2.svg?branch=master)](https://travis-ci.com/cbpark/YAM2)
+[![Pipeline](https://gitlab.com/cbpark/yam2/badges/master/pipeline.svg)]( https://gitlab.com/cbpark/yam2/-/pipelines/)
 
 YAM2 is free software library for calculating a set of kinematic variables M<sub>2</sub> using several numerical optimization algorithms.
 
