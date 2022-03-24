@@ -18,7 +18,7 @@ build (clang):
   stage: build
   image: ubuntu:20.04
   before_script:
-    - apt update && apt -y install git clang libnlopt-cxx-dev
+    - apt update && apt -y install build-essential clang libnlopt-cxx-dev
   script:
     - CXX=clang make
     - CXX=clang make lib
