@@ -20,12 +20,12 @@ build (clang):
   before_script:
     - apt update && apt -y install build-essential clang libnlopt-cxx-dev
   script:
-    - CXX=clang make
-    - CXX=clang make lib
-    - CXX=clang make examples/m2
-    - CXX=clang make examples/m2cons
-    - CXX=clang make examples/m2ccons
-    - CXX=clang make examples/m2vertex
-    - CXX=clang make examples/m2consvertex
+    - CXX=clang++ make
+    - CXX=clang++ make lib
+    - CXX=clang++ make examples/m2
+    - CXX=clang++ make examples/m2cons
+    - CXX=clang++ make examples/m2ccons
+    - CXX=clang++ make examples/m2vertex
+    - CXX=clang++ make examples/m2consvertex
     - DESTDIR="$PWD/pkg" make install
     - ls -R "$PWD/pkg"
