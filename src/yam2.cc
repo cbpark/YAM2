@@ -6,7 +6,7 @@
 
 #include <nlopt.hpp>  // for the NLopt API
 
-#include <algorithm>  // std::any_of, std::copy_if
+#include <algorithm>  // std::any_of
 #include <cmath>      // std::is_nan, std::fabs
 #include <exception>  // std::exception
 #include <optional>

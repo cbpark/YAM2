@@ -35,8 +35,8 @@ int main() {
     const auto zero = yam2::FourMomentum();
 
     const auto input = yam2::mkInputWithVertex(
-        {v1, v2}, {zero, zero}, ptmiss, m_invis, vertex1, vertex2,
-        0.0, {m_parent}, {}, sqrt_s, {ptot_z});
+        {v1, v2}, {zero, zero}, ptmiss, m_invis, vertex1, vertex2, 0.0,
+        {m_parent}, {}, sqrt_s, {ptot_z});
     if (!input) {
         std::cerr << "Invalid input.\n";
         return 1;
