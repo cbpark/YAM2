@@ -51,6 +51,8 @@ public:
         return {a * dk1x_, a * dk1y_, a * dk1z_, a * dk2z_};
     }
 
+    Gradient operator-() const { return {-dk1x_, -dk1y_, -dk1z_, -dk2z_}; }
+
     Gradient &operator-=(const Gradient &g) {
         this->dk1x_ -= g.dk1x();
         this->dk1y_ -= g.dk1y();

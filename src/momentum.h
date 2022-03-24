@@ -62,10 +62,16 @@ public:
 
     double phi() const { return std::atan2(y_, x_); }
 
+    double norm() const { return std::hypot(x_, y_, z_); }
+
     SpatialMomentum normalize() const {
-        double norm = std::hypot(x_, y_, z_);
+        double norm = this->norm();
         if (norm < 1.0e-10) { norm = 1.0e-10; }
         return {x_ / norm, y_ / norm, z_ / norm};
+    }
+
+    double dot(const SpatialMomentum &v) const {
+        return x_ * v.px() + y_ * v.py() + z_ * v.pz();
     }
 
     friend std::ostream &operator<<(std::ostream &os, const SpatialMomentum &p);
