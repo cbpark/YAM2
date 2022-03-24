@@ -31,5 +31,6 @@ script:
   - make examples/m2cons
   - make examples/m2ccons
   - make exmaples/m2vertex
+  - make exmaples/m2consvertex
   - DESTDIR="$PWD/pkg" make install
   - ls -R "$PWD/pkg"

@@ -100,6 +100,11 @@ std::optional<M2Solution> m2VertexEq(
     const std::optional<InputKinematicsWithVertex> &inp, double eps = EPSCONS,
     unsigned int neval = NEVAL);
 
+/** The M2 variable with the sqrt(s) and vertex constraints */
+std::optional<M2Solution> m2ConsVertexEq(
+    const std::optional<InputKinematicsWithVertex> &inp, double eps = EPSCONS,
+    unsigned int neval = NEVAL);
+
 /** M2XX variable using the SQP method */
 std::optional<M2Solution> m2XXSQP(const std::optional<InputKinematics> &inp,
                                   double eps = EPSX,
@@ -133,6 +138,11 @@ std::optional<M2Solution> m2CConsSQP(const std::optional<InputKinematics> &inp,
 
 /** M2VertexEq variable using the SQP method */
 std::optional<M2Solution> m2VertexEqSQP(
+    const std::optional<InputKinematicsWithVertex> &inp, double eps = EPSCONS,
+    unsigned int neval = NEVAL);
+
+/** M2ConsVertexEq variable using the SQP method */
+std::optional<M2Solution> m2ConsVertexEqSQP(
     const std::optional<InputKinematicsWithVertex> &inp, double eps = EPSCONS,
     unsigned int neval = NEVAL);
 
@@ -180,6 +190,14 @@ std::optional<M2Solution> m2CConsAugLagBFGS(
  * update
  */
 std::optional<M2Solution> m2VertexEqAugLagBFGS(
+    const std::optional<InputKinematics> &inp, double eps = EPSCONS,
+    unsigned int neval = NEVAL);
+
+/**
+ * M2ConsVertexEq variable using the augmented Lagrangian method with the BFGS
+ * update
+ */
+std::optional<M2Solution> m2ConsVertexEqAugLagBFGS(
     const std::optional<InputKinematics> &inp, double eps = EPSCONS,
     unsigned int neval = NEVAL);
 
@@ -244,6 +262,14 @@ std::optional<M2Solution> m2CConsAugLagNMSimplex(
  * with the Nelder-Mead simplex
  */
 std::optional<M2Solution> m2VertexEqAugLagNMSimplex(
+    const std::optional<InputKinematics> &inp, double eps = EPSCONS,
+    unsigned int neval = NEVAL);
+
+/**
+ * M2ConsVertexEq variable using the augmented Lagrangian method
+ * with the Nelder-Mead simplex
+ */
+std::optional<M2Solution> m2ConsVertexEqAugLagNMSimplex(
     const std::optional<InputKinematics> &inp, double eps = EPSCONS,
     unsigned int neval = NEVAL);
 }  // namespace yam2

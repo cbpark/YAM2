@@ -12,4 +12,5 @@ examples/m2
 examples/m2cons
 examples/m2ccons
 examples/m2vertex
+examples/m2consvertex
 *.gz
