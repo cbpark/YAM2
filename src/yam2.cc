@@ -9,7 +9,6 @@
 #include <algorithm>  // std::any_of, std::copy_if
 #include <cmath>      // std::is_nan, std::fabs
 #include <exception>  // std::exception
-#include <functional>
 #include <optional>
 #include <ostream>
 #include <tuple>  // std::tuple
@@ -337,10 +336,13 @@ OptM2 m2VertexEqAugLagNMSimplex(const OptInpWithVertex &inp, double eps,
     return m2AugLagNMSimplex(constraint, inp, eps, neval);
 }
 
-using M2Func = std::function<OptM2(const OptInp &, double, int)>;
+template <typename Input>
+using M2Func = OptM2 (*)(const optional<Input> &, double, unsigned int);
 
-OptM2 m2MinStrategy1(M2Func fSQP, M2Func fAugLagBFGS, M2Func fAugLagNMSimplex,
-                     const OptInp &inp, double eps, unsigned int neval) {
+template <typename Input>
+OptM2 m2MinStrategy1(M2Func<Input> fSQP, M2Func<Input> fAugLagBFGS,
+                     M2Func<Input> fAugLagNMSimplex, const optional<Input> &inp,
+                     double eps, unsigned int neval) {
     auto m2_sqp = fSQP(inp, eps, neval);
     auto m2_auglag_bfgs = fAugLagBFGS(inp, eps, neval);
 
@@ -351,7 +353,7 @@ OptM2 m2MinStrategy1(M2Func fSQP, M2Func fAugLagBFGS, M2Func fAugLagNMSimplex,
         neval_objf_tot += m2_auglag_bfgs.value().neval_objf();
     }
 
-    // if both SQP and A-BFGS were successful
+    // if both SQP and AugLagBFGS were successful
     if (m2_sqp && m2_auglag_bfgs) {
         m2_sqp.value().set_neval_objf(neval_objf_tot);
         m2_auglag_bfgs.value().set_neval_objf(neval_objf_tot);
@@ -364,9 +366,20 @@ OptM2 m2MinStrategy1(M2Func fSQP, M2Func fAugLagBFGS, M2Func fAugLagNMSimplex,
         return m2_auglag_bfgs;
     }
 
-    // if both SQP and A-BFGS failed, use A-Simplex.
+    // if both SQP and AugLagBFGS failed, use AugLagNMSimplex.
     return fAugLagNMSimplex(inp, eps, neval);
 }
+
+template OptM2 m2MinStrategy1<InputKinematics>(
+    M2Func<InputKinematics> fSQP, M2Func<InputKinematics> fAugLagBFGS,
+    M2Func<InputKinematics> fAugLagNMSimplex, const OptInp &inp, double eps,
+    unsigned int neval);
+
+template OptM2 m2MinStrategy1<InputKinematicsWithVertex>(
+    M2Func<InputKinematicsWithVertex> fSQP,
+    M2Func<InputKinematicsWithVertex> fAugLagBFGS,
+    M2Func<InputKinematicsWithVertex> fAugLagNMSimplex,
+    const OptInpWithVertex &inp, double eps, unsigned int neval);
 
 OptM2 m2XX(const OptInp &inp, double eps, unsigned int neval) {
     return m2MinStrategy1(m2XXSQP, m2XXAugLagBFGS, m2XXAugLagNMSimplex, inp,
@@ -398,7 +411,9 @@ OptM2 m2Cons(const OptInp &inp, double eps, unsigned int neval) {
                           inp, eps, neval);
 }
 
-OptM2 m2MinStrategy2(const std::vector<OptM2> &m2sols, const OptInp &inp) {
+template <typename Input>
+OptM2 m2MinStrategy2(const std::vector<OptM2> &m2sols,
+                     const optional<Input> &inp) {
     std::vector<OptM2> m2sols_;
     std::copy_if(
         m2sols.cbegin(), m2sols.cend(), std::back_inserter(m2sols_),
@@ -424,6 +439,12 @@ OptM2 m2MinStrategy2(const std::vector<OptM2> &m2sols, const OptInp &inp) {
     }
 }
 
+template OptM2 m2MinStrategy2<InputKinematics>(const std::vector<OptM2> &m2sols,
+                                               const OptInp &inp);
+
+template OptM2 m2MinStrategy2<InputKinematicsWithVertex>(
+    const std::vector<OptM2> &m2sols, const OptInpWithVertex &inp);
+
 OptM2 m2CCons(const OptInp &inp, double eps, unsigned int neval) {
     std::vector<OptM2> m2sols;
     m2sols.push_back(m2CConsSQP(inp, eps, neval));
@@ -433,11 +454,8 @@ OptM2 m2CCons(const OptInp &inp, double eps, unsigned int neval) {
 }
 
 OptM2 m2VertexEq(const OptInpWithVertex &inp, double eps, unsigned int neval) {
-    std::vector<OptM2> m2sols;
-    m2sols.push_back(m2VertexEqSQP(inp, eps, neval));
-    m2sols.push_back(m2VertexEqAugLagBFGS(inp, eps, neval));
-    m2sols.push_back(m2VertexEqAugLagNMSimplex(inp, eps, neval));
-    return m2MinStrategy2(m2sols, inp);
+    return m2MinStrategy1(m2VertexEqSQP, m2VertexEqAugLagBFGS,
+                          m2VertexEqAugLagNMSimplex, inp, eps, neval);
 }
 
 std::ostream &operator<<(std::ostream &os, const M2Solution &sol) {
