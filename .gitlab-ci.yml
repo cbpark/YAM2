@@ -1,7 +1,6 @@
-image: gcc
-
-build:
+build (gcc):
   stage: build
+  image: gcc
   before_script:
     - apt update && apt -y install libnlopt-cxx-dev
   script:
@@ -12,5 +11,21 @@ build:
     - make examples/m2ccons
     - make examples/m2vertex
     - make examples/m2consvertex
+    - DESTDIR="$PWD/pkg" make install
+    - ls -R "$PWD/pkg"
+
+build (clang):
+  stage: build
+  image: ubuntu:20.04
+  before_script:
+    - apt update && apt -y install git clang libnlopt-cxx-dev
+  script:
+    - CXX=clang make
+    - CXX=clang make lib
+    - CXX=clang make examples/m2
+    - CXX=clang make examples/m2cons
+    - CXX=clang make examples/m2ccons
+    - CXX=clang make examples/m2vertex
+    - CXX=clang make examples/m2consvertex
     - DESTDIR="$PWD/pkg" make install
     - ls -R "$PWD/pkg"
