@@ -381,6 +381,37 @@ template OptM2 m2MinStrategy1<InputKinematicsWithVertex>(
     M2Func<InputKinematicsWithVertex> fAugLagNMSimplex,
     const OptInpWithVertex &inp, double eps, unsigned int neval);
 
+template <typename Input>
+OptM2 m2MinStrategy2(const std::vector<M2Func<Input>> &f_algos,
+                     const optional<Input> &inp, double eps,
+                     unsigned int neval) {
+    for (auto f_algo : f_algos) {
+        auto m2sol = f_algo(inp, eps, neval);
+        if (m2sol && inp) {
+            auto inpv = inp.value();
+            auto p_parent1 = inpv.p1() + m2sol.value().k1();
+            auto p_parent2 = inpv.p2() + m2sol.value().k2();
+
+            if (p_parent1.m() < inpv.mparent().value_or(Mass{1.0e+10}).value *
+                                    inpv.scale() * 1.05 &&
+                p_parent2.m() < inpv.mparent().value_or(Mass{1.0e+10}).value *
+                                    inpv.scale() * 1.05) {
+                return {m2sol};
+            }
+        }
+    }
+
+    return {};
+}
+
+template OptM2 m2MinStrategy2<InputKinematics>(
+    const std::vector<M2Func<InputKinematics>> &f_algos, const OptInp &inp,
+    double eps, unsigned int neval);
+
+template OptM2 m2MinStrategy2<InputKinematicsWithVertex>(
+    const std::vector<M2Func<InputKinematicsWithVertex>> &f_algos,
+    const OptInpWithVertex &inp, double eps, unsigned int neval);
+
 OptM2 m2XX(const OptInp &inp, double eps, unsigned int neval) {
     return m2MinStrategy1(m2XXSQP, m2XXAugLagBFGS, m2XXAugLagNMSimplex, inp,
                           eps, neval);
@@ -411,46 +442,10 @@ OptM2 m2Cons(const OptInp &inp, double eps, unsigned int neval) {
                           inp, eps, neval);
 }
 
-template <typename Input>
-OptM2 m2MinStrategy2(const std::vector<OptM2> &m2sols,
-                     const optional<Input> &inp) {
-    std::vector<OptM2> m2sols_;
-    std::copy_if(
-        m2sols.cbegin(), m2sols.cend(), std::back_inserter(m2sols_),
-        [&](OptM2 m2sol) {
-            if (m2sol && inp) {
-                auto inp_ = inp.value();
-                auto p_parent1 = inp_.p1() + m2sol.value().k1();
-                auto p_parent2 = inp_.p2() + m2sol.value().k2();
-                return p_parent1.m() <
-                           inp_.mparent().value_or(Mass{1.0e+10}).value *
-                               inp_.scale() * 1.05 &&
-                       p_parent2.m() <
-                           inp_.mparent().value_or(Mass{1.0e+10}).value *
-                               inp_.scale() * 1.05;
-            }
-            return false;
-        });
-
-    if (!m2sols_.empty()) {
-        return {m2sols_[0]};
-    } else {
-        return {};
-    }
-}
-
-template OptM2 m2MinStrategy2<InputKinematics>(const std::vector<OptM2> &m2sols,
-                                               const OptInp &inp);
-
-template OptM2 m2MinStrategy2<InputKinematicsWithVertex>(
-    const std::vector<OptM2> &m2sols, const OptInpWithVertex &inp);
-
 OptM2 m2CCons(const OptInp &inp, double eps, unsigned int neval) {
-    std::vector<OptM2> m2sols;
-    m2sols.push_back(m2CConsSQP(inp, eps, neval));
-    m2sols.push_back(m2CConsAugLagBFGS(inp, eps, neval));
-    m2sols.push_back(m2CConsAugLagNMSimplex(inp, eps, neval));
-    return m2MinStrategy2(m2sols, inp);
+    std::vector<M2Func<InputKinematics>> f_algos{m2CConsSQP, m2CConsAugLagBFGS,
+                                                 m2CConsAugLagNMSimplex};
+    return m2MinStrategy2(f_algos, inp, eps, neval);
 }
 
 OptM2 m2VertexEq(const OptInpWithVertex &inp, double eps, unsigned int neval) {
