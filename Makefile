@@ -16,7 +16,8 @@ LIBSRC 	  := $(wildcard $(SRCDIR)/*.cc)
 LIBOBJ 	  := $(LIBSRC:.cc=.o)
 EXE    	  := examples/m2 \
 	examples/m2cons exmaples/m2ccons \
-	examples/m2vertex examples/m2consvertex
+	examples/m2vertex examples/m2consvertex \
+	examples/m2vertex_ineq
 ifeq ($(UNAME), Darwin)
 SHAREDLIB := $(LIBDIR)/lib$(PKGNAME).dylib
 else

@@ -13,4 +13,5 @@ examples/m2cons
 examples/m2ccons
 examples/m2vertex
 examples/m2consvertex
+examples/m2vertex_ineq
 *.gz

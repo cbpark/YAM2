@@ -95,13 +95,18 @@ std::optional<M2Solution> m2CCons(const std::optional<InputKinematics> &inp,
                                   double eps = EPSCONS,
                                   unsigned int neval = NEVAL);
 
-/** The M2 variable with the vertex constraints */
+/** The M2 variable with the vertex constraints (equality) */
 std::optional<M2Solution> m2VertexEq(
     const std::optional<InputKinematicsWithVertex> &inp, double eps = EPSCONS,
     unsigned int neval = NEVAL);
 
 /** The M2 variable with the sqrt(s) and vertex constraints */
 std::optional<M2Solution> m2ConsVertexEq(
+    const std::optional<InputKinematicsWithVertex> &inp, double eps = EPSCONS,
+    unsigned int neval = NEVAL);
+
+/** The M2 variable with the vertex constraints (inequality) */
+std::optional<M2Solution> m2VertexIneq(
     const std::optional<InputKinematicsWithVertex> &inp, double eps = EPSCONS,
     unsigned int neval = NEVAL);
 
@@ -143,6 +148,11 @@ std::optional<M2Solution> m2VertexEqSQP(
 
 /** M2ConsVertexEq variable using the SQP method */
 std::optional<M2Solution> m2ConsVertexEqSQP(
+    const std::optional<InputKinematicsWithVertex> &inp, double eps = EPSCONS,
+    unsigned int neval = NEVAL);
+
+/** M2VertexIneq variable using the SQP method */
+std::optional<M2Solution> m2VertexIneqSQP(
     const std::optional<InputKinematicsWithVertex> &inp, double eps = EPSCONS,
     unsigned int neval = NEVAL);
 
@@ -198,6 +208,14 @@ std::optional<M2Solution> m2VertexEqAugLagBFGS(
  * update
  */
 std::optional<M2Solution> m2ConsVertexEqAugLagBFGS(
+    const std::optional<InputKinematicsWithVertex> &inp, double eps = EPSCONS,
+    unsigned int neval = NEVAL);
+
+/**
+ * M2VertexIneq variable using the augmented Lagrangian method with the BFGS
+ * update
+ */
+std::optional<M2Solution> m2VertexIneqAugLagBFGS(
     const std::optional<InputKinematicsWithVertex> &inp, double eps = EPSCONS,
     unsigned int neval = NEVAL);
 
