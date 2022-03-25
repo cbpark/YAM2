@@ -4,7 +4,8 @@
 
 #include "constraint.h"
 
-#include <cmath>         // std::pow, std::tan
+#include <cmath>         // std::pow, std::tan, std::acos
+#include <utility>       // std::pair
 #include "gradient.h"    // m2Func, m2Func1, m2Func2
 #include "input.h"       // InputKinematics, deltaSqrtS
 #include "invisibles.h"  // mkInvisibles
@@ -131,5 +132,53 @@ double constraintVertex1Phi(const NLoptVar &x, NLoptVar &grad, void *input) {
     }
 
     return parent1.phi() - inp->vertex1().phi();
+}
+
+double acos(double x) {
+    if (x < -1.0) { return M_PI; }
+    if (x > 1.0) { return 0.0; }
+    return std::acos(x);
+}
+
+std::pair<double, Gradient> dotVertex1(const NLoptVar &x,
+                                       const InputKinematicsWithVertex &inp) {
+    auto parent1 = getParent1(x, inp);
+    auto parent1_norm_vec = parent1.normalize();
+
+    double vdot = parent1_norm_vec.dot(inp.vertex1());
+
+    double d = 1.0 - vdot * vdot;
+    if (d < 1.0e-10) { d = 1.0e-10; }
+    double dacos = -1.0 / std::sqrt(d);
+
+    double dk1x = inp.vertex1().px() - parent1_norm_vec.px() * vdot;
+    double dk1y = inp.vertex1().py() - parent1_norm_vec.py() * vdot;
+    double dk1z = inp.vertex1().pz() - parent1_norm_vec.pz() * vdot;
+    double dk2z = 0.0;
+    Gradient grad{dk1x, dk1y, dk1z, dk2z};
+    grad *= dacos / parent1.norm();
+
+    return {vdot, grad};
+}
+
+double constraintVertex1Upper(const NLoptVar &x, NLoptVar &grad, void *input) {
+    const auto *inp = reinterpret_cast<InputKinematicsWithVertex *>(input);
+    const auto &[vdot, d] = dotVertex1(x, *inp);
+
+    if (!grad.empty()) { d.set_gradient(grad); }
+
+    return acos(vdot) - inp->delta_theta_max();
+}
+
+double constraintVertex1Lower(const NLoptVar &x, NLoptVar &grad, void *input) {
+    const auto *inp = reinterpret_cast<InputKinematicsWithVertex *>(input);
+    auto [vdot, d] = dotVertex1(x, *inp);
+
+    if (!grad.empty()) {
+        d = -d;
+        d.set_gradient(grad);
+    }
+
+    return -acos(vdot) - inp->delta_theta_max();
 }
 }  // namespace yam2

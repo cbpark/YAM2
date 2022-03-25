@@ -9,7 +9,7 @@
 #include "variables.h"  // NLoptVar
 
 namespace yam2 {
-typedef double (*Constraint)(const NLoptVar &x, NLoptVar &grad, void *input);
+using Constraint = double (*)(const NLoptVar &x, NLoptVar &grad, void *input);
 
 using Constraints = std::vector<Constraint>;
 
@@ -39,6 +39,12 @@ double constraintVertex1Theta(const NLoptVar &x, NLoptVar &grad, void *input);
 
 /** constraint: \hat phi */
 double constraintVertex1Phi(const NLoptVar &x, NLoptVar &grad, void *input);
+
+/** constraint: acos(parent1 . v) < delta_theta_max */
+double constraintVertex1Upper(const NLoptVar &x, NLoptVar &grad, void *input);
+
+/** constraint: acos(parent1 . v) > -delta_theta_max */
+double constraintVertex1Lower(const NLoptVar &x, NLoptVar &grad, void *input);
 }  // namespace yam2
 
 #endif  // YAM2_SRC_CONSTRAINT_H_
