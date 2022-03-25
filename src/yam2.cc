@@ -165,53 +165,63 @@ OptM2 m2XXSQP(const OptInp &inp, double eps, unsigned int neval) {
 }
 
 OptM2 m2CXSQP(const OptInp &inp, double eps, unsigned int neval) {
-    const Constraints constraint{constraintA};
-    return m2SQP(constraint, Constraints(), inp, eps, neval);
+    const Constraints constraint_eq{constraintA};
+    return m2SQP(constraint_eq, Constraints(), inp, eps, neval);
 }
 
 OptM2 m2XCSQP(const OptInp &inp, double eps, unsigned int neval) {
-    const Constraints constraint{constraintB};
-    return m2SQP(constraint, Constraints(), inp, eps, neval);
+    const Constraints constraint_eq{constraintB};
+    return m2SQP(constraint_eq, Constraints(), inp, eps, neval);
 }
 
 OptM2 m2CCSQP(const OptInp &inp, double eps, unsigned int neval) {
-    const Constraints constraint{constraintA, constraintB};
-    return m2SQP(constraint, Constraints(), inp, eps, neval);
+    const Constraints constraint_eq{constraintA, constraintB};
+    return m2SQP(constraint_eq, Constraints(), inp, eps, neval);
 }
 
 OptM2 m2CRSQP(const OptInp &inp, double eps, unsigned int neval) {
-    const Constraints constraint{constraintA, constraintR1, constraintR2};
-    return m2SQP(constraint, Constraints(), inp, eps, neval);
+    const Constraints constraint_eq{constraintA, constraintR1, constraintR2};
+    return m2SQP(constraint_eq, Constraints(), inp, eps, neval);
 }
 
 OptM2 m2ConsSQP(const OptInp &inp, double eps, unsigned int neval) {
-    const Constraints constraint{constraintSqrtS};
-    return m2SQP(constraint, Constraints(), inp, eps, neval);
+    const Constraints constraint_eq{constraintSqrtS};
+    return m2SQP(constraint_eq, Constraints(), inp, eps, neval);
 }
 
 OptM2 m2CConsSQP(const OptInp &inp, double eps, unsigned int neval) {
-    const Constraints constraint{constraintSqrtS, constraintA1, constraintA2};
-    return m2SQP(constraint, Constraints(), inp, eps, neval);
+    const Constraints constraint_eq{constraintSqrtS, constraintA1,
+                                    constraintA2};
+    return m2SQP(constraint_eq, Constraints(), inp, eps, neval);
 }
 
 OptM2 m2VertexEqSQP(const OptInpWithVertex &inp, double eps,
                     unsigned int neval) {
-    const Constraints constraint{constraintVertex1Theta, constraintVertex1Phi};
-    return m2SQP(constraint, Constraints(), inp, eps, neval);
+    const Constraints constraint_eq{constraintVertex1Theta,
+                                    constraintVertex1Phi};
+    return m2SQP(constraint_eq, Constraints(), inp, eps, neval);
 }
 
 OptM2 m2ConsVertexEqSQP(const OptInpWithVertex &inp, double eps,
                         unsigned int neval) {
-    const Constraints constraint{constraintSqrtS, constraintVertex1Theta,
-                                 constraintVertex1Phi};
-    return m2SQP(constraint, Constraints(), inp, eps, neval);
+    const Constraints constraint_eq{constraintSqrtS, constraintVertex1Theta,
+                                    constraintVertex1Phi};
+    return m2SQP(constraint_eq, Constraints(), inp, eps, neval);
 }
 
 OptM2 m2VertexIneqSQP(const OptInpWithVertex &inp, double eps,
                       unsigned int neval) {
-    const Constraints constraint{constraintVertex1Upper,
-                                 constraintVertex1Lower};
-    return m2SQP(Constraints(), constraint, inp, eps, neval);
+    const Constraints constraint_ineq{constraintVertex1Upper,
+                                      constraintVertex1Lower};
+    return m2SQP(Constraints(), constraint_ineq, inp, eps, neval);
+}
+
+OptM2 m2ConsVertexIneqSQP(const OptInpWithVertex &inp, double eps,
+                          unsigned int neval) {
+    const Constraints constraint_eq{constraintSqrtS};
+    const Constraints constraint_ineq{constraintVertex1Upper,
+                                      constraintVertex1Lower};
+    return m2SQP(constraint_eq, constraint_ineq, inp, eps, neval);
 }
 
 template <typename Input>
@@ -291,53 +301,63 @@ OptM2 m2XXAugLagBFGS(const OptInp &inp, double eps, unsigned int neval) {
 }
 
 OptM2 m2CXAugLagBFGS(const OptInp &inp, double eps, unsigned int neval) {
-    const Constraints constraint{constraintA};
-    return m2AugLagBFGS(constraint, Constraints(), inp, eps, neval);
+    const Constraints constraint_eq{constraintA};
+    return m2AugLagBFGS(constraint_eq, Constraints(), inp, eps, neval);
 }
 
 OptM2 m2XCAugLagBFGS(const OptInp &inp, double eps, unsigned int neval) {
-    const Constraints constraint{constraintB};
-    return m2AugLagBFGS(constraint, Constraints(), inp, eps, neval);
+    const Constraints constraint_eq{constraintB};
+    return m2AugLagBFGS(constraint_eq, Constraints(), inp, eps, neval);
 }
 
 OptM2 m2CCAugLagBFGS(const OptInp &inp, double eps, unsigned int neval) {
-    const Constraints constraint{constraintA, constraintB};
-    return m2AugLagBFGS(constraint, Constraints(), inp, eps, neval);
+    const Constraints constraint_eq{constraintA, constraintB};
+    return m2AugLagBFGS(constraint_eq, Constraints(), inp, eps, neval);
 }
 
 OptM2 m2CRAugLagBFGS(const OptInp &inp, double eps, unsigned int neval) {
-    const Constraints constraint{constraintA, constraintR1, constraintR2};
-    return m2AugLagBFGS(constraint, Constraints(), inp, eps, neval);
+    const Constraints constraint_eq{constraintA, constraintR1, constraintR2};
+    return m2AugLagBFGS(constraint_eq, Constraints(), inp, eps, neval);
 }
 
 OptM2 m2ConsAugLagBFGS(const OptInp &inp, double eps, unsigned int neval) {
-    const Constraints constraint{constraintSqrtS};
-    return m2AugLagBFGS(constraint, Constraints(), inp, eps, neval);
+    const Constraints constraint_eq{constraintSqrtS};
+    return m2AugLagBFGS(constraint_eq, Constraints(), inp, eps, neval);
 }
 
 OptM2 m2CConsAugLagBFGS(const OptInp &inp, double eps, unsigned int neval) {
-    const Constraints constraint{constraintSqrtS, constraintA1, constraintA2};
-    return m2AugLagBFGS(constraint, Constraints(), inp, eps, neval);
+    const Constraints constraint_eq{constraintSqrtS, constraintA1,
+                                    constraintA2};
+    return m2AugLagBFGS(constraint_eq, Constraints(), inp, eps, neval);
 }
 
 OptM2 m2VertexEqAugLagBFGS(const OptInpWithVertex &inp, double eps,
                            unsigned int neval) {
-    const Constraints constraint{constraintVertex1Theta, constraintVertex1Phi};
-    return m2AugLagBFGS(constraint, Constraints(), inp, eps, neval);
+    const Constraints constraint_eq{constraintVertex1Theta,
+                                    constraintVertex1Phi};
+    return m2AugLagBFGS(constraint_eq, Constraints(), inp, eps, neval);
 }
 
 OptM2 m2ConsVertexEqAugLagBFGS(const OptInpWithVertex &inp, double eps,
                                unsigned int neval) {
-    const Constraints constraint{constraintSqrtS, constraintVertex1Theta,
-                                 constraintVertex1Phi};
-    return m2AugLagBFGS(constraint, Constraints(), inp, eps, neval);
+    const Constraints constraint_eq{constraintSqrtS, constraintVertex1Theta,
+                                    constraintVertex1Phi};
+    return m2AugLagBFGS(constraint_eq, Constraints(), inp, eps, neval);
 }
 
 OptM2 m2VertexIneqAugLagBFGS(const OptInpWithVertex &inp, double eps,
                              unsigned int neval) {
-    const Constraints constraint{constraintVertex1Upper,
-                                 constraintVertex1Lower};
-    return m2AugLagBFGS(Constraints(), constraint, inp, eps, neval);
+    const Constraints constraint_ineq{constraintVertex1Upper,
+                                      constraintVertex1Lower};
+    return m2AugLagBFGS(Constraints(), constraint_ineq, inp, eps, neval);
+}
+
+OptM2 m2ConsVertexIneqAugLagBFGS(const OptInpWithVertex &inp, double eps,
+                                 unsigned int neval) {
+    const Constraints constraint_eq{constraintSqrtS};
+    const Constraints constraint_ineq{constraintVertex1Upper,
+                                      constraintVertex1Lower};
+    return m2AugLagBFGS(constraint_eq, constraint_ineq, inp, eps, neval);
 }
 
 OptM2 m2AugLagNMSimplex(const Constraints &cfs_eq, const Constraints &cfs_ineq,
@@ -350,47 +370,49 @@ OptM2 m2XXAugLagNMSimplex(const OptInp &inp, double eps, unsigned int neval) {
 }
 
 OptM2 m2CXAugLagNMSimplex(const OptInp &inp, double eps, unsigned int neval) {
-    const Constraints constraint{constraintA};
-    return m2AugLagNMSimplex(constraint, Constraints(), inp, eps, neval);
+    const Constraints constraint_eq{constraintA};
+    return m2AugLagNMSimplex(constraint_eq, Constraints(), inp, eps, neval);
 }
 
 OptM2 m2XCAugLagNMSimplex(const OptInp &inp, double eps, unsigned int neval) {
-    const Constraints constraint{constraintB};
-    return m2AugLagNMSimplex(constraint, Constraints(), inp, eps, neval);
+    const Constraints constraint_eq{constraintB};
+    return m2AugLagNMSimplex(constraint_eq, Constraints(), inp, eps, neval);
 }
 
 OptM2 m2CCAugLagNMSimplex(const OptInp &inp, double eps, unsigned int neval) {
-    const Constraints constraint{constraintA, constraintB};
-    return m2AugLagNMSimplex(constraint, Constraints(), inp, eps, neval);
+    const Constraints constraint_eq{constraintA, constraintB};
+    return m2AugLagNMSimplex(constraint_eq, Constraints(), inp, eps, neval);
 }
 
 OptM2 m2CRAugLagNMSimplex(const OptInp &inp, double eps, unsigned int neval) {
-    const Constraints constraint{constraintA, constraintR1, constraintR2};
-    return m2AugLagNMSimplex(constraint, Constraints(), inp, eps, neval);
+    const Constraints constraint_eq{constraintA, constraintR1, constraintR2};
+    return m2AugLagNMSimplex(constraint_eq, Constraints(), inp, eps, neval);
 }
 
 OptM2 m2ConsAugLagNMSimplex(const OptInp &inp, double eps, unsigned int neval) {
-    const Constraints constraint{constraintSqrtS};
-    return m2AugLagNMSimplex(constraint, Constraints(), inp, eps, neval);
+    const Constraints constraint_eq{constraintSqrtS};
+    return m2AugLagNMSimplex(constraint_eq, Constraints(), inp, eps, neval);
 }
 
 OptM2 m2CConsAugLagNMSimplex(const OptInp &inp, double eps,
                              unsigned int neval) {
-    const Constraints constraint{constraintSqrtS, constraintA1, constraintA2};
-    return m2AugLagNMSimplex(constraint, Constraints(), inp, eps, neval);
+    const Constraints constraint_eq{constraintSqrtS, constraintA1,
+                                    constraintA2};
+    return m2AugLagNMSimplex(constraint_eq, Constraints(), inp, eps, neval);
 }
 
 OptM2 m2VertexEqAugLagNMSimplex(const OptInpWithVertex &inp, double eps,
                                 unsigned int neval) {
-    const Constraints constraint{constraintVertex1Theta, constraintVertex1Phi};
-    return m2AugLagNMSimplex(constraint, Constraints(), inp, eps, neval);
+    const Constraints constraint_eq{constraintVertex1Theta,
+                                    constraintVertex1Phi};
+    return m2AugLagNMSimplex(constraint_eq, Constraints(), inp, eps, neval);
 }
 
 OptM2 m2ConsVertexEqAugLagNMSimplex(const OptInpWithVertex &inp, double eps,
                                     unsigned int neval) {
-    const Constraints constraint{constraintSqrtS, constraintVertex1Theta,
-                                 constraintVertex1Phi};
-    return m2AugLagNMSimplex(constraint, Constraints(), inp, eps, neval);
+    const Constraints constraint_eq{constraintSqrtS, constraintVertex1Theta,
+                                    constraintVertex1Phi};
+    return m2AugLagNMSimplex(constraint_eq, Constraints(), inp, eps, neval);
 }
 
 template <typename Input>
@@ -438,6 +460,8 @@ template OptM2 m2MinStrategy1<InputKinematicsWithVertex>(
     M2Func<InputKinematicsWithVertex> fAugLagNMSimplex,
     const OptInpWithVertex &inp, double eps, unsigned int neval);
 
+// Strategy 2: if the first algorithm works and it doesn't exceed the parent
+// particle mass (input), return the result.
 template <typename Input>
 OptM2 m2MinStrategy2(const std::vector<M2Func<Input>> &f_algos,
                      const optional<Input> &inp, double eps,
@@ -469,6 +493,7 @@ template OptM2 m2MinStrategy2<InputKinematicsWithVertex>(
     const std::vector<M2Func<InputKinematicsWithVertex>> &f_algos,
     const OptInpWithVertex &inp, double eps, unsigned int neval);
 
+// Strategy 3: if the first algorithm in the list works, return the result.
 template <typename Input>
 OptM2 m2MinStrategy3(const std::vector<M2Func<Input>> &f_algos,
                      const optional<Input> &inp, double eps,
@@ -542,6 +567,13 @@ OptM2 m2VertexIneq(const OptInpWithVertex &inp, double eps,
                    unsigned int neval) {
     std::vector<M2Func<InputKinematicsWithVertex>> f_algos{
         m2VertexIneqAugLagBFGS, m2VertexIneqSQP};
+    return m2MinStrategy3(f_algos, inp, eps, neval);
+}
+
+OptM2 m2ConsVertexIneq(const OptInpWithVertex &inp, double eps,
+                       unsigned int neval) {
+    std::vector<M2Func<InputKinematicsWithVertex>> f_algos{
+        m2ConsVertexIneqAugLagBFGS, m2ConsVertexIneqSQP};
     return m2MinStrategy3(f_algos, inp, eps, neval);
 }
 

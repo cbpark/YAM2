@@ -1,5 +1,5 @@
 PKGNAME   := YAM2
-VERSION   := 0.3.1
+VERSION   := 0.3.2
 ARCHIVE   := $(PKGNAME)-$(VERSION)
 SRCDIR    := src
 LIBDIR    := lib
@@ -17,7 +17,7 @@ LIBOBJ 	  := $(LIBSRC:.cc=.o)
 EXE    	  := examples/m2 \
 	examples/m2cons exmaples/m2ccons \
 	examples/m2vertex examples/m2consvertex \
-	examples/m2vertex_ineq
+	examples/m2vertex_ineq examples/m2consvertex_ineq
 ifeq ($(UNAME), Darwin)
 SHAREDLIB := $(LIBDIR)/lib$(PKGNAME).dylib
 else
