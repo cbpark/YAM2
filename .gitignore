@@ -8,6 +8,7 @@
 *cache
 bin
 lib
+dest*
 examples/m2
 examples/m2cons
 examples/m2ccons
