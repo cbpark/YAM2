@@ -60,7 +60,7 @@ In Linux, `libYAM2.so`, while in macOS, `libYAM2.dylib` will be generated in the
 R__LOAD_LIBRARY(/usr/local/lib/libYAM2.so)
 R__LOAD_LIBRARY(/usr/lib/libnlopt.so)
 
-gSystem->AddIncludePath("/usr/local/include");
+gSystem->AddIncludePath("/usr/local/include/YAM2");
 ```
 
 Modify the lines appropriately to adjust the paths to the shared library and the include path.
