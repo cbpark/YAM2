@@ -2,7 +2,7 @@ build (gcc):
   stage: build
   image: gcc
   before_script:
-    - apt update && apt -y install libnlopt-cxx-dev
+    - apt update && apt -y install libnlopt-cxx-dev cmake
   script:
     - make
     - make lib
@@ -15,12 +15,13 @@ build (gcc):
     - make examples/m2consvertex_ineq
     - DESTDIR="$PWD/pkg" make install
     - ls -R "$PWD/pkg"
+    - cd build && cmake -DCMAKE_BUILD_TYPE=Debug .. && make VERBOSE=1
 
 build (clang):
   stage: build
   image: ubuntu:20.04
   before_script:
-    - apt update && apt -y install build-essential clang libnlopt-cxx-dev
+    - apt update && apt -y install build-essential clang cmake libnlopt-cxx-dev
   script:
     - CXX=clang++ make
     - CXX=clang++ make lib
@@ -33,3 +34,4 @@ build (clang):
     - CXX=clang++ make examples/m2consvertex_ineq
     - DESTDIR="$PWD/pkg" make install
     - ls -R "$PWD/pkg"
+    - cd build && cmake -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_BUILD_TYPE=Debug .. && make VERBOSE=1
