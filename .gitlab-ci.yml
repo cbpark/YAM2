@@ -2,7 +2,7 @@ build (gcc):
   stage: build
   image: gcc
   before_script:
-    - apt update && apt -y install libnlopt-cxx-dev cmake
+    - apt -qq update && apt -y -qq install libnlopt-cxx-dev cmake
   script:
     - make
     - make lib
@@ -21,7 +21,8 @@ build (clang):
   stage: build
   image: ubuntu:20.04
   before_script:
-    - apt update && apt -y install build-essential clang cmake libnlopt-cxx-dev
+    - apt -qq update
+    - DEBIAN_FRONTEND=noninteractive apt -y -qq install build-essential clang cmake libnlopt-cxx-dev
   script:
     - CXX=clang++ make
     - CXX=clang++ make lib
