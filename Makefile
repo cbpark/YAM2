@@ -1,5 +1,7 @@
+# Copyright (c) 2022 Chan Beom Park <cbpark@gmail.com>
+
 PKGNAME   := YAM2
-VERSION   := 0.3.2
+VERSION   := 0.3.3
 ARCHIVE   := $(PKGNAME)-$(VERSION)
 SRCDIR    := src
 LIBDIR    := lib

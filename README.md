@@ -32,6 +32,8 @@ sudo zypper install nlopt
 
 For Ubuntu prior to 20.04 LTS (Focal Fossa), install `libnlopt-dev`. (Check whether there exists `/usr/include/nlopt.hpp`.) In CentOS, the [EPEL](https://fedoraproject.org/wiki/EPEL) repository must be installed and enabled. In macOS, one can install NLopt using [Homebrew](https://brew.sh/). We have tested our codes with the NLopt version >= 2.6.2.
 
+If you are more comfortable with [CMake](https://cmake.org), skip the below instruction and go directly to **Installation using CMake**.
+
 The source code of the YAM2 library can be built by running `make`. If the path to NLopt is `/usr/local`, append the path to the `make` command:
 
 ```
@@ -64,6 +66,18 @@ gSystem->AddIncludePath("/usr/local/include/YAM2");
 ```
 
 Modify the lines appropriately to adjust the paths to the shared library and the include path.
+
+### Installation using CMake
+
+Building and installing using CMake are supported as well. If the path to NLopt is `/usr/local` and the installation path is `/usr`, run
+
+```
+cd build
+cmake -Dnlopt_DIR=/usr/local -DCMAKE_INSTALL_PREFIX=/usr/local ..
+make
+```
+
+Then, `sudo make install` will install the library and header files.
 
 ## How to use
 
