@@ -2,7 +2,7 @@
  *  Copyright (c) 2020 Chan Beom Park <cbpark@gmail.com>
  */
 
-#include "input.h"
+#include "YAM2/input.h"
 
 #include <nlopt.hpp>  // for the NLopt API
 
@@ -13,10 +13,10 @@
 #include <optional>
 #include <vector>
 
-#include "gradient.h"    // mTotGrad
-#include "invisibles.h"  // mkInvisibles
-#include "momentum.h"    // FourMomentum, TransverseMomentum, Mass
-#include "variables.h"   // NLoptVar, mkVariables
+#include "YAM2/invisibles.h"  // mkInvisibles
+#include "YAM2/momentum.h"    // FourMomentum, TransverseMomentum, Mass
+#include "YAM2/variables.h"   // NLoptVar, mkVariables
+#include "gradient.h"         // mTotGrad
 
 using std::vector;
 

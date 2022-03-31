@@ -1,11 +1,12 @@
 # Copyright (c) 2022 Chan Beom Park <cbpark@gmail.com>
 
 PKGNAME   := YAM2
-VERSION   := 0.3.3
+VERSION   := 0.3.4
 ARCHIVE   := $(PKGNAME)-$(VERSION)
 SRCDIR    := src
 LIBDIR    := lib
-CXXFLAGS  := -g -O2 -Wall -Wextra -std=c++17 -pedantic -I$(SRCDIR) $(CXXFLAGS)
+INCDIR    := include
+CXXFLAGS  := -g -O2 -Wall -Wextra -std=c++17 -pedantic -I$(INCDIR) $(CXXFLAGS)
 LIBS      := -lm
 AR        := ar crs
 MKDIR     := mkdir -p
@@ -27,7 +28,7 @@ SHAREDLIB := $(LIBDIR)/lib$(PKGNAME).so
 endif
 
 DESTDIR   ?= /usr/local
-HEADERS   := $(wildcard $(SRCDIR)/*.h)
+HEADERS   := $(wildcard $(INCDIR)/YAM2/*.h)
 
 # NLopt (https://nlopt.readthedocs.io/)
 NLOPT ?= /usr
@@ -42,7 +43,7 @@ endif
 
 all: $(LIB)
 
-$(LIB): CXXFLAGS += -I$(NLOPT)/include -fPIC
+$(LIB): CXXFLAGS += -I$(SRCDIR) -I$(NLOPT)/include -fPIC
 $(LIB): $(LIBOBJ)
 	$(MKDIR) $(LIBDIR)
 	$(AR) $@ $^

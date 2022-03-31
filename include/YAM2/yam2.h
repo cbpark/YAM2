@@ -8,7 +8,6 @@
 #include <ostream>
 
 #include "input.h"
-
 #include "invisibles.h"  // Invisibles, mkInvisibles
 #include "momentum.h"    // FourMomentum
 #include "variables.h"   // Variables

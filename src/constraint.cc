@@ -2,15 +2,15 @@
  *  Copyright (c) 2020 Chan Beom Park <cbpark@gmail.com>
  */
 
-#include "constraint.h"
+#include "YAM2/constraint.h"
 
-#include <cmath>         // std::pow, std::tan, std::acos
-#include <utility>       // std::pair
-#include "gradient.h"    // m2Func, m2Func1, m2Func2
-#include "input.h"       // InputKinematics, deltaSqrtS
-#include "invisibles.h"  // mkInvisibles
-#include "momentum.h"    // SpatialMomentum
-#include "variables.h"   // mkVariables, NLoptVar
+#include <cmath>              // std::pow, std::tan, std::acos
+#include <utility>            // std::pair
+#include "YAM2/input.h"       // InputKinematics, deltaSqrtS
+#include "YAM2/invisibles.h"  // mkInvisibles
+#include "YAM2/momentum.h"    // SpatialMomentum
+#include "YAM2/variables.h"   // mkVariables, NLoptVar
+#include "gradient.h"         // m2Func, m2Func1, m2Func2
 
 namespace yam2 {
 double constraintEq(const InputKinematics &inp, const FourMomentum &p1,

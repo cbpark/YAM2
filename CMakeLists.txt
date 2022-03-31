@@ -3,7 +3,7 @@
 cmake_minimum_required(VERSION 3.10)
 
 project(YAM2
-  VERSION 0.3.3
+  VERSION 0.3.4
   DESCRIPTION "Yet another library for the M2 variables"
   HOMEPAGE_URL "https://github.com/cbpark/YAM2"
   LANGUAGES CXX)

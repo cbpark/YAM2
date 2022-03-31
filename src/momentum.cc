@@ -2,7 +2,7 @@
  *  Copyright (c) 2020 Chan Beom Park <cbpark@gmail.com>
  */
 
-#include "momentum.h"
+#include "YAM2/momentum.h"
 
 #include <ostream>
 

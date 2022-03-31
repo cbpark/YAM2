@@ -3,7 +3,7 @@
  */
 
 #include <iostream>
-#include "yam2.h"
+#include "YAM2/yam2.h"
 
 int main() {
     /**

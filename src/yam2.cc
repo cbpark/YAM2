@@ -2,7 +2,7 @@
  *  Copyright (c) 2020 Chan Beom Park <cbpark@gmail.com>
  */
 
-#include "yam2.h"
+#include "YAM2/yam2.h"
 
 #include <nlopt.hpp>  // for the NLopt API
 
@@ -14,11 +14,11 @@
 #include <tuple>  // std::tuple
 #include <vector>
 
-#include "constraint.h"  // Constraints
-#include "gradient.h"    // m2Func
-#include "input.h"       // InputKinematics
-#include "invisibles.h"  // mkInvisibles
-#include "variables.h"   // Variables, mkVariables, NLoptVar
+#include "YAM2/constraint.h"  // Constraints
+#include "YAM2/input.h"       // InputKinematics
+#include "YAM2/invisibles.h"  // mkInvisibles
+#include "YAM2/variables.h"   // Variables, mkVariables, NLoptVar
+#include "gradient.h"         // m2Func
 
 using std::optional;
 

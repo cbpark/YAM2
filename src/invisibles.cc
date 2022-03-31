@@ -2,11 +2,11 @@
  *  Copyright (c) 2020 Chan Beom Park <cbpark@gmail.com>
  */
 
-#include "invisibles.h"
+#include "YAM2/invisibles.h"
 
-#include "input.h"      // InputKinematics
-#include "momentum.h"   // FourMomentum
-#include "variables.h"  // Variables
+#include "YAM2/input.h"      // InputKinematics
+#include "YAM2/momentum.h"   // FourMomentum
+#include "YAM2/variables.h"  // Variables
 
 namespace yam2 {
 Invisibles mkInvisibles(const InputKinematics &inp, const Variables &var,

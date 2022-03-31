@@ -81,10 +81,10 @@ Then, `sudo make install` will install the library and header files.
 
 ## How to use
 
-The interfaces for using YAM2 are defined in the header file [`yam2.h`](./src/yam2.h). Users have to add the header to their analysis code through include directive.
+The interfaces for using YAM2 are defined in the header file [`yam2.h`](./include/YAM2/yam2.h). Users have to add the header to their analysis code through include directive.
 
 ``` c++
-#include <yam2.h>
+#include <YAM2/yam2.h>
 ```
 
 The type signature of the function for calculating M<sub>2CC</sub> can be seen in the following function declaration.
@@ -95,9 +95,9 @@ std::optional<M2Solution> m2CCSQP(
     double eps = EPS, int neval = NEVAL);
 ```
 
-It will calculate M<sub>2CC</sub> using the sequential quadratic programming (SQP) method. For M<sub>2XC</sub>, the function to use is [`m2XCSQP`](./src/yam2.h). The function for calculating M<sub>2CC</sub> using the augmented Lagrangian method with the BFGS update is [`m2CCAugLagBFGS`](./src/yam2.h).
+It will calculate M<sub>2CC</sub> using the sequential quadratic programming (SQP) method. For M<sub>2XC</sub>, the function to use is [`m2XCSQP`](./include/YAM2/yam2.h). The function for calculating M<sub>2CC</sub> using the augmented Lagrangian method with the BFGS update is [`m2CCAugLagBFGS`](./include/YAM2/yam2.h).
 
-In the function declaration given above, one can see that the return type of the function is [`std::optional`](https://en.cppreference.com/w/cpp/utility/optional) of [`M2Solution`](./src/yam2.h). The class template `std::optional` causes a null value if the function has failed, or otherwise, it returns the contained value, that is, `M2Solution` in our case. The function fails if the input is incorrect or the function has eventually failed to find a minimum.
+In the function declaration given above, one can see that the return type of the function is [`std::optional`](https://en.cppreference.com/w/cpp/utility/optional) of [`M2Solution`](./include/YAM2/yam2.h). The class template `std::optional` causes a null value if the function has failed, or otherwise, it returns the contained value, that is, `M2Solution` in our case. The function fails if the input is incorrect or the function has eventually failed to find a minimum.
 
 Once the calculation of the M<sub>2</sub> function is successful, the result can be extracted by the `value` method of `std::optional`.
 
@@ -117,7 +117,7 @@ As can be seen in the code snippet, the `M2Solution` class contains three method
 
 ### Input
 
-There are three inputs to the functions for calculating M<sub>2</sub>. The first one is an instance of [`InputKinematics`](./src/input.h), which is for the particle momentum configuration of the given event. It can be constructed by using the [`mkInput`](./src/input.h) function,
+There are three inputs to the functions for calculating M<sub>2</sub>. The first one is an instance of [`InputKinematics`](./include/YAM2/input.h), which is for the particle momentum configuration of the given event. It can be constructed by using the [`mkInput`](./include/YAM2/input.h) function,
 
 ``` c++
 std::optional<InputKinematics> mkInput(
@@ -134,7 +134,7 @@ A1 + A2 --> a1 B1 + a2 B2 --> a1 b1 C1 + a2 b2 C2.
 
 We stress that the order of the particle momenta should be set with care since it is not checked by the program: a<sub>i</sub> must be produced before having b<sub>i</sub> in the decay chain.
 
-In addition to them, users have to insert the missing transverse momentum and the invisible particle mass into `ptmiss` and `minv`, respectively. See [`momentum.h`](./src/momentum.h) for the class definitions of `FourMomentum`, `TransverseMomentum`, and `Mass`.
+In addition to them, users have to insert the missing transverse momentum and the invisible particle mass into `ptmiss` and `minv`, respectively. See [`momentum.h`](./include/YAM2/momentum.h) for the class definitions of `FourMomentum`, `TransverseMomentum`, and `Mass`.
 
 The input momentum configuration should be validated before substituting it into the functions for calculating M<sub>2</sub>. An example code snippet using the `mkInput` is given below.
 
@@ -147,7 +147,7 @@ if (!input) {
 const auto m2sol = yam2::m2CCSQP(input);
 ```
 
-The other optional inputs to the [`m2CCSQP`](./src/yam2.h) function in the above are the tolerance `eps` and the maximal number of iterations `neval`. These will be set to the default values defined in [`yam2.h`](./src/yam2.h) unless users supply any input. In the current version of YAM2, their default values are `EPS` = 10<sup>-3</sup> and `NEVAL` = 5000. We recommend users to read the example analysis code enclosed with YAM2, [`examples/m2.cc`](./examples/m2.cc), before starting to write their analysis code for the M<sub>2</sub> variables. If you want to build the example code, run `make examples/m2`.
+The other optional inputs to the [`m2CCSQP`](./include/YAM2/yam2.h) function in the above are the tolerance `eps` and the maximal number of iterations `neval`. These will be set to the default values defined in [`yam2.h`](./include/YAM2/yam2.h) unless users supply any input. In the current version of YAM2, their default values are `EPS` = 10<sup>-3</sup> and `NEVAL` = 5000. We recommend users to read the example analysis code enclosed with YAM2, [`examples/m2.cc`](./examples/m2.cc), before starting to write their analysis code for the M<sub>2</sub> variables. If you want to build the example code, run `make examples/m2`.
 
 Supposing that the file name of the analysis code is `m2.cc` and the path to YAM2 is `/usr/local`, an example command for building an analysis code using YAM2 is as follows.
 
@@ -174,7 +174,7 @@ const auto input =
 const auto m2sol = yam2::m2Cons(input);
 ```
 
-See [`m2cons.cc`](examples/m2cons.cc) for a more complete example code.
+See [`m2cons.cc`](./examples/m2cons.cc) for a more complete example code.
 
 It has also been used in the study of the tau decay to lepton + invisible particle(s) at Belle II. See [arXiv:2106.16236](https://arxiv.org/abs/2106.16236). At Belle II, the center-of-mass energy (`sqrt_s`) and the three-momenta of the overall system are fixed for all events. Therefore, one can add more constraints to the invisible particle momenta.
 

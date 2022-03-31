@@ -7,10 +7,10 @@
 #include <cmath>
 #include <ostream>
 #include <tuple>
-#include "input.h"       // InputKinematics
-#include "invisibles.h"  // Invisibles
-#include "momentum.h"    // FourMomentum
-#include "variables.h"   // Variables
+#include "YAM2/input.h"       // InputKinematics
+#include "YAM2/invisibles.h"  // Invisibles
+#include "YAM2/momentum.h"    // FourMomentum
+#include "YAM2/variables.h"   // Variables
 
 using std::pair;
 
