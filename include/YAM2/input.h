@@ -37,6 +37,8 @@ private:
     std::optional<double> ptot_z_;
     /** an energy scale of the process */
     double scale_;
+    /** the precision of the equality constraint */
+    double eps_constraint_ = 0.0;
 
 protected:
     InputKinematics(const FourMomentum &p1, const FourMomentum &p2,
@@ -80,6 +82,9 @@ public:
     std::optional<double> ptot_z() const { return ptot_z_; }
 
     double scale() const { return scale_; }
+
+    double eps_constraint() const { return eps_constraint_; }
+    void set_eps_constraint(double eps) { eps_constraint_ = eps; }
 
     /** the initial guess configuration */
     NLoptVar initial_guess(double eps, unsigned int neval);
