@@ -25,6 +25,8 @@ using std::optional;
 /** to count the number of object function evaluations. */
 unsigned int neval_objf = 0;
 
+unsigned int nloop = 0;
+
 namespace yam2 {
 using OptInp = optional<InputKinematics>;
 using OptInpWithVertex = optional<InputKinematicsWithVertex>;
@@ -58,51 +60,78 @@ double m2ObjF(const NLoptVar &x, NLoptVar &grad, void *input) {
  *  If NLopt throws an exception (such as nlopt::roundoff_limited),
  *  rescale the tolerance (* 10) and re-run the optimizer.
  */
-std::tuple<nlopt::result, double, NLoptVar> doOptimize(
+std::optional<std::tuple<nlopt::result, double, NLoptVar>> doOptimize(
     InputKinematics &inp, nlopt::opt &algorithm,
     optional<nlopt::opt> &subproblem, const NLoptVar &x0, double epsf) {
-    if (!subproblem) {
-        algorithm.set_ftol_rel(epsf);
-        algorithm.set_ftol_abs(epsf);
-    } else {
-        subproblem.value().set_ftol_rel(epsf);
-        subproblem.value().set_ftol_abs(epsf);
-        // perhaps, the outer algorithm doesn't need to rescale the tolerance.
-        // (check!)
-        algorithm.set_local_optimizer(subproblem.value());
-    }
-
     nlopt::result result;
     double minf;
     auto x{x0};
-    try {
-        neval_objf = 0;  // reset the number of evaluations
-        result = algorithm.optimize(x, minf);
-    } catch (std::exception &e) {
-        std::cerr << "doOptimize: exception from NLopt (" << e.what() << ")\n";
-        epsf *= 10.0;
-        doOptimize(inp, algorithm, subproblem, x0, epsf);
+
+    while (nloop < 3) {
+        if (!subproblem) {
+            algorithm.set_ftol_rel(epsf);
+            algorithm.set_ftol_abs(epsf);
+        } else {
+            subproblem.value().set_ftol_rel(epsf);
+            subproblem.value().set_ftol_abs(epsf);
+            // perhaps, the outer algorithm doesn't need to rescale the
+            // tolerance. (check!)
+            algorithm.set_local_optimizer(subproblem.value());
+        }
+
+        bool exception_caught = true;
+        try {
+            neval_objf = 0;  // reset the number of evaluations
+            result = algorithm.optimize(x, minf);
+            exception_caught = false;
+        } catch (std::exception &e) {
+#ifdef DEBUG
+            std::cerr << "doOptimize: exception from NLopt (" << e.what()
+                      << ")\n";
+#endif
+            epsf *= 10.0;
+            ++nloop;
+            // doOptimize(inp, algorithm, subproblem, x0, epsf);
+            continue;
+        }
+
+        if (!exception_caught) {
+            // the solution has NaN?
+            bool nan_sol = std::any_of(
+                x.cbegin(), x.cend(), [](double xv) { return std::isnan(xv); });
+            if (nan_sol) {
+#ifdef DEBUG
+                std::cerr << "doOptimize: error (NaN solution)! we increase "
+                             "tolerance ...\n";
+#endif
+                epsf *= 10.0;
+                ++nloop;
+                // doOptimize(inp, algorithm, subproblem, x0, epsf * 10.0);
+                continue;
+            }
+
+            // unphysical solution?
+            bool invalid_sol = std::any_of(x.cbegin(), x.cend(), [](double xv) {
+                return std::fabs(xv) > 1.0e10;
+            });
+            if (invalid_sol) {
+#ifdef DEBUG
+                std::cerr
+                    << "doOptimize: error (invalid solution)! we increase "
+                       "tolerance ...\n";
+#endif
+                epsf *= 10.0;
+                ++nloop;
+                // doOptimize(inp, algorithm, subproblem, x0, epsf * 10.0);
+                continue;
+            }
+
+            // success!
+            return {{result, minf, x}};
+        }
     }
 
-    // the solution has NaN?
-    bool nan_sol = std::any_of(x.cbegin(), x.cend(),
-                               [](double xv) { return std::isnan(xv); });
-    if (nan_sol) {
-        std::cerr
-            << "doOptimize: error (NaN solution)! we increase tolerance ...\n";
-        doOptimize(inp, algorithm, subproblem, x0, epsf * 10.0);
-    }
-
-    // unphysical solution?
-    bool invalid_sol = std::any_of(
-        x.cbegin(), x.cend(), [](double xv) { return std::fabs(xv) > 1.0e10; });
-    if (invalid_sol) {
-        std::cerr << "doOptimize: error (invalid solution)! we increase "
-                     "tolerance ...\n";
-        doOptimize(inp, algorithm, subproblem, x0, epsf * 10.0);
-    }
-
-    return {result, minf, x};
+    return {};
 }
 
 /**
@@ -138,9 +167,16 @@ OptM2 m2SQP(const Constraints &cfs_eq, const Constraints &cfs_ineq,
     x0.resize(dim);
     optional<nlopt::opt> subproblem;
     const double epsf = eps * 1.0e-3;
+
+    nloop = 0;
+    // const auto &[result, minf, x] =
+    //     doOptimize(inpv, algorithm, subproblem, x0, epsf);
+    auto minimum = doOptimize(inpv, algorithm, subproblem, x0, epsf);
+    // failed to find the minimum.
+    if (!minimum) { return {}; }
+
     // minf = the minimum value of the objective function.
-    const auto &[result, minf, x] =
-        doOptimize(inpv, algorithm, subproblem, x0, epsf);
+    const auto &[result, minf, x] = minimum.value();
 
     // if M2 <= 0, it has been failed to find the minimum.
     if (result < 0 || minf <= 0) { return {}; }  // if failed, return empty.
@@ -260,8 +296,16 @@ OptM2 m2AugLag(const nlopt::algorithm &subopt, const Constraints &cfs_eq,
 
     auto x0 = inpv.initial_guess(eps, neval);
     x0.resize(dim);
-    const auto &[result, minf, x] =
-        doOptimize(inpv, algorithm, subproblem, x0, epsf);
+
+    nloop = 0;
+    // const auto &[result, minf, x] =
+    //     doOptimize(inpv, algorithm, subproblem, x0, epsf);
+    auto minimum = doOptimize(inpv, algorithm, subproblem, x0, epsf);
+    // failed to find the minimum.
+    if (!minimum) { return {}; }
+
+    // minf = the minimum value of the objective function.
+    const auto &[result, minf, x] = minimum.value();
 
     if (result < 0 || minf <= 0) { return {}; }
 
@@ -474,9 +518,9 @@ OptM2 m2MinStrategy2(const std::vector<M2Func<Input>> &f_algos,
             auto p_parent2 = inpv.p2() + m2sol.value().k2();
 
             if (p_parent1.m() < inpv.mparent().value_or(Mass{1.0e+10}).value *
-                                    inpv.scale() * 1.05 &&
+                                    inpv.scale() * 1.02 &&
                 p_parent2.m() < inpv.mparent().value_or(Mass{1.0e+10}).value *
-                                    inpv.scale() * 1.05) {
+                                    inpv.scale() * 1.02) {
                 return {m2sol};
             }
         }
