@@ -61,8 +61,8 @@ double m2ObjF(const NLoptVar &x, NLoptVar &grad, void *input) {
  *  rescale the tolerance (* 10) and re-run the optimizer.
  */
 std::optional<std::tuple<nlopt::result, double, NLoptVar>> doOptimize(
-    InputKinematics &inp, nlopt::opt &algorithm,
-    optional<nlopt::opt> &subproblem, const NLoptVar &x0, double epsf) {
+    nlopt::opt &algorithm, optional<nlopt::opt> &subproblem, const NLoptVar &x0,
+    double epsf) {
     nlopt::result result;
     double minf;
     auto x{x0};
@@ -171,7 +171,7 @@ OptM2 m2SQP(const Constraints &cfs_eq, const Constraints &cfs_ineq,
     nloop = 0;
     // const auto &[result, minf, x] =
     //     doOptimize(inpv, algorithm, subproblem, x0, epsf);
-    auto minimum = doOptimize(inpv, algorithm, subproblem, x0, epsf);
+    auto minimum = doOptimize(algorithm, subproblem, x0, epsf);
     // failed to find the minimum.
     if (!minimum) { return {}; }
 
@@ -308,7 +308,7 @@ OptM2 m2AugLag(const nlopt::algorithm &subopt, const Constraints &cfs_eq,
     nloop = 0;
     // const auto &[result, minf, x] =
     //     doOptimize(inpv, algorithm, subproblem, x0, epsf);
-    auto minimum = doOptimize(inpv, algorithm, subproblem, x0, epsf);
+    auto minimum = doOptimize(algorithm, subproblem, x0, epsf);
     // failed to find the minimum.
     if (!minimum) { return {}; }
 
