@@ -67,6 +67,9 @@ std::optional<std::tuple<nlopt::result, double, NLoptVar>> doOptimize(
     double minf;
     auto x{x0};
 
+    // Suppose that the default tolerance is set to be 10^{-6}.
+    // If optimization fails, we will rescale the tolerance by 10 times,
+    // up to 10^{-3}.
     while (nloop < 3) {
         if (!subproblem) {
             algorithm.set_ftol_rel(epsf);
