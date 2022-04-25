@@ -43,8 +43,8 @@ int main() {
     }
     std::cout << "-- process information (scaled):\n" << input.value() << '\n';
 
-    // const auto m2sol = yam2::m2ConsVertexEqSQP(input, 1.0e-10, 1000);
-    const auto m2sol = yam2::m2ConsVertexEq(input, 1.0e-10, 1000);
+    // const auto m2sol = yam2::m2ConsVertexEqSQP(input, 1.0e-6, 1000);
+    const auto m2sol = yam2::m2ConsVertexEq(input, 1.0e-6, 1000);
 
     if (!m2sol) {
         std::cerr << "Failed to find minimum.\n";
