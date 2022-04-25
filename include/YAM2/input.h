@@ -37,8 +37,10 @@ private:
     std::optional<double> ptot_z_;
     /** an energy scale of the process */
     double scale_;
-    /** the precision of the equality constraint */
-    double eps_constraint_ = 0.0;
+    /** the precision of the equality constraint of the on-shell mass constraint
+     * for the parent particle masses. It can be set by set_eps_constraint.
+     */
+    double eps_constraint_ = 1.0e-2;
 
 protected:
     InputKinematics(const FourMomentum &p1, const FourMomentum &p2,
@@ -112,14 +114,14 @@ class InputKinematicsWithVertex : public InputKinematics {
 private:
     SpatialMomentum vertex1_;
     SpatialMomentum vertex2_;
-    double delta_theta_max_;
+    double delta_theta_;
 
     InputKinematicsWithVertex(const FourMomentum &p1, const FourMomentum &p2,
                               const FourMomentum &q1, const FourMomentum &q2,
                               const TransverseMomentum &ptmiss,
                               const Mass &minv, const SpatialMomentum &vertex1,
                               const SpatialMomentum &vertex2,
-                              double delta_theta_max,
+                              double delta_theta,
                               const std::optional<Mass> &mparent,
                               const std::optional<Mass> &mrel, double sqrt_s,
                               const std::optional<double> ptot_z, double scale)
@@ -127,7 +129,7 @@ private:
                           ptot_z, scale),
           vertex1_(vertex1),
           vertex2_(vertex2),
-          delta_theta_max_(delta_theta_max) {}
+          delta_theta_(delta_theta) {}
 
 public:
     InputKinematicsWithVertex() = delete;
@@ -135,7 +137,7 @@ public:
 
     SpatialMomentum vertex1() const { return vertex1_; }
     SpatialMomentum vertex2() const { return vertex2_; }
-    double delta_theta_max() const { return delta_theta_max_; }
+    double delta_theta() const { return delta_theta_; }
 
     virtual void show(std::ostream &os) const;
 
@@ -143,21 +145,21 @@ public:
         const std::vector<FourMomentum> &as,
         const std::vector<FourMomentum> &bs, const TransverseMomentum &ptmiss,
         const Mass &minv, const SpatialMomentum &vertex1,
-        const SpatialMomentum &vertex2, double delta_theta_max,
+        const SpatialMomentum &vertex2, double delta_theta,
         const std::optional<Mass> &mparent, const std::optional<Mass> &mrel,
         double sqrt_s, const std::optional<double> ptot_z);
 
     friend std::optional<InputKinematicsWithVertex> mkInputWithVertex(
         const std::optional<InputKinematics> &input_kinematics,
         const SpatialMomentum &vertex1, const SpatialMomentum &vertex2,
-        double delta_theta_max);
+        double delta_theta);
 };
 
 std::optional<InputKinematicsWithVertex> mkInputWithVertex(
     const std::vector<FourMomentum> &as, const std::vector<FourMomentum> &bs,
     const TransverseMomentum &ptmiss, const Mass &minv,
     const SpatialMomentum &vertex1, const SpatialMomentum &vertex2,
-    double delta_theta_max = 0.0,
+    double delta_theta = 0.0,
     const std::optional<Mass> &mparent = {Mass{0.0}},
     const std::optional<Mass> &mrel = {Mass{0.0}}, double sqrt_s = 0.0,
     const std::optional<double> ptot_z = {});
@@ -165,7 +167,7 @@ std::optional<InputKinematicsWithVertex> mkInputWithVertex(
 std::optional<InputKinematicsWithVertex> mkInputWithVertex(
     const std::optional<InputKinematics> &input_kinematics,
     const SpatialMomentum &vertex1, const SpatialMomentum &vertex2,
-    double delta_theta_max);
+    double delta_theta);
 
 /**
  *  the difference between the total invariant mass and the collision energy

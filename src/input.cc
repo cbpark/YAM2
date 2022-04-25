@@ -104,36 +104,35 @@ void InputKinematicsWithVertex::show(std::ostream &os) const {
     InputKinematics::show(os);
     os << "\nvertex1: " << vertex1_ << '\n';
     os << "vertex2: " << vertex2_ << '\n';
-    os << "delta_theta_max: " << delta_theta_max_;
+    os << "delta_theta: " << delta_theta_;
 }
 
 std::optional<InputKinematicsWithVertex> mkInputWithVertex(
     const vector<FourMomentum> &as, const vector<FourMomentum> &bs,
     const TransverseMomentum &ptmiss, const Mass &minv,
     const SpatialMomentum &vertex1, const SpatialMomentum &vertex2,
-    double delta_theta_max, const std::optional<Mass> &mparent,
+    double delta_theta, const std::optional<Mass> &mparent,
     const std::optional<Mass> &mrel, double sqrt_s,
     const std::optional<double> ptot_z) {
     auto input_kinematics =
         mkInput(as, bs, ptmiss, minv, mparent, mrel, sqrt_s, ptot_z);
     return mkInputWithVertex(input_kinematics.value(), vertex1, vertex2,
-                             delta_theta_max);
+                             delta_theta);
 }
 
 std::optional<InputKinematicsWithVertex> mkInputWithVertex(
     const std::optional<InputKinematics> &input_kinematics,
     const SpatialMomentum &vertex1, const SpatialMomentum &vertex2,
-    double delta_theta_max) {
+    double delta_theta) {
     if (!input_kinematics) {
         std::cerr << "mkInputWithVertex: invalid input kinematics.\n";
         return {};
     }
 
-    if (delta_theta_max < 0.0) {
-        std::cerr << "mkInputWithVertex: delta_theta_max must be positive.\n";
+    if (delta_theta < 0.0) {
+        std::cerr << "mkInputWithVertex: delta_theta must be positive.\n";
         return {};
     }
-
     const auto v1 = vertex1.normalize();
     const auto v2 = vertex2.normalize();
 
@@ -145,7 +144,7 @@ std::optional<InputKinematicsWithVertex> mkInputWithVertex(
              input_kinematics.value().minv(),
              v1,
              v2,
-             delta_theta_max,
+             delta_theta,
              {input_kinematics.value().mparent()},
              {input_kinematics.value().mrel()},
              input_kinematics.value().sqrt_s(),
