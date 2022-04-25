@@ -109,6 +109,13 @@ std::optional<M2Solution> m2ConsVertexEq(
     const std::optional<InputKinematicsWithVertex> &inp, double eps = EPSX,
     unsigned int neval = NEVAL);
 
+/** The M2 variable with the sqrt(s), on-shell mass for parent particles, and
+ * vertex constraints
+ */
+std::optional<M2Solution> m2CConsVertexEq(
+    const std::optional<InputKinematicsWithVertex> &inp, double eps = EPSX,
+    unsigned int neval = NEVAL);
+
 /** The M2 variable with the vertex constraints (inequality) */
 std::optional<M2Solution> m2VertexIneq(
     const std::optional<InputKinematicsWithVertex> &inp, double eps = EPSX,
@@ -162,6 +169,11 @@ std::optional<M2Solution> m2VertexEqSQP(
 
 /** M2ConsVertexEq variable using the SQP method */
 std::optional<M2Solution> m2ConsVertexEqSQP(
+    const std::optional<InputKinematicsWithVertex> &inp, double eps = EPSX,
+    unsigned int neval = NEVAL);
+
+/** M2CConsVertexEq variable using the SQP method */
+std::optional<M2Solution> m2CConsVertexEqSQP(
     const std::optional<InputKinematicsWithVertex> &inp, double eps = EPSX,
     unsigned int neval = NEVAL);
 
@@ -235,6 +247,14 @@ std::optional<M2Solution> m2VertexEqAugLagBFGS(
  * update
  */
 std::optional<M2Solution> m2ConsVertexEqAugLagBFGS(
+    const std::optional<InputKinematicsWithVertex> &inp, double eps = EPSX,
+    unsigned int neval = NEVAL);
+
+/**
+ * M2CConsVertexEq variable using the augmented Lagrangian method with the BFGS
+ * update
+ */
+std::optional<M2Solution> m2CConsVertexEqAugLagBFGS(
     const std::optional<InputKinematicsWithVertex> &inp, double eps = EPSX,
     unsigned int neval = NEVAL);
 
@@ -323,6 +343,14 @@ std::optional<M2Solution> m2VertexEqAugLagNMSimplex(
  * with the Nelder-Mead simplex
  */
 std::optional<M2Solution> m2ConsVertexEqAugLagNMSimplex(
+    const std::optional<InputKinematicsWithVertex> &inp, double eps = EPSX,
+    unsigned int neval = NEVAL);
+
+/**
+ * M2CConsVertexEq variable using the augmented Lagrangian method
+ * with the Nelder-Mead simplex
+ */
+std::optional<M2Solution> m2CConsVertexEqAugLagNMSimplex(
     const std::optional<InputKinematicsWithVertex> &inp, double eps = EPSX,
     unsigned int neval = NEVAL);
 }  // namespace yam2

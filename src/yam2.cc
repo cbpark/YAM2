@@ -253,6 +253,13 @@ OptM2 m2ConsVertexEqSQP(const OptInpWithVertex &inp, double eps,
     return m2SQP(constraint_eq, Constraints(), inp, eps, neval);
 }
 
+OptM2 m2CConsVertexEqSQP(const OptInpWithVertex &inp, double eps,
+                         unsigned int neval) {
+    const Constraints constraint_eq{constraintSqrtS, constraintA1,
+                                    constraintVertex1};
+    return m2SQP(constraint_eq, Constraints(), inp, eps, neval);
+}
+
 OptM2 m2VertexIneqSQP(const OptInpWithVertex &inp, double eps,
                       unsigned int neval) {
     const Constraints constraint_ineq{constraintVertex1Upper,
@@ -403,6 +410,13 @@ OptM2 m2ConsVertexEqAugLagBFGS(const OptInpWithVertex &inp, double eps,
     return m2AugLagBFGS(constraint_eq, Constraints(), inp, eps, neval);
 }
 
+OptM2 m2CConsVertexEqAugLagBFGS(const OptInpWithVertex &inp, double eps,
+                                unsigned int neval) {
+    const Constraints constraint_eq{constraintSqrtS, constraintA1,
+                                    constraintVertex1};
+    return m2AugLagBFGS(constraint_eq, Constraints(), inp, eps, neval);
+}
+
 OptM2 m2VertexIneqAugLagBFGS(const OptInpWithVertex &inp, double eps,
                              unsigned int neval) {
     const Constraints constraint_ineq{constraintVertex1Upper,
@@ -468,6 +482,13 @@ OptM2 m2VertexEqAugLagNMSimplex(const OptInpWithVertex &inp, double eps,
 OptM2 m2ConsVertexEqAugLagNMSimplex(const OptInpWithVertex &inp, double eps,
                                     unsigned int neval) {
     const Constraints constraint_eq{constraintSqrtS, constraintVertex1};
+    return m2AugLagNMSimplex(constraint_eq, Constraints(), inp, eps, neval);
+}
+
+OptM2 m2CConsVertexEqAugLagNMSimplex(const OptInpWithVertex &inp, double eps,
+                                     unsigned int neval) {
+    const Constraints constraint_eq{constraintSqrtS, constraintA1,
+                                    constraintVertex1};
     return m2AugLagNMSimplex(constraint_eq, Constraints(), inp, eps, neval);
 }
 
@@ -560,6 +581,44 @@ template OptM2 m2MinStrategy2<InputKinematicsWithVertex>(
     const std::vector<M2Func<InputKinematicsWithVertex>> &f_algos,
     const OptInpWithVertex &inp, double eps, unsigned int neval);
 
+// Strategy 21: the same as Strategy 2 but applying the on-shell condition
+// to the first decay chain.
+template <typename Input>
+OptM2 m2MinStrategy21(const std::vector<M2Func<Input>> &f_algos,
+                      const optional<Input> &inp, double eps,
+                      unsigned int neval) {
+    for (auto f_algo : f_algos) {
+        auto m2sol = f_algo(inp, eps, neval);
+        if (m2sol && inp) {
+            auto inpv = inp.value();
+            auto p_parent1 = inpv.p1() * inpv.scale() + m2sol.value().k1();
+            double m_parent1 = p_parent1.m();
+
+            double m_parent_a1 =
+                inpv.mparent().value_or(Mass{1.0e+10}).value * inpv.scale();
+
+            // the reconstructed parent mass should be within 2%.
+            double upper = 1.02;
+            double lower = 0.98;
+
+            if (m_parent1 < m_parent_a1 * upper &&
+                m_parent1 > m_parent_a1 * lower) {
+                return {m2sol};
+            }
+        }
+    }
+
+    return {};
+}
+
+template OptM2 m2MinStrategy21<InputKinematics>(
+    const std::vector<M2Func<InputKinematics>> &f_algos, const OptInp &inp,
+    double eps, unsigned int neval);
+
+template OptM2 m2MinStrategy21<InputKinematicsWithVertex>(
+    const std::vector<M2Func<InputKinematicsWithVertex>> &f_algos,
+    const OptInpWithVertex &inp, double eps, unsigned int neval);
+
 // Strategy 3: if the first algorithm in the list works, return the result.
 template <typename Input>
 OptM2 m2MinStrategy3(const std::vector<M2Func<Input>> &f_algos,
@@ -630,13 +689,21 @@ OptM2 m2VertexEq(const OptInpWithVertex &inp, double eps, unsigned int neval) {
 
 OptM2 m2ConsVertexEq(const OptInpWithVertex &inp, double eps,
                      unsigned int neval) {
-    // TODO: It seems that the SQP method doesn't work well.
+    // TODO: It seems that the SQP method doesn't work well (why?)
     // std::vector<M2Func<InputKinematicsWithVertex>> f_algos{
     //     m2ConsVertexEqSQP, m2ConsVertexEqAugLagBFGS,
     //     m2ConsVertexEqAugLagNMSimplex};
     std::vector<M2Func<InputKinematicsWithVertex>> f_algos{
         m2ConsVertexEqAugLagBFGS, m2ConsVertexEqAugLagNMSimplex};
-    return m2MinStrategy2(f_algos, inp, eps, neval);
+    // Strategy 3: if the first algorithm in the list works, return the result.
+    return m2MinStrategy3(f_algos, inp, eps, neval);
+}
+
+OptM2 m2CConsVertexEq(const OptInpWithVertex &inp, double eps,
+                      unsigned int neval) {
+    std::vector<M2Func<InputKinematicsWithVertex>> f_algos{
+        m2CConsVertexEqAugLagBFGS, m2CConsVertexEqAugLagNMSimplex};
+    return m2MinStrategy21(f_algos, inp, eps, neval);
 }
 
 OptM2 m2VertexIneq(const OptInpWithVertex &inp, double eps,
