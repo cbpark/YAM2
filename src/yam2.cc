@@ -239,20 +239,17 @@ OptM2 m2CConsIneqSQP(const OptInp &inp, double eps, unsigned int neval) {
     const Constraints constraint_ineq{constraintA1Upper, constraintA1Lower,
                                       constraintA2Upper, constraintA2Lower};
     return m2SQP(constraint_eq, constraint_ineq, inp, eps, neval);
-    // return m2SQP(Constraints(), constraint_ineq, inp, eps, neval);
 }
 
 OptM2 m2VertexEqSQP(const OptInpWithVertex &inp, double eps,
                     unsigned int neval) {
-    const Constraints constraint_eq{constraintVertex1Theta,
-                                    constraintVertex1Phi};
+    const Constraints constraint_eq{constraintVertex1};
     return m2SQP(constraint_eq, Constraints(), inp, eps, neval);
 }
 
 OptM2 m2ConsVertexEqSQP(const OptInpWithVertex &inp, double eps,
                         unsigned int neval) {
-    const Constraints constraint_eq{constraintSqrtS, constraintVertex1Theta,
-                                    constraintVertex1Phi};
+    const Constraints constraint_eq{constraintSqrtS, constraintVertex1};
     return m2SQP(constraint_eq, Constraints(), inp, eps, neval);
 }
 
@@ -396,15 +393,13 @@ OptM2 m2CConsIneqAugLagBFGS(const OptInp &inp, double eps, unsigned int neval) {
 
 OptM2 m2VertexEqAugLagBFGS(const OptInpWithVertex &inp, double eps,
                            unsigned int neval) {
-    const Constraints constraint_eq{constraintVertex1Theta,
-                                    constraintVertex1Phi};
+    const Constraints constraint_eq{constraintVertex1};
     return m2AugLagBFGS(constraint_eq, Constraints(), inp, eps, neval);
 }
 
 OptM2 m2ConsVertexEqAugLagBFGS(const OptInpWithVertex &inp, double eps,
                                unsigned int neval) {
-    const Constraints constraint_eq{constraintSqrtS, constraintVertex1Theta,
-                                    constraintVertex1Phi};
+    const Constraints constraint_eq{constraintSqrtS, constraintVertex1};
     return m2AugLagBFGS(constraint_eq, Constraints(), inp, eps, neval);
 }
 
@@ -466,15 +461,13 @@ OptM2 m2CConsAugLagNMSimplex(const OptInp &inp, double eps,
 
 OptM2 m2VertexEqAugLagNMSimplex(const OptInpWithVertex &inp, double eps,
                                 unsigned int neval) {
-    const Constraints constraint_eq{constraintVertex1Theta,
-                                    constraintVertex1Phi};
+    const Constraints constraint_eq{constraintVertex1};
     return m2AugLagNMSimplex(constraint_eq, Constraints(), inp, eps, neval);
 }
 
 OptM2 m2ConsVertexEqAugLagNMSimplex(const OptInpWithVertex &inp, double eps,
                                     unsigned int neval) {
-    const Constraints constraint_eq{constraintSqrtS, constraintVertex1Theta,
-                                    constraintVertex1Phi};
+    const Constraints constraint_eq{constraintSqrtS, constraintVertex1};
     return m2AugLagNMSimplex(constraint_eq, Constraints(), inp, eps, neval);
 }
 
@@ -533,13 +526,24 @@ OptM2 m2MinStrategy2(const std::vector<M2Func<Input>> &f_algos,
         auto m2sol = f_algo(inp, eps, neval);
         if (m2sol && inp) {
             auto inpv = inp.value();
-            auto p_parent1 = inpv.p1() + m2sol.value().k1();
-            auto p_parent2 = inpv.p2() + m2sol.value().k2();
+            auto p_parent1 = inpv.p1() * inpv.scale() + m2sol.value().k1();
+            double m_parent1 = p_parent1.m();
+            auto p_parent2 = inpv.p2() * inpv.scale() + m2sol.value().k2();
+            double m_parent2 = p_parent2.m();
 
-            if (p_parent1.m() < inpv.mparent().value_or(Mass{1.0e+10}).value *
-                                    inpv.scale() * 1.02 &&
-                p_parent2.m() < inpv.mparent().value_or(Mass{1.0e+10}).value *
-                                    inpv.scale() * 1.02) {
+            double m_parent_a1 =
+                inpv.mparent().value_or(Mass{1.0e+10}).value * inpv.scale();
+            double m_parent_a2 =
+                inpv.mparent().value_or(Mass{1.0e+10}).value * inpv.scale();
+
+            // the reconstructed parent mass should be within 2%.
+            double upper = 1.02;
+            double lower = 0.98;
+
+            if (m_parent1 < m_parent_a1 * upper &&
+                m_parent1 > m_parent_a1 * lower &&
+                m_parent2 < m_parent_a2 * upper &&
+                m_parent2 > m_parent_a2 * lower) {
                 return {m2sol};
             }
         }
@@ -626,9 +630,12 @@ OptM2 m2VertexEq(const OptInpWithVertex &inp, double eps, unsigned int neval) {
 
 OptM2 m2ConsVertexEq(const OptInpWithVertex &inp, double eps,
                      unsigned int neval) {
+    // TODO: It seems that the SQP method doesn't work well.
+    // std::vector<M2Func<InputKinematicsWithVertex>> f_algos{
+    //     m2ConsVertexEqSQP, m2ConsVertexEqAugLagBFGS,
+    //     m2ConsVertexEqAugLagNMSimplex};
     std::vector<M2Func<InputKinematicsWithVertex>> f_algos{
-        m2ConsVertexEqSQP, m2ConsVertexEqAugLagBFGS,
-        m2ConsVertexEqAugLagNMSimplex};
+        m2ConsVertexEqAugLagBFGS, m2ConsVertexEqAugLagNMSimplex};
     return m2MinStrategy2(f_algos, inp, eps, neval);
 }
 

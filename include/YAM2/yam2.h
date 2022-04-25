@@ -91,32 +91,32 @@ std::optional<M2Solution> m2Cons(const std::optional<InputKinematics> &inp,
 
 /** The M2CCons variable */
 std::optional<M2Solution> m2CCons(const std::optional<InputKinematics> &inp,
-                                  double eps = EPSCONS,
+                                  double eps = EPSX,
                                   unsigned int neval = NEVAL);
 
 /** The M2CConsIneq variable */
 std::optional<M2Solution> m2CConsIneq(const std::optional<InputKinematics> &inp,
-                                      double eps = EPSCONS,
+                                      double eps = EPSX,
                                       unsigned int neval = NEVAL);
 
 /** The M2 variable with the vertex constraints (equality) */
 std::optional<M2Solution> m2VertexEq(
-    const std::optional<InputKinematicsWithVertex> &inp, double eps = EPSCONS,
+    const std::optional<InputKinematicsWithVertex> &inp, double eps = EPSX,
     unsigned int neval = NEVAL);
 
 /** The M2 variable with the sqrt(s) and vertex constraints */
 std::optional<M2Solution> m2ConsVertexEq(
-    const std::optional<InputKinematicsWithVertex> &inp, double eps = EPSCONS,
+    const std::optional<InputKinematicsWithVertex> &inp, double eps = EPSX,
     unsigned int neval = NEVAL);
 
 /** The M2 variable with the vertex constraints (inequality) */
 std::optional<M2Solution> m2VertexIneq(
-    const std::optional<InputKinematicsWithVertex> &inp, double eps = EPSCONS,
+    const std::optional<InputKinematicsWithVertex> &inp, double eps = EPSX,
     unsigned int neval = NEVAL);
 
 /** The M2 variable with the sqrt(s) and vertex constraints (inequality) */
 std::optional<M2Solution> m2ConsVertexIneq(
-    const std::optional<InputKinematicsWithVertex> &inp, double eps = EPSCONS,
+    const std::optional<InputKinematicsWithVertex> &inp, double eps = EPSX,
     unsigned int neval = NEVAL);
 
 /** M2XX variable using the SQP method */
@@ -147,32 +147,32 @@ std::optional<M2Solution> m2ConsSQP(const std::optional<InputKinematics> &inp,
 
 /** M2CCons variable using the SQP method */
 std::optional<M2Solution> m2CConsSQP(const std::optional<InputKinematics> &inp,
-                                     double eps = EPSCONS,
+                                     double eps = EPSX,
                                      unsigned int neval = NEVAL);
 
 /** M2CConsIneq variable using the SQP method */
 std::optional<M2Solution> m2CConsIneqSQP(
-    const std::optional<InputKinematics> &inp, double eps = EPSCONS,
+    const std::optional<InputKinematics> &inp, double eps = EPSX,
     unsigned int neval = NEVAL);
 
 /** M2VertexEq variable using the SQP method */
 std::optional<M2Solution> m2VertexEqSQP(
-    const std::optional<InputKinematicsWithVertex> &inp, double eps = EPSCONS,
+    const std::optional<InputKinematicsWithVertex> &inp, double eps = EPSX,
     unsigned int neval = NEVAL);
 
 /** M2ConsVertexEq variable using the SQP method */
 std::optional<M2Solution> m2ConsVertexEqSQP(
-    const std::optional<InputKinematicsWithVertex> &inp, double eps = EPSCONS,
+    const std::optional<InputKinematicsWithVertex> &inp, double eps = EPSX,
     unsigned int neval = NEVAL);
 
 /** M2VertexIneq variable using the SQP method */
 std::optional<M2Solution> m2VertexIneqSQP(
-    const std::optional<InputKinematicsWithVertex> &inp, double eps = EPSCONS,
+    const std::optional<InputKinematicsWithVertex> &inp, double eps = EPSX,
     unsigned int neval = NEVAL);
 
 /** M2ConsVertexIneq variable using the SQP method */
 std::optional<M2Solution> m2ConsVertexIneqSQP(
-    const std::optional<InputKinematicsWithVertex> &inp, double eps = EPSCONS,
+    const std::optional<InputKinematicsWithVertex> &inp, double eps = EPSX,
     unsigned int neval = NEVAL);
 
 /** M2XX variable using the augmented Lagrangian method with the BFGS update */
@@ -211,7 +211,7 @@ std::optional<M2Solution> m2ConsAugLagBFGS(
  * M2CCons variable using the augmented Lagrangian method with the BFGS update
  */
 std::optional<M2Solution> m2CConsAugLagBFGS(
-    const std::optional<InputKinematics> &inp, double eps = EPSCONS,
+    const std::optional<InputKinematics> &inp, double eps = EPSX,
     unsigned int neval = NEVAL);
 
 /**
@@ -219,7 +219,7 @@ std::optional<M2Solution> m2CConsAugLagBFGS(
  * update
  */
 std::optional<M2Solution> m2CConsIneqAugLagBFGS(
-    const std::optional<InputKinematics> &inp, double eps = EPSCONS,
+    const std::optional<InputKinematics> &inp, double eps = EPSX,
     unsigned int neval = NEVAL);
 
 /**
@@ -227,7 +227,7 @@ std::optional<M2Solution> m2CConsIneqAugLagBFGS(
  * update
  */
 std::optional<M2Solution> m2VertexEqAugLagBFGS(
-    const std::optional<InputKinematicsWithVertex> &inp, double eps = EPSCONS,
+    const std::optional<InputKinematicsWithVertex> &inp, double eps = EPSX,
     unsigned int neval = NEVAL);
 
 /**
@@ -235,7 +235,7 @@ std::optional<M2Solution> m2VertexEqAugLagBFGS(
  * update
  */
 std::optional<M2Solution> m2ConsVertexEqAugLagBFGS(
-    const std::optional<InputKinematicsWithVertex> &inp, double eps = EPSCONS,
+    const std::optional<InputKinematicsWithVertex> &inp, double eps = EPSX,
     unsigned int neval = NEVAL);
 
 /**
@@ -243,7 +243,7 @@ std::optional<M2Solution> m2ConsVertexEqAugLagBFGS(
  * update
  */
 std::optional<M2Solution> m2VertexIneqAugLagBFGS(
-    const std::optional<InputKinematicsWithVertex> &inp, double eps = EPSCONS,
+    const std::optional<InputKinematicsWithVertex> &inp, double eps = EPSX,
     unsigned int neval = NEVAL);
 
 /**
@@ -251,7 +251,7 @@ std::optional<M2Solution> m2VertexIneqAugLagBFGS(
  * update
  */
 std::optional<M2Solution> m2ConsVertexIneqAugLagBFGS(
-    const std::optional<InputKinematicsWithVertex> &inp, double eps = EPSCONS,
+    const std::optional<InputKinematicsWithVertex> &inp, double eps = EPSX,
     unsigned int neval = NEVAL);
 
 /**
@@ -299,7 +299,7 @@ std::optional<M2Solution> m2CRAugLagNMSimplex(
  * with the Nelder-Mead simplex
  */
 std::optional<M2Solution> m2ConsAugLagNMSimplex(
-    const std::optional<InputKinematics> &inp, double eps = EPSCONS,
+    const std::optional<InputKinematics> &inp, double eps = EPSX,
     unsigned int neval = NEVAL);
 
 /**
@@ -307,7 +307,7 @@ std::optional<M2Solution> m2ConsAugLagNMSimplex(
  * with the Nelder-Mead simplex
  */
 std::optional<M2Solution> m2CConsAugLagNMSimplex(
-    const std::optional<InputKinematics> &inp, double eps = EPSCONS,
+    const std::optional<InputKinematics> &inp, double eps = EPSX,
     unsigned int neval = NEVAL);
 
 /**
@@ -315,7 +315,7 @@ std::optional<M2Solution> m2CConsAugLagNMSimplex(
  * with the Nelder-Mead simplex
  */
 std::optional<M2Solution> m2VertexEqAugLagNMSimplex(
-    const std::optional<InputKinematicsWithVertex> &inp, double eps = EPSCONS,
+    const std::optional<InputKinematicsWithVertex> &inp, double eps = EPSX,
     unsigned int neval = NEVAL);
 
 /**
@@ -323,7 +323,7 @@ std::optional<M2Solution> m2VertexEqAugLagNMSimplex(
  * with the Nelder-Mead simplex
  */
 std::optional<M2Solution> m2ConsVertexEqAugLagNMSimplex(
-    const std::optional<InputKinematicsWithVertex> &inp, double eps = EPSCONS,
+    const std::optional<InputKinematicsWithVertex> &inp, double eps = EPSX,
     unsigned int neval = NEVAL);
 }  // namespace yam2
 

@@ -46,16 +46,16 @@ double constraintR2(const NLoptVar &x, NLoptVar &grad, void *input);
 /** constraint: (p1 + p2 + k1 + k2)^2 = s */
 double constraintSqrtS(const NLoptVar &x, NLoptVar &grad, void *input);
 
-/** constraint: \hat theta */
-double constraintVertex1Theta(const NLoptVar &x, NLoptVar &grad, void *input);
+/** constraint: acos(parent1 . v) = 0 */
+double constraintVertex1(const NLoptVar &x, NLoptVar &grad, void *input);
 
-/** constraint: \hat phi */
-double constraintVertex1Phi(const NLoptVar &x, NLoptVar &grad, void *input);
+/** constraint: acos(parent2 . v) = 0 */
+double constraintVertex2(const NLoptVar &x, NLoptVar &grad, void *input);
 
-/** constraint: acos(parent1 . v) < delta_theta_max */
+/** constraint: acos(parent1 . v) < delta_theta */
 double constraintVertex1Upper(const NLoptVar &x, NLoptVar &grad, void *input);
 
-/** constraint: acos(parent1 . v) > -delta_theta_max */
+/** constraint: acos(parent1 . v) > -delta_theta */
 double constraintVertex1Lower(const NLoptVar &x, NLoptVar &grad, void *input);
 }  // namespace yam2
 
