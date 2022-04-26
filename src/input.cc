@@ -78,21 +78,26 @@ std::optional<InputKinematics> mkInput(
 
     const auto p1 = ps.front(), p2 = ps.back();
     const auto q1 = bs.front(), q2 = bs.back();
-    const double e1 = p1.e(), e2 = p2.e();
-    const double etmiss_sq = ptmiss.ptsq() + 2.0 * minv.square();
-    const double scalesq = e1 * e1 + e2 * e2 + etmiss_sq;
 
-    if (scalesq <= 0.0) {
-        std::cerr << "mkInput: found zero or negative energy scale.\n";
-        return {};
+    double sval;
+    if (mparent) {
+        sval = mparent.value().value;
+    } else {
+        const double e1 = p1.e(), e2 = p2.e();
+        const double etmiss_sq = ptmiss.ptsq() + 2.0 * minv.square();
+        const double scalesq = e1 * e1 + e2 * e2 + etmiss_sq;
+
+        if (scalesq <= 0.0) {
+            std::cerr << "mkInput: found zero or negative energy scale.\n";
+            return {};
+        }
+        sval = 8.0 * std::sqrt(scalesq);  // scale > 0
     }
 
-    const double scale = 8.0 * std::sqrt(scalesq);  // scale > 0
-
-    return {{p1 / scale, p2 / scale, q1 / scale, q2 / scale, ptmiss / scale,
-             minv / scale, scaleIfExists(mparent, scale),
-             scaleIfExists(mrel, scale), sqrt_s / scale,
-             scaleIfExists(ptot_z, scale), scale}};
+    return {{p1 / sval, p2 / sval, q1 / sval, q2 / sval, ptmiss / sval,
+             minv / sval, scaleIfExists(mparent, sval),
+             scaleIfExists(mrel, sval), sqrt_s / sval,
+             scaleIfExists(ptot_z, sval), sval}};
 }
 
 std::ostream &operator<<(std::ostream &os, const InputKinematics &p) {
