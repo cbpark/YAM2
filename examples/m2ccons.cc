@@ -29,11 +29,8 @@ int main() {
     // the longitudinal momentum of B1 + B2.
     const double ptot_z = 0.0;  // CM frame
 
-    // we have only one-step decay, so it's necessary to fake the second step.
-    const auto zero = yam2::FourMomentum();
-
-    const auto input = yam2::mkInput({v1, v2}, {zero, zero}, ptmiss, m_invis,
-                                     {m_parent}, {}, sqrt_s, {ptot_z});
+    const auto input = yam2::mkInput(v1, v2, ptmiss, m_invis, {m_parent}, {},
+                                     sqrt_s, {ptot_z});
     if (!input) {
         std::cerr << "Invalid input.\n";
         return 1;

@@ -33,12 +33,9 @@ int main() {
 
     const double delta_theta_max = 0.15;
 
-    // we have only one-step decay, so it's necessary to fake the second step.
-    const auto zero = yam2::FourMomentum();
-
     const auto input = yam2::mkInputWithVertex(
-        {v1, v2}, {zero, zero}, ptmiss, m_invis, vertex1, vertex2,
-        delta_theta_max, {m_parent}, {}, sqrt_s, {ptot_z});
+        v1, v2, ptmiss, m_invis, vertex1, vertex2, delta_theta_max, {m_parent},
+        {}, sqrt_s, {ptot_z});
     if (!input) {
         std::cerr << "Invalid input.\n";
         return 1;
