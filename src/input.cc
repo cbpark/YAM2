@@ -51,7 +51,8 @@ void InputKinematics::show(std::ostream &os) const {
 
     if (mparent1_) { os << "M(parent1): " << mparent1_.value().value << '\n'; }
     if (mparent2_) { os << "M(parent2): " << mparent2_.value().value << '\n'; }
-    if (mrel_) { os << "M(relative): " << mrel_.value().value << '\n'; }
+    if (mrel1_) { os << "M(relative1): " << mrel1_.value().value << '\n'; }
+    if (mrel2_) { os << "M(relative2): " << mrel2_.value().value << '\n'; }
     if (sqrt_s_ > 0.0) { os << "sqrt(s): " << sqrt_s_ << '\n'; }
     if (ptot_z_) { os << "Pz: " << ptot_z_.value() << '\n'; }
 
@@ -62,8 +63,8 @@ std::optional<InputKinematics> mkInput(
     const vector<FourMomentum> &as, const vector<FourMomentum> &bs,
     const TransverseMomentum &ptmiss, const Mass &minv1, const Mass &minv2,
     const std::optional<Mass> &mparent1, const std::optional<Mass> &mparent2,
-    const std::optional<Mass> &mrel, double sqrt_s,
-    const std::optional<double> ptot_z) {
+    const std::optional<Mass> &mrel1, const std::optional<Mass> &mrel2,
+    double sqrt_s, const std::optional<double> ptot_z) {
     if (as.size() != 2 || bs.size() != 2) {
         std::cerr << "mkInput: Invalid number of visible particles.\n";
         return {};
@@ -104,8 +105,9 @@ std::optional<InputKinematics> mkInput(
 
     return {{p1 / sval, p2 / sval, q1 / sval, q2 / sval, ptmiss / sval,
              minv1 / sval, minv2 / sval, scaleIfExists(mparent1, sval),
-             scaleIfExists(mparent2, sval), scaleIfExists(mrel, sval),
-             sqrt_s / sval, scaleIfExists(ptot_z, sval), sval}};
+             scaleIfExists(mparent2, sval), scaleIfExists(mrel1, sval),
+             scaleIfExists(mrel2, sval), sqrt_s / sval,
+             scaleIfExists(ptot_z, sval), sval}};
 }
 
 std::ostream &operator<<(std::ostream &os, const InputKinematics &p) {
@@ -148,7 +150,8 @@ std::optional<InputKinematicsWithVertex> mkInputWithVertex(
              delta_theta,
              {input_kinematics.value().mparent1()},
              {input_kinematics.value().mparent2()},
-             {input_kinematics.value().mrel()},
+             {input_kinematics.value().mrel1()},
+             {input_kinematics.value().mrel2()},
              input_kinematics.value().sqrt_s(),
              input_kinematics.value().ptot_z(),
              input_kinematics.value().scale()}};

@@ -36,7 +36,7 @@ int main() {
 
     // the default tolerance is 1.0e-9.
     // const auto m2sol = yam2::m2ConsSQP(input, 1.0e-9);
-    const auto m2sol = yam2::m2ConsSQP(input);
+    const auto m2sol = yam2::m2Cons(input);
 
     // the other available methods are:
     // - the augmented Lagrangian method with BFGS:

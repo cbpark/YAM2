@@ -115,24 +115,25 @@ double constraintA2Lower(const NLoptVar &x, NLoptVar &grad, void *input) {
 }
 
 double constraintR(const InputKinematics &inp, const FourMomentum &q,
-                   GradFunc fmGrad, const NLoptVar &x, NLoptVar &grad) {
+                   const std::optional<Mass> &mrel, GradFunc fmGrad,
+                   const NLoptVar &x, NLoptVar &grad) {
     const auto var = mkVariables(x);
     const auto var_val = var.value();
     const auto ks = mkInvisibles(inp, var_val);
     const auto &[grad_, m_] = fmGrad(inp, q, ks);
 
     if (!grad.empty()) { grad_.set_gradient(grad); }
-    return m_ - inp.mrel().value_or(Mass{m_}).value;
+    return m_ - mrel.value_or(Mass{m_}).value;
 }
 
 double constraintR1(const NLoptVar &x, NLoptVar &grad, void *input) {
     auto *const inp = reinterpret_cast<InputKinematics *>(input);
-    return constraintR(*inp, inp->q1(), m2Func1, x, grad);
+    return constraintR(*inp, inp->q1(), inp->mrel1(), m2Func1, x, grad);
 }
 
 double constraintR2(const NLoptVar &x, NLoptVar &grad, void *input) {
     auto *const inp = reinterpret_cast<InputKinematics *>(input);
-    return constraintR(*inp, inp->q2(), m2Func2, x, grad);
+    return constraintR(*inp, inp->q2(), inp->mrel2(), m2Func2, x, grad);
 }
 
 double constraintSqrtS(const NLoptVar &x, NLoptVar &grad, void *input) {
