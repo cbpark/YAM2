@@ -565,9 +565,9 @@ OptM2 m2MinStrategy2(const std::vector<M2Func<Input>> &f_algos,
             double m_parent2 = p_parent2.m();
 
             double m_parent_a1 =
-                inpv.mparent().value_or(Mass{1.0e+10}).value * inpv.scale();
+                inpv.mparent1().value_or(Mass{1.0e+10}).value * inpv.scale();
             double m_parent_a2 =
-                inpv.mparent().value_or(Mass{1.0e+10}).value * inpv.scale();
+                inpv.mparent2().value_or(Mass{1.0e+10}).value * inpv.scale();
 
             // the reconstructed parent mass should be within 2%.
             double upper = 1.02;
@@ -607,7 +607,7 @@ OptM2 m2MinStrategy21(const std::vector<M2Func<Input>> &f_algos,
             double m_parent1 = p_parent1.m();
 
             double m_parent_a1 =
-                inpv.mparent().value_or(Mass{1.0e+10}).value * inpv.scale();
+                inpv.mparent1().value_or(Mass{1.0e+10}).value * inpv.scale();
 
             // the reconstructed parent mass should be within 2%.
             double upper = 1.02;

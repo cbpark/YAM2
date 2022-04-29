@@ -82,32 +82,36 @@ double constraintAPLower(const InputKinematics &inp, const FourMomentum &p,
 
 double constraintA1(const NLoptVar &x, NLoptVar &grad, void *input) {
     auto *const inp = reinterpret_cast<InputKinematics *>(input);
-    return constraintAP(*inp, inp->p1(), inp->mparent(), m2Func1, x, grad);
+    return constraintAP(*inp, inp->p1(), inp->mparent1(), m2Func1, x, grad);
 }
 
 double constraintA1Upper(const NLoptVar &x, NLoptVar &grad, void *input) {
     auto *const inp = reinterpret_cast<InputKinematics *>(input);
-    return constraintAPUpper(*inp, inp->p1(), inp->mparent(), m2Func1, x, grad);
+    return constraintAPUpper(*inp, inp->p1(), inp->mparent1(), m2Func1, x,
+                             grad);
 }
 
 double constraintA1Lower(const NLoptVar &x, NLoptVar &grad, void *input) {
     auto *const inp = reinterpret_cast<InputKinematics *>(input);
-    return constraintAPLower(*inp, inp->p1(), inp->mparent(), m2Func1, x, grad);
+    return constraintAPLower(*inp, inp->p1(), inp->mparent1(), m2Func1, x,
+                             grad);
 }
 
 double constraintA2(const NLoptVar &x, NLoptVar &grad, void *input) {
     auto *const inp = reinterpret_cast<InputKinematics *>(input);
-    return constraintAP(*inp, inp->p2(), inp->mparent(), m2Func2, x, grad);
+    return constraintAP(*inp, inp->p2(), inp->mparent2(), m2Func2, x, grad);
 }
 
 double constraintA2Upper(const NLoptVar &x, NLoptVar &grad, void *input) {
     auto *const inp = reinterpret_cast<InputKinematics *>(input);
-    return constraintAPUpper(*inp, inp->p2(), inp->mparent(), m2Func2, x, grad);
+    return constraintAPUpper(*inp, inp->p2(), inp->mparent2(), m2Func2, x,
+                             grad);
 }
 
 double constraintA2Lower(const NLoptVar &x, NLoptVar &grad, void *input) {
     auto *const inp = reinterpret_cast<InputKinematics *>(input);
-    return constraintAPLower(*inp, inp->p2(), inp->mparent(), m2Func2, x, grad);
+    return constraintAPLower(*inp, inp->p2(), inp->mparent2(), m2Func2, x,
+                             grad);
 }
 
 double constraintR(const InputKinematics &inp, const FourMomentum &q,

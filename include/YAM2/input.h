@@ -29,8 +29,10 @@ private:
     Mass minv1_;
     /** the input mass for the second invisible particle */
     Mass minv2_;
-    /** the input mass for the parent particle */
-    std::optional<Mass> mparent_;
+    /** the input mass for the first parent particle */
+    std::optional<Mass> mparent1_;
+    /** the input mass for the second parent particle */
+    std::optional<Mass> mparent2_;
     /** the input mass for the relative particle */
     std::optional<Mass> mrel_;
     /** collision energy (sqrt(s)) */
@@ -48,7 +50,8 @@ protected:
     InputKinematics(const FourMomentum &p1, const FourMomentum &p2,
                     const FourMomentum &q1, const FourMomentum &q2,
                     const TransverseMomentum &ptmiss, const Mass &minv1,
-                    const Mass &minv2, const std::optional<Mass> &mparent,
+                    const Mass &minv2, const std::optional<Mass> &mparent1,
+                    const std::optional<Mass> &mparent2,
                     const std::optional<Mass> &mrel, double sqrt_s,
                     const std::optional<double> ptot_z, double scale)
         : p1_(p1),
@@ -58,7 +61,8 @@ protected:
           ptmiss_(ptmiss),
           minv1_(minv1),
           minv2_(minv2),
-          mparent_(mparent),
+          mparent1_(mparent1),
+          mparent2_(mparent2),
           mrel_(mrel),
           sqrt_s_(sqrt_s),
           ptot_z_(ptot_z),
@@ -80,7 +84,8 @@ public:
     Mass minv2() const { return minv2_; }
     double minv2_square() const { return minv2_.square(); }
 
-    std::optional<Mass> mparent() const { return mparent_; }
+    std::optional<Mass> mparent1() const { return mparent1_; }
+    std::optional<Mass> mparent2() const { return mparent2_; }
 
     std::optional<Mass> mrel() const { return mrel_; }
 
@@ -102,7 +107,8 @@ public:
         const std::vector<FourMomentum> &as,
         const std::vector<FourMomentum> &bs, const TransverseMomentum &ptmiss,
         const Mass &minv1, const Mass &minv2,
-        const std::optional<Mass> &mparent, const std::optional<Mass> &mrel,
+        const std::optional<Mass> &mparent1,
+        const std::optional<Mass> &mparent2, const std::optional<Mass> &mrel,
         double sqrt_s, const std::optional<double> ptot_z);
 
     friend std::optional<InputKinematics> mkInput(
@@ -118,7 +124,8 @@ std::optional<InputKinematics> mkInput(const std::vector<FourMomentum> &as,
                                        const std::vector<FourMomentum> &bs,
                                        const TransverseMomentum &ptmiss,
                                        const Mass &minv1, const Mass &minv2,
-                                       const std::optional<Mass> &mparent = {},
+                                       const std::optional<Mass> &mparent1 = {},
+                                       const std::optional<Mass> &mparent2 = {},
                                        const std::optional<Mass> &mrel = {},
                                        double sqrt_s = 0.0,
                                        const std::optional<double> ptot_z = {});
@@ -129,8 +136,8 @@ inline std::optional<InputKinematics> mkInput(
     const std::optional<Mass> &mparent = {}, double sqrt_s = 0.0,
     const std::optional<double> ptot_z = {}) {
     const auto zero = FourMomentum();
-    return mkInput({p1, p2}, {zero, zero}, ptmiss, minv, minv, mparent, {},
-                   sqrt_s, ptot_z);
+    return mkInput({p1, p2}, {zero, zero}, ptmiss, minv, minv, mparent, mparent,
+                   {}, sqrt_s, ptot_z);
 }
 
 class InputKinematicsWithVertex : public InputKinematics {
@@ -144,10 +151,11 @@ private:
         const FourMomentum &q2, const TransverseMomentum &ptmiss,
         const Mass &minv1, const Mass &minv2, const SpatialMomentum &vertex1,
         const SpatialMomentum &vertex2, double delta_theta,
-        const std::optional<Mass> &mparent, const std::optional<Mass> &mrel,
+        const std::optional<Mass> &mparent1,
+        const std::optional<Mass> &mparent2, const std::optional<Mass> &mrel,
         double sqrt_s, const std::optional<double> ptot_z, double scale)
-        : InputKinematics(p1, p2, q1, q2, ptmiss, minv1, minv2, mparent, mrel,
-                          sqrt_s, ptot_z, scale),
+        : InputKinematics(p1, p2, q1, q2, ptmiss, minv1, minv2, mparent1,
+                          mparent2, mrel, sqrt_s, ptot_z, scale),
           vertex1_(vertex1),
           vertex2_(vertex2),
           delta_theta_(delta_theta) {}
@@ -172,7 +180,8 @@ public:
         const std::vector<FourMomentum> &bs, const TransverseMomentum &ptmiss,
         const Mass &minv1, const Mass &minv2, const SpatialMomentum &vertex1,
         const SpatialMomentum &vertex2, double delta_theta,
-        const std::optional<Mass> &mparent, const std::optional<Mass> &mrel,
+        const std::optional<Mass> &mparent1,
+        const std::optional<Mass> &mparent2, const std::optional<Mass> &mrel,
         double sqrt_s, const std::optional<double> ptot_z);
 
     friend std::optional<InputKinematicsWithVertex> mkInputWithVertex(
@@ -193,11 +202,12 @@ inline std::optional<InputKinematicsWithVertex> mkInputWithVertex(
     const std::vector<FourMomentum> &as, const std::vector<FourMomentum> &bs,
     const TransverseMomentum &ptmiss, const Mass &minv1, const Mass &minv2,
     const SpatialMomentum &vertex1, const SpatialMomentum &vertex2,
-    double delta_theta = 0.0, const std::optional<Mass> &mparent = {},
+    double delta_theta = 0.0, const std::optional<Mass> &mparent1 = {},
+    const std::optional<Mass> &mparent2 = {},
     const std::optional<Mass> &mrel = {}, double sqrt_s = 0.0,
     const std::optional<double> ptot_z = {}) {
-    auto input_kinematics =
-        mkInput(as, bs, ptmiss, minv1, minv2, mparent, mrel, sqrt_s, ptot_z);
+    auto input_kinematics = mkInput(as, bs, ptmiss, minv1, minv2, mparent1,
+                                    mparent2, mrel, sqrt_s, ptot_z);
     return mkInputWithVertex(input_kinematics, vertex1, vertex2, delta_theta);
 }
 
