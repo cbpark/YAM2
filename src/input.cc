@@ -46,7 +46,8 @@ void InputKinematics::show(std::ostream &os) const {
        << "q1: " << q1_ << '\n'
        << "q2: " << q2_ << '\n'
        << "ptmiss: " << ptmiss_ << '\n'
-       << "M(invisible): " << minv_.value << '\n';
+       << "M(invisible1): " << minv1_.value << '\n'
+       << "M(invisible2): " << minv2_.value << '\n';
 
     if (mparent_) { os << "M(parent): " << mparent_.value().value << '\n'; }
     if (mrel_) { os << "M(relative): " << mrel_.value().value << '\n'; }
@@ -58,7 +59,7 @@ void InputKinematics::show(std::ostream &os) const {
 
 std::optional<InputKinematics> mkInput(
     const vector<FourMomentum> &as, const vector<FourMomentum> &bs,
-    const TransverseMomentum &ptmiss, const Mass &minv,
+    const TransverseMomentum &ptmiss, const Mass &minv1, const Mass &minv2,
     const std::optional<Mass> &mparent, const std::optional<Mass> &mrel,
     double sqrt_s, const std::optional<double> ptot_z) {
     if (as.size() != 2 || bs.size() != 2) {
@@ -84,7 +85,8 @@ std::optional<InputKinematics> mkInput(
         sval = mparent.value().value;
     } else {
         const double e1 = p1.e(), e2 = p2.e();
-        const double etmiss_sq = ptmiss.ptsq() + 2.0 * minv.square();
+        const double etmiss_sq =
+            ptmiss.ptsq() + minv1.square() + minv2.square();
         const double scalesq = e1 * e1 + e2 * e2 + etmiss_sq;
 
         if (scalesq <= 0.0) {
@@ -99,7 +101,7 @@ std::optional<InputKinematics> mkInput(
     }
 
     return {{p1 / sval, p2 / sval, q1 / sval, q2 / sval, ptmiss / sval,
-             minv / sval, scaleIfExists(mparent, sval),
+             minv1 / sval, minv2 / sval, scaleIfExists(mparent, sval),
              scaleIfExists(mrel, sval), sqrt_s / sval,
              scaleIfExists(ptot_z, sval), sval}};
 }
@@ -137,7 +139,8 @@ std::optional<InputKinematicsWithVertex> mkInputWithVertex(
              input_kinematics.value().q1(),
              input_kinematics.value().q2(),
              input_kinematics.value().ptmiss(),
-             input_kinematics.value().minv(),
+             input_kinematics.value().minv1(),
+             input_kinematics.value().minv2(),
              v1,
              v2,
              delta_theta,

@@ -23,12 +23,12 @@ Invisibles mkInvisibles(const InputKinematics &inp, const Variables &var,
         k2z = var.k2z();
     }
 
-    const auto m{inp.minv()};
-
-    FourMomentum k1{m, k1x, k1y, k1z};
+    const auto m1{inp.minv1()};
+    FourMomentum k1{m1, k1x, k1y, k1z};
     k1 *= scale;
 
-    FourMomentum k2{m, k2x, k2y, k2z};
+    const auto m2{inp.minv2()};
+    FourMomentum k2{m2, k2x, k2y, k2z};
     k2 *= scale;
 
     return {k1, k2};
