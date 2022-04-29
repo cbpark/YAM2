@@ -112,15 +112,15 @@ public:
 std::optional<InputKinematics> mkInput(
     const std::vector<FourMomentum> &as, const std::vector<FourMomentum> &bs,
     const TransverseMomentum &ptmiss, const Mass &minv,
-    const std::optional<Mass> &mparent = {Mass{0.0}},
-    const std::optional<Mass> &mrel = {Mass{0.0}}, double sqrt_s = 0.0,
+    const std::optional<Mass> &mparent = {},
+    const std::optional<Mass> &mrel = {}, double sqrt_s = 0.0,
     const std::optional<double> ptot_z = {});
 
 std::optional<InputKinematics> mkInput(
     const FourMomentum &p1, const FourMomentum &p2,
     const TransverseMomentum &ptmiss, const Mass &minv,
-    const std::optional<Mass> &mparent = {Mass{0.0}},
-    const std::optional<Mass> &mrel = {Mass{0.0}}, double sqrt_s = 0.0,
+    const std::optional<Mass> &mparent = {},
+    const std::optional<Mass> &mrel = {}, double sqrt_s = 0.0,
     const std::optional<double> ptot_z = {});
 
 class InputKinematicsWithVertex : public InputKinematics {
@@ -180,16 +180,16 @@ std::optional<InputKinematicsWithVertex> mkInputWithVertex(
     const std::vector<FourMomentum> &as, const std::vector<FourMomentum> &bs,
     const TransverseMomentum &ptmiss, const Mass &minv,
     const SpatialMomentum &vertex1, const SpatialMomentum &vertex2,
-    double delta_theta = 0.0, const std::optional<Mass> &mparent = {Mass{0.0}},
-    const std::optional<Mass> &mrel = {Mass{0.0}}, double sqrt_s = 0.0,
+    double delta_theta = 0.0, const std::optional<Mass> &mparent = {},
+    const std::optional<Mass> &mrel = {}, double sqrt_s = 0.0,
     const std::optional<double> ptot_z = {});
 
 std::optional<InputKinematicsWithVertex> mkInputWithVertex(
     const FourMomentum &p1, const FourMomentum &p2,
     const TransverseMomentum &ptmiss, const Mass &minv,
     const SpatialMomentum &vertex1, const SpatialMomentum &vertex2,
-    double delta_theta = 0.0, const std::optional<Mass> &mparent = {Mass{0.0}},
-    const std::optional<Mass> &mrel = {Mass{0.0}}, double sqrt_s = 0.0,
+    double delta_theta = 0.0, const std::optional<Mass> &mparent = {},
+    const std::optional<Mass> &mrel = {}, double sqrt_s = 0.0,
     const std::optional<double> ptot_z = {});
 
 std::optional<InputKinematicsWithVertex> mkInputWithVertex(

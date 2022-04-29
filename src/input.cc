@@ -88,10 +88,14 @@ std::optional<InputKinematics> mkInput(
         const double scalesq = e1 * e1 + e2 * e2 + etmiss_sq;
 
         if (scalesq <= 0.0) {
-            std::cerr << "mkInput: found zero or negative energy scale.\n";
+            std::cerr << "mkInput: unphysical energy scale.\n";
             return {};
         }
         sval = 8.0 * std::sqrt(scalesq);  // scale > 0
+    }
+    if (sval <= 0.0) {
+        std::cerr << "mkInput: found zero or negative energy scale.\n";
+        return {};
     }
 
     return {{p1 / sval, p2 / sval, q1 / sval, q2 / sval, ptmiss / sval,
