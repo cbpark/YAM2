@@ -100,6 +100,18 @@ std::optional<InputKinematics> mkInput(
              scaleIfExists(ptot_z, sval), sval}};
 }
 
+std::optional<InputKinematics> mkInput(
+    const FourMomentum &p1, const FourMomentum &p2,
+    const TransverseMomentum &ptmiss, const Mass &minv,
+    const std::optional<Mass> &mparent, const std::optional<Mass> &mrel,
+    double sqrt_s, const std::optional<double> ptot_z) {
+    auto zero = FourMomentum();
+    return mkInput(
+        {p1, p2}, {zero, zero}, ptmiss, minv, mparent, mrel, sqrt_s, ptot_z
+
+    );
+}
+
 std::ostream &operator<<(std::ostream &os, const InputKinematics &p) {
     p.show(os);
     return os;

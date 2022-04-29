@@ -100,11 +100,24 @@ public:
         const std::optional<Mass> &mrel, double sqrt_s,
         const std::optional<double> ptot_z);
 
+    friend std::optional<InputKinematics> mkInput(
+        const FourMomentum &p1, const FourMomentum &p2,
+        const TransverseMomentum &ptmiss, const Mass &minv,
+        const std::optional<Mass> &mparent, const std::optional<Mass> &mrel,
+        double sqrt_s, const std::optional<double> ptot_z);
+
     friend std::ostream &operator<<(std::ostream &os, const InputKinematics &p);
 };
 
 std::optional<InputKinematics> mkInput(
     const std::vector<FourMomentum> &as, const std::vector<FourMomentum> &bs,
+    const TransverseMomentum &ptmiss, const Mass &minv,
+    const std::optional<Mass> &mparent = {Mass{0.0}},
+    const std::optional<Mass> &mrel = {Mass{0.0}}, double sqrt_s = 0.0,
+    const std::optional<double> ptot_z = {});
+
+std::optional<InputKinematics> mkInput(
+    const FourMomentum &p1, const FourMomentum &p2,
     const TransverseMomentum &ptmiss, const Mass &minv,
     const std::optional<Mass> &mparent = {Mass{0.0}},
     const std::optional<Mass> &mrel = {Mass{0.0}}, double sqrt_s = 0.0,
