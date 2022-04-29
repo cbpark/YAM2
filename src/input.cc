@@ -138,6 +138,19 @@ std::optional<InputKinematicsWithVertex> mkInputWithVertex(
 }
 
 std::optional<InputKinematicsWithVertex> mkInputWithVertex(
+    const FourMomentum &p1, const FourMomentum &p2,
+    const TransverseMomentum &ptmiss, const Mass &minv,
+    const SpatialMomentum &vertex1, const SpatialMomentum &vertex2,
+    double delta_theta, const std::optional<Mass> &mparent,
+    const std::optional<Mass> &mrel, double sqrt_s,
+    const std::optional<double> ptot_z) {
+    auto input_kinematics =
+        mkInput(p1, p2, ptmiss, minv, mparent, mrel, sqrt_s, ptot_z);
+    return mkInputWithVertex(input_kinematics.value(), vertex1, vertex2,
+                             delta_theta);
+}
+
+std::optional<InputKinematicsWithVertex> mkInputWithVertex(
     const std::optional<InputKinematics> &input_kinematics,
     const SpatialMomentum &vertex1, const SpatialMomentum &vertex2,
     double delta_theta) {
