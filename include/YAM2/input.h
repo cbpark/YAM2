@@ -120,6 +120,7 @@ public:
     friend std::ostream &operator<<(std::ostream &os, const InputKinematics &p);
 };
 
+/** Constructor for asymmetric decay chains. */
 std::optional<InputKinematics> mkInput(const std::vector<FourMomentum> &as,
                                        const std::vector<FourMomentum> &bs,
                                        const TransverseMomentum &ptmiss,
@@ -131,6 +132,7 @@ std::optional<InputKinematics> mkInput(const std::vector<FourMomentum> &as,
                                        double sqrt_s = 0.0,
                                        const std::optional<double> ptot_z = {});
 
+/** Constructor for symmetric decay chains. */
 inline std::optional<InputKinematics> mkInput(
     const std::vector<FourMomentum> &as, const std::vector<FourMomentum> &bs,
     const TransverseMomentum &ptmiss, const Mass &minv,
@@ -141,6 +143,7 @@ inline std::optional<InputKinematics> mkInput(
                    sqrt_s, ptot_z);
 }
 
+/** Constructor for symmetric decay chains of one-step decays. */
 inline std::optional<InputKinematics> mkInput(
     const FourMomentum &p1, const FourMomentum &p2,
     const TransverseMomentum &ptmiss, const Mass &minv,
@@ -193,6 +196,10 @@ std::optional<InputKinematicsWithVertex> mkInputWithVertex(
     const SpatialMomentum &vertex1, const SpatialMomentum &vertex2,
     double delta_theta);
 
+/**
+ * Constructor for asymmetric decay chains with the vertices of parent
+ * particles.
+ */
 inline std::optional<InputKinematicsWithVertex> mkInputWithVertex(
     const std::vector<FourMomentum> &as, const std::vector<FourMomentum> &bs,
     const TransverseMomentum &ptmiss, const Mass &minv1, const Mass &minv2,
@@ -207,6 +214,10 @@ inline std::optional<InputKinematicsWithVertex> mkInputWithVertex(
     return mkInputWithVertex(input_kinematics, vertex1, vertex2, delta_theta);
 }
 
+/**
+ * Constructor for symmetric decay chains with the vertices of parent
+ * particles.
+ */
 inline std::optional<InputKinematicsWithVertex> mkInputWithVertex(
     const FourMomentum &p1, const FourMomentum &p2,
     const TransverseMomentum &ptmiss, const Mass &minv,
