@@ -169,7 +169,7 @@ e.g., the Higgs boson decay to a pair of tau leptons, where each tau decays into
 const auto zero = yam2::FourMomentum();
 
 const auto input =
-        yam2::mkInput({a1, a2}, {zero, zero}, ptmiss, m_invis, {}, {}, mY);
+        yam2::mkInput(a1, a2, ptmiss, m_invis, {}, mY);
 
 const auto m2sol = yam2::m2Cons(input);
 ```
@@ -182,7 +182,7 @@ It has also been used in the study of the tau decay to lepton + invisible partic
 const auto zero = yam2::FourMomentum();
 
 const auto input =
-        yam2::mkInput({a1, a2}, {zero, zero}, ptmiss, m_invis, {}, {}, sqrt_s, {pz});
+        yam2::mkInput(a1, a2, ptmiss, m_invis, {}, sqrt_s, {pz});
 
 const auto m2sol = yam2::m2Cons(input);
 ```

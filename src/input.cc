@@ -104,18 +104,6 @@ std::optional<InputKinematics> mkInput(
              scaleIfExists(ptot_z, sval), sval}};
 }
 
-std::optional<InputKinematics> mkInput(
-    const FourMomentum &p1, const FourMomentum &p2,
-    const TransverseMomentum &ptmiss, const Mass &minv,
-    const std::optional<Mass> &mparent, const std::optional<Mass> &mrel,
-    double sqrt_s, const std::optional<double> ptot_z) {
-    auto zero = FourMomentum();
-    return mkInput(
-        {p1, p2}, {zero, zero}, ptmiss, minv, mparent, mrel, sqrt_s, ptot_z
-
-    );
-}
-
 std::ostream &operator<<(std::ostream &os, const InputKinematics &p) {
     p.show(os);
     return os;
@@ -126,32 +114,6 @@ void InputKinematicsWithVertex::show(std::ostream &os) const {
     os << "\nvertex1: " << vertex1_ << '\n';
     os << "vertex2: " << vertex2_ << '\n';
     os << "delta_theta: " << delta_theta_;
-}
-
-std::optional<InputKinematicsWithVertex> mkInputWithVertex(
-    const vector<FourMomentum> &as, const vector<FourMomentum> &bs,
-    const TransverseMomentum &ptmiss, const Mass &minv,
-    const SpatialMomentum &vertex1, const SpatialMomentum &vertex2,
-    double delta_theta, const std::optional<Mass> &mparent,
-    const std::optional<Mass> &mrel, double sqrt_s,
-    const std::optional<double> ptot_z) {
-    auto input_kinematics =
-        mkInput(as, bs, ptmiss, minv, mparent, mrel, sqrt_s, ptot_z);
-    return mkInputWithVertex(input_kinematics.value(), vertex1, vertex2,
-                             delta_theta);
-}
-
-std::optional<InputKinematicsWithVertex> mkInputWithVertex(
-    const FourMomentum &p1, const FourMomentum &p2,
-    const TransverseMomentum &ptmiss, const Mass &minv,
-    const SpatialMomentum &vertex1, const SpatialMomentum &vertex2,
-    double delta_theta, const std::optional<Mass> &mparent,
-    const std::optional<Mass> &mrel, double sqrt_s,
-    const std::optional<double> ptot_z) {
-    auto input_kinematics =
-        mkInput(p1, p2, ptmiss, minv, mparent, mrel, sqrt_s, ptot_z);
-    return mkInputWithVertex(input_kinematics.value(), vertex1, vertex2,
-                             delta_theta);
 }
 
 std::optional<InputKinematicsWithVertex> mkInputWithVertex(

@@ -29,8 +29,8 @@ int main() {
     // the longitudinal momentum of B1 + B2.
     const double ptot_z = 0.0;  // CM frame
 
-    const auto input = yam2::mkInput(v1, v2, ptmiss, m_invis, {m_parent}, {},
-                                     sqrt_s, {ptot_z});
+    const auto input =
+        yam2::mkInput(v1, v2, ptmiss, m_invis, {m_parent}, sqrt_s, {ptot_z});
     if (!input) {
         std::cerr << "Invalid input.\n";
         return 1;
