@@ -212,14 +212,6 @@ double constraintVertex1Theta(const NLoptVar &x, NLoptVar &grad, void *input) {
         double dk1z = -pt / p2;
         double dk2z = 0.0;
 
-        // double r = std::pow(std::tan(theta), 2);
-        // double denom = (1.0 + r) * parent1.pz();
-
-        // double dk1x = parent1.px() / (pt * denom);
-        // double dk1y = parent1.py() / (pt * denom);
-        // double dk1z = -pt / (denom * parent1.pz());
-        // double dk2z = 0.0;
-
         auto grad_ = Gradient(dk1x, dk1y, dk1z, dk2z);
         grad_.set_gradient(grad);
     }
@@ -233,6 +225,7 @@ double constraintVertex1Phi(const NLoptVar &x, NLoptVar &grad, void *input) {
 
     if (!grad.empty()) {
         double pt2 = parent1.pt2();
+
         double dk1x = -parent1.py() / pt2;
         double dk1y = parent1.px() / pt2;
         double dk1z = 0.0;
