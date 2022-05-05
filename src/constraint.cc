@@ -152,6 +152,52 @@ SpatialMomentum getParent(const NLoptVar &x, const InputKinematics &inp,
     }
 }
 
+double constraintVertex1X(const NLoptVar &x, NLoptVar &grad, void *input) {
+    auto *const inp = reinterpret_cast<InputKinematicsWithVertex *>(input);
+    auto parent1 = getParent(x, *inp, DecayChainOf::Parent1);
+    auto parent1_norm_vec = parent1.normalize();
+
+    if (!grad.empty()) {
+        double parent1_norm = parent1.norm();
+
+        double dk1x =
+            (1 - parent1_norm_vec.px() * parent1_norm_vec.px()) / parent1_norm;
+        double dk1y =
+            -parent1_norm_vec.px() * parent1_norm_vec.py() / parent1_norm;
+        double dk1z =
+            -parent1_norm_vec.px() * parent1_norm_vec.pz() / parent1_norm;
+        double dk2z = 0.0;
+
+        auto grad_ = Gradient(dk1x, dk1y, dk1z, dk2z);
+        grad_.set_gradient(grad);
+    }
+
+    return parent1_norm_vec.px() - inp->vertex1().px();
+}
+
+double constraintVertex1Y(const NLoptVar &x, NLoptVar &grad, void *input) {
+    auto *const inp = reinterpret_cast<InputKinematicsWithVertex *>(input);
+    auto parent1 = getParent(x, *inp, DecayChainOf::Parent1);
+    auto parent1_norm_vec = parent1.normalize();
+
+    if (!grad.empty()) {
+        double parent1_norm = parent1.norm();
+
+        double dk1x =
+            -parent1_norm_vec.px() * parent1_norm_vec.py() / parent1_norm;
+        double dk1y =
+            (1 - parent1_norm_vec.py() * parent1_norm_vec.py()) / parent1_norm;
+        double dk1z =
+            -parent1_norm_vec.py() * parent1_norm_vec.pz() / parent1_norm;
+        double dk2z = 0.0;
+
+        auto grad_ = Gradient(dk1x, dk1y, dk1z, dk2z);
+        grad_.set_gradient(grad);
+    }
+
+    return parent1_norm_vec.py() - inp->vertex1().py();
+}
+
 double constraintVertex1Theta(const NLoptVar &x, NLoptVar &grad, void *input) {
     auto *const inp = reinterpret_cast<InputKinematicsWithVertex *>(input);
     auto parent1 = getParent(x, *inp, DecayChainOf::Parent1);
@@ -159,13 +205,20 @@ double constraintVertex1Theta(const NLoptVar &x, NLoptVar &grad, void *input) {
 
     if (!grad.empty()) {
         double pt = parent1.pt();
-        double r = std::pow(std::tan(theta), 2);
-        double denom = (1.0 + r) * parent1.pz();
+        double p2 = parent1.p2();
 
-        double dk1x = parent1.px() / (pt * denom);
-        double dk1y = parent1.py() / (pt * denom);
-        double dk1z = -pt / (denom * parent1.pz());
+        double dk1x = parent1.px() * parent1.pz() / pt / p2;
+        double dk1y = parent1.py() * parent1.pz() / pt / p2;
+        double dk1z = -pt / p2;
         double dk2z = 0.0;
+
+        // double r = std::pow(std::tan(theta), 2);
+        // double denom = (1.0 + r) * parent1.pz();
+
+        // double dk1x = parent1.px() / (pt * denom);
+        // double dk1y = parent1.py() / (pt * denom);
+        // double dk1z = -pt / (denom * parent1.pz());
+        // double dk2z = 0.0;
 
         auto grad_ = Gradient(dk1x, dk1y, dk1z, dk2z);
         grad_.set_gradient(grad);
@@ -179,11 +232,9 @@ double constraintVertex1Phi(const NLoptVar &x, NLoptVar &grad, void *input) {
     auto parent1 = getParent(x, *inp, DecayChainOf::Parent1);
 
     if (!grad.empty()) {
-        double px2 = std::pow(parent1.px(), 2);
-        double py2px2 = 1.0 + std::pow(parent1.py(), 2) / px2;
-
-        double dk1x = -parent1.py() / px2 / py2px2;
-        double dk1y = 1.0 / parent1.px() / py2px2;
+        double pt2 = parent1.pt2();
+        double dk1x = -parent1.py() / pt2;
+        double dk1y = parent1.px() / pt2;
         double dk1z = 0.0;
         double dk2z = 0.0;
 

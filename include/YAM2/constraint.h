@@ -49,6 +49,10 @@ double constraintSqrtS(const NLoptVar &x, NLoptVar &grad, void *input);
 /** constraint: acos(parent1 . v) = 0 */
 double constraintVertex1(const NLoptVar &x, NLoptVar &grad, void *input);
 
+double constraintVertex1X(const NLoptVar &x, NLoptVar &grad, void *input);
+
+double constraintVertex1Y(const NLoptVar &x, NLoptVar &grad, void *input);
+
 /** constraint: Delta theta(parent1, vertex1) = 0 */
 double constraintVertex1Theta(const NLoptVar &x, NLoptVar &grad, void *input);
 
