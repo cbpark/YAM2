@@ -56,13 +56,18 @@ public:
     double py() const { return y_; }
     double pz() const { return z_; }
 
+    double p2() const { return x_ * x_ + y_ * y_ + z_ * z_; }
+
+    double norm() const { return std::hypot(x_, y_, z_); }
+    double p() const { return this->norm(); }
+
     double pt() const { return std::hypot(x_, y_); }
+
+    double pt2() const { return x_ * x_ + y_ * y_; }
 
     double theta() const { return std::atan2(pt(), z_); }
 
     double phi() const { return std::atan2(y_, x_); }
-
-    double norm() const { return std::hypot(x_, y_, z_); }
 
     SpatialMomentum normalize() const {
         double norm = this->norm();
