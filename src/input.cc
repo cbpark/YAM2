@@ -135,6 +135,7 @@ std::optional<InputKinematicsWithVertex> mkInputWithVertex(
         std::cerr << "mkInputWithVertex: delta_theta must be positive.\n";
         return {};
     }
+
     const auto v1 = vertex1.normalize();
     const auto v2 = vertex2.normalize();
 
