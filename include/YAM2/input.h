@@ -143,15 +143,26 @@ inline std::optional<InputKinematics> mkInput(
                    sqrt_s, ptot_z);
 }
 
+/** Constructor for asymmetric decay chains of one-step decays. */
+inline std::optional<InputKinematics> mkInput(
+    const FourMomentum &p1, const FourMomentum &p2,
+    const TransverseMomentum &ptmiss, const Mass &minv1, const Mass &minv2,
+    const std::optional<Mass> &mparent1 = {},
+    const std::optional<Mass> &mparent2 = {}, double sqrt_s = 0.0,
+    const std::optional<double> ptot_z = {}) {
+    const auto zero = FourMomentum();
+    return mkInput({p1, p2}, {zero, zero}, ptmiss, minv1, minv2, mparent1,
+                   mparent2, {}, {}, sqrt_s, ptot_z);
+}
+
 /** Constructor for symmetric decay chains of one-step decays. */
 inline std::optional<InputKinematics> mkInput(
     const FourMomentum &p1, const FourMomentum &p2,
     const TransverseMomentum &ptmiss, const Mass &minv,
     const std::optional<Mass> &mparent = {}, double sqrt_s = 0.0,
     const std::optional<double> ptot_z = {}) {
-    const auto zero = FourMomentum();
-    return mkInput({p1, p2}, {zero, zero}, ptmiss, minv, minv, mparent, mparent,
-                   {}, {}, sqrt_s, ptot_z);
+    return mkInput(p1, p2, ptmiss, minv, minv, mparent, mparent, sqrt_s,
+                   ptot_z);
 }
 
 class InputKinematicsWithVertex : public InputKinematics {
@@ -211,6 +222,22 @@ inline std::optional<InputKinematicsWithVertex> mkInputWithVertex(
     const std::optional<double> ptot_z = {}) {
     auto input_kinematics = mkInput(as, bs, ptmiss, minv1, minv2, mparent1,
                                     mparent2, mrel1, mrel2, sqrt_s, ptot_z);
+    return mkInputWithVertex(input_kinematics, vertex1, vertex2, delta_theta);
+}
+
+/**
+ * Constructor for asymmetric decay chains with the vertices of parent
+ * particles.
+ */
+inline std::optional<InputKinematicsWithVertex> mkInputWithVertex(
+    const FourMomentum &p1, const FourMomentum &p2,
+    const TransverseMomentum &ptmiss, const Mass &minv1, const Mass &minv2,
+    const SpatialMomentum &vertex1, const SpatialMomentum &vertex2,
+    double delta_theta = 0.0, const std::optional<Mass> &mparent1 = {},
+    const std::optional<Mass> &mparent2 = {}, double sqrt_s = 0.0,
+    const std::optional<double> ptot_z = {}) {
+    auto input_kinematics = mkInput(p1, p2, ptmiss, minv1, minv2, mparent1,
+                                    mparent2, sqrt_s, ptot_z);
     return mkInputWithVertex(input_kinematics, vertex1, vertex2, delta_theta);
 }
 
