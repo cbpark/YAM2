@@ -54,64 +54,14 @@ double constraintAP(const InputKinematics &inp, const FourMomentum &p,
     return m_ - mparent.value_or(Mass{m_}).value;
 }
 
-double constraintAPUpper(const InputKinematics &inp, const FourMomentum &p,
-                         const std::optional<Mass> &mparent, GradFunc fmGrad,
-                         const NLoptVar &x, NLoptVar &grad) {
-    const auto var = mkVariables(x);
-    const auto var_val = var.value();
-    const auto ks = mkInvisibles(inp, var_val);
-
-    const auto &[grad_, m_] = fmGrad(inp, p, ks);
-    if (!grad.empty()) { grad_.set_gradient(grad); }
-    return m_ - mparent.value_or(Mass{m_}).value * (1.0 + inp.eps_constraint());
-}
-
-double constraintAPLower(const InputKinematics &inp, const FourMomentum &p,
-                         const std::optional<Mass> &mparent, GradFunc fmGrad,
-                         const NLoptVar &x, NLoptVar &grad) {
-    const auto var = mkVariables(x);
-    const auto var_val = var.value();
-    const auto ks = mkInvisibles(inp, var_val);
-
-    auto [grad_, m_] = fmGrad(inp, p, ks);
-    grad_ = -grad_;
-    if (!grad.empty()) { grad_.set_gradient(grad); }
-    return -m_ +
-           mparent.value_or(Mass{m_}).value * (1.0 - inp.eps_constraint());
-}
-
 double constraintA1(const NLoptVar &x, NLoptVar &grad, void *input) {
     auto *const inp = reinterpret_cast<InputKinematics *>(input);
     return constraintAP(*inp, inp->p1(), inp->mparent1(), m2Func1, x, grad);
 }
 
-double constraintA1Upper(const NLoptVar &x, NLoptVar &grad, void *input) {
-    auto *const inp = reinterpret_cast<InputKinematics *>(input);
-    return constraintAPUpper(*inp, inp->p1(), inp->mparent1(), m2Func1, x,
-                             grad);
-}
-
-double constraintA1Lower(const NLoptVar &x, NLoptVar &grad, void *input) {
-    auto *const inp = reinterpret_cast<InputKinematics *>(input);
-    return constraintAPLower(*inp, inp->p1(), inp->mparent1(), m2Func1, x,
-                             grad);
-}
-
 double constraintA2(const NLoptVar &x, NLoptVar &grad, void *input) {
     auto *const inp = reinterpret_cast<InputKinematics *>(input);
     return constraintAP(*inp, inp->p2(), inp->mparent2(), m2Func2, x, grad);
-}
-
-double constraintA2Upper(const NLoptVar &x, NLoptVar &grad, void *input) {
-    auto *const inp = reinterpret_cast<InputKinematics *>(input);
-    return constraintAPUpper(*inp, inp->p2(), inp->mparent2(), m2Func2, x,
-                             grad);
-}
-
-double constraintA2Lower(const NLoptVar &x, NLoptVar &grad, void *input) {
-    auto *const inp = reinterpret_cast<InputKinematics *>(input);
-    return constraintAPLower(*inp, inp->p2(), inp->mparent2(), m2Func2, x,
-                             grad);
 }
 
 double constraintR(const InputKinematics &inp, const FourMomentum &q,
