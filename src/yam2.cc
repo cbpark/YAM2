@@ -534,7 +534,7 @@ template OptM2 m2MinStrategy1<InputKinematicsWithVertex>(
     M2Func<InputKinematicsWithVertex> fAugLagNMSimplex,
     const OptInpWithVertex &inp, double eps, unsigned int neval);
 
-// Strategy 2: if the algorithm works and it doesn't exceed the parent
+// Strategy 2: if the algorithm works and it doesn't deviate the parent
 // particle mass (input), return the result.
 template <typename Input>
 OptM2 m2MinStrategy2(const std::vector<M2Func<Input>> &f_algos,
@@ -554,9 +554,9 @@ OptM2 m2MinStrategy2(const std::vector<M2Func<Input>> &f_algos,
             double m_parent_a2 =
                 inpv.mparent2().value_or(Mass{1.0e+10}).value * inpv.scale();
 
-            // the reconstructed parent mass should be within 2%.
-            double upper = 1.02;
-            double lower = 0.98;
+            // the reconstructed parent mass should be within 50%.
+            double upper = 1.5;
+            double lower = 0.5;
 
             if (m_parent1 < m_parent_a1 * upper &&
                 m_parent1 > m_parent_a1 * lower &&
@@ -594,9 +594,9 @@ OptM2 m2MinStrategy21(const std::vector<M2Func<Input>> &f_algos,
             double m_parent_a1 =
                 inpv.mparent1().value_or(Mass{1.0e+10}).value * inpv.scale();
 
-            // the reconstructed parent mass should be within 2%.
-            double upper = 1.02;
-            double lower = 0.98;
+            // the reconstructed parent mass should be within 50%.
+            double upper = 1.5;
+            double lower = 0.5;
 
             if (m_parent1 < m_parent_a1 * upper &&
                 m_parent1 > m_parent_a1 * lower) {
