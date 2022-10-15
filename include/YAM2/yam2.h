@@ -60,7 +60,7 @@ constexpr double EPSCONS = 1.0e-9;
 /** the maximum number of iterations */
 constexpr int NEVAL = 5000;
 
-/** The M2XX variable.
+/** The M2XX variable in the full system (ab).
  *
  *  It returns the smaller value between the results from SQP and
  *  augmented Lagrangian methods.
@@ -68,19 +68,23 @@ constexpr int NEVAL = 5000;
 std::optional<M2Solution> m2XX(const std::optional<InputKinematics> &inp,
                                double eps = EPSX, unsigned int neval = NEVAL);
 
-/** The M2CX variable */
+/** The M2CX variable in the full system (ab) */
 std::optional<M2Solution> m2CX(const std::optional<InputKinematics> &inp,
                                double eps = EPS, unsigned int neval = NEVAL);
 
-/** The M2XC variable */
+/** The M2XC variable in the full system (ab) */
 std::optional<M2Solution> m2XC(const std::optional<InputKinematics> &inp,
                                double eps = EPS, unsigned int neval = NEVAL);
 
-/** The M2CC variable */
+/** The M2CC variable in the full system (ab) */
 std::optional<M2Solution> m2CC(const std::optional<InputKinematics> &inp,
                                double eps = EPS, unsigned int neval = NEVAL);
 
-/** The M2CR variable */
+/** The M2CC variable in the subsystem (b) */
+std::optional<M2Solution> m2CCB(const std::optional<InputKinematics> &inp,
+                                double eps = EPS, unsigned int neval = NEVAL);
+
+/** The M2CR variable in the full system (ab) */
 std::optional<M2Solution> m2CR(const std::optional<InputKinematics> &inp,
                                double eps = EPS, unsigned int neval = NEVAL);
 
@@ -121,24 +125,29 @@ std::optional<M2Solution> m2ConsVertexIneq(
     const std::optional<InputKinematicsWithVertex> &inp, double eps = EPSX,
     unsigned int neval = NEVAL);
 
-/** M2XX variable using the SQP method */
+/** M2XX variable in the full system (ab) using the SQP method */
 std::optional<M2Solution> m2XXSQP(const std::optional<InputKinematics> &inp,
                                   double eps = EPSX,
                                   unsigned int neval = NEVAL);
 
-/** M2CX variable using the SQP method */
+/** M2CX variable in the full system (ab) using the SQP method */
 std::optional<M2Solution> m2CXSQP(const std::optional<InputKinematics> &inp,
                                   double eps = EPS, unsigned int neval = NEVAL);
 
-/** M2XC variable using the SQP method */
+/** M2XC variable in the full system (ab) using the SQP method */
 std::optional<M2Solution> m2XCSQP(const std::optional<InputKinematics> &inp,
                                   double eps = EPS, unsigned int neval = NEVAL);
 
-/** M2CC variable using the SQP method */
+/** M2CC variable in the full system (ab) using the SQP method */
 std::optional<M2Solution> m2CCSQP(const std::optional<InputKinematics> &inp,
                                   double eps = EPS, unsigned int neval = NEVAL);
 
-/** M2CR variable using the SQP method */
+/** M2CC variable in the subsystem (b) using the SQP method */
+std::optional<M2Solution> m2CCBSQP(const std::optional<InputKinematics> &inp,
+                                   double eps = EPS,
+                                   unsigned int neval = NEVAL);
+
+/** M2CR variable in the full system (ab) using the SQP method */
 std::optional<M2Solution> m2CRSQP(const std::optional<InputKinematics> &inp,
                                   double eps = EPS, unsigned int neval = NEVAL);
 
@@ -177,27 +186,50 @@ std::optional<M2Solution> m2ConsVertexIneqSQP(
     const std::optional<InputKinematicsWithVertex> &inp, double eps = EPSX,
     unsigned int neval = NEVAL);
 
-/** M2XX variable using the augmented Lagrangian method with the BFGS update */
+/**
+ * M2XX variable in the full system (ab)
+ * using the augmented Lagrangian method with the BFGS update
+ */
 std::optional<M2Solution> m2XXAugLagBFGS(
     const std::optional<InputKinematics> &inp, double eps = EPSX,
     unsigned int neval = NEVAL);
 
-/** M2CX variable using the augmented Lagrangian method with the BFGS update */
+/**
+ * M2CX variable in the full system (ab)
+ * using the augmented Lagrangian method with the BFGS update
+ */
 std::optional<M2Solution> m2CXAugLagBFGS(
     const std::optional<InputKinematics> &inp, double eps = EPS,
     unsigned int neval = NEVAL);
 
-/** M2XC variable using the augmented Lagrangian method with the BFGS update */
+/**
+ * M2XC variable in the full system (ab)
+ * using the augmented Lagrangian method with the BFGS update
+ */
 std::optional<M2Solution> m2XCAugLagBFGS(
     const std::optional<InputKinematics> &inp, double eps = EPS,
     unsigned int neval = NEVAL);
 
-/** M2CC variable using the augmented Lagrangian method with the BFGS update */
+/**
+ * M2CC variable in the full system (ab)
+ * using the augmented Lagrangian method with the BFGS update
+ */
 std::optional<M2Solution> m2CCAugLagBFGS(
     const std::optional<InputKinematics> &inp, double eps = EPS,
     unsigned int neval = NEVAL);
 
-/** M2CR variable using the augmented Lagrangian method with the BFGS update */
+/**
+ * M2CC variable in the subsystem (b)
+ * using the augmented Lagrangian method with the BFGS update
+ */
+std::optional<M2Solution> m2CCBAugLagBFGS(
+    const std::optional<InputKinematics> &inp, double eps = EPS,
+    unsigned int neval = NEVAL);
+
+/**
+ * M2CR variable in the full system (ab)
+ * using the augmented Lagrangian method with the BFGS update
+ */
 std::optional<M2Solution> m2CRAugLagBFGS(
     const std::optional<InputKinematics> &inp, double eps = EPS,
     unsigned int neval = NEVAL);
@@ -257,40 +289,48 @@ std::optional<M2Solution> m2ConsVertexIneqAugLagBFGS(
     unsigned int neval = NEVAL);
 
 /**
- * M2XX variable using the augmented Lagrangian method
- * with the Nelder-Mead simplex
+ * M2XX variable in the full system (ab)
+ * using the augmented Lagrangian method with the Nelder-Mead simplex
  */
 std::optional<M2Solution> m2XXAugLagNMSimplex(
     const std::optional<InputKinematics> &inp, double eps = EPSX,
     unsigned int neval = NEVAL);
 
 /**
- * M2CX variable using the augmented Lagrangian method
- * with the Nelder-Mead simplex
+ * M2CX variable in the full system (ab)
+ * using the augmented Lagrangian method with the Nelder-Mead simplex
  */
 std::optional<M2Solution> m2CXAugLagNMSimplex(
     const std::optional<InputKinematics> &inp, double eps = EPS,
     unsigned int neval = NEVAL);
 
 /**
- * M2XC variable using the augmented Lagrangian method
- * with the Nelder-Mead simplex
+ * M2XC variable in the full system (ab)
+ * using the augmented Lagrangian method with the Nelder-Mead simplex
  */
 std::optional<M2Solution> m2XCAugLagNMSimplex(
     const std::optional<InputKinematics> &inp, double eps = EPS,
     unsigned int neval = NEVAL);
 
 /**
- * M2CC variable using the augmented Lagrangian method
- * with the Nelder-Mead simplex
+ * M2CC variable in the full system (ab)
+ * using the augmented Lagrangian method with the Nelder-Mead simplex
  */
 std::optional<M2Solution> m2CCAugLagNMSimplex(
     const std::optional<InputKinematics> &inp, double eps = EPS,
     unsigned int neval = NEVAL);
 
 /**
- * M2CR variable using the augmented Lagrangian method
- * with the Nelder-Mead simplex
+ * M2CC variable in the subsystem (b)
+ * using the augmented Lagrangian method with the Nelder-Mead simplex
+ */
+std::optional<M2Solution> m2CCBAugLagNMSimplex(
+    const std::optional<InputKinematics> &inp, double eps = EPS,
+    unsigned int neval = NEVAL);
+
+/**
+ * M2CR variable in the full system (ab)
+ * using the augmented Lagrangian method with the Nelder-Mead simplex
  */
 std::optional<M2Solution> m2CRAugLagNMSimplex(
     const std::optional<InputKinematics> &inp, double eps = EPS,
