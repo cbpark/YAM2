@@ -1,6 +1,6 @@
 pkgbase = yam2-git
 	pkgdesc = Yet another library for the M2 variables
-	pkgver = 0.3.4.aa7186c
+	pkgver = 2.0.0
 	pkgrel = 1
 	url = https://github.com/cbpark/YAM2
 	arch = x86_64
