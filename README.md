@@ -79,6 +79,22 @@ make
 
 Then, `sudo make install` will install the library and header files.
 
+If you see the following message while build with CMake,
+
+```
+CMake Warning at CMakeLists.txt:26 (find_package):
+Found package configuration file:
+
+/usr/lib/cmake/ROOT/ROOTConfig.cmake
+
+but it set ROOT_FOUND to FALSE so package "ROOT" is considered to be NOT
+FOUND.  Reason given by package:
+
+ROOT could not be found because dependency Vdt could not be found.
+```
+
+install the [`vdt`](https://github.com/dpiparo/vdt) package.
+
 ## How to use
 
 The interfaces for using YAM2 are defined in the header file [`yam2.h`](./include/YAM2/yam2.h). Users have to add the header to their analysis code through include directive.
