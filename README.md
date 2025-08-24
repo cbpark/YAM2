@@ -1,62 +1,94 @@
-# YAM2: Yet another library for the M2 variables
+# YAM2: Yet Another Library for the M₂ Variables
 
 [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
-[![Pipeline](https://gitlab.com/cbpark/yam2/badges/master/pipeline.svg)]( https://gitlab.com/cbpark/yam2/-/pipelines/)
+[![Pipeline](https://gitlab.com/cbpark/yam2/badges/master/pipeline.svg)](https://gitlab.com/cbpark/yam2/-/pipelines/)
 
-YAM2 is free software library for calculating a set of kinematic variables M<sub>2</sub> using several numerical optimization algorithms.
+**YAM2** is a free and open-source C++ library for calculating the family of kinematic variables M<sub>2</sub>, widely used in collider phenomenology with invisible particles. It provides multiple numerical optimization backends (e.g., SQP and augmented Lagrangian) for solving constrained minimization problems efficiently. YAM2 is suitable for analyses at both **hadron** and **lepton** colliders.
 
-## How to build
+---
 
-For building the source codes, it is required to have a C++ compiler, supporting the C++17 features, and [NLopt](https://github.com/stevengj/nlopt). For C++ compiler, check the pages given below.
+## Table of Contents
 
-* [C++ Standards Support in GCC](https://gcc.gnu.org/projects/cxx-status.html),
-* [C++ Support in Clang](https://clang.llvm.org/cxx_status.html).
+- [Installation](#installation)
+  - [Dependencies](#dependencies)
+  - [Build with Make](#build-with-make)
+  - [Shared Library](#shared-library)
+  - [Build with CMake](#build-with-cmake)
+- [Usage](#usage)
+  - [Basic Example](#basic-example)
+  - [Input Format](#input-format)
+  - [M2Cons Example](#m2cons-example)
+- [Citation](#citation)
+- [References](#references)
 
-In theory, it would work with GCC >= 7 or Clang >= 5. In macOS, the required C++17 headers have been supported since [Xcode 10](https://developer.apple.com/documentation/xcode-release-notes/xcode-10-release-notes).
+---
 
-Detailed instructions for installing NLopt by building the source code are given in [NLopt installation](https://nlopt.readthedocs.io/en/latest/NLopt_Installation/). For some Linux distributions, it can be installed by using the system package manager. For example,
+## Installation
 
-```
-# For Arch Linux/Manjaro:
+### Dependencies
+
+- A C++17 compliant compiler (GCC ≥ 7, Clang ≥ 5, or Xcode ≥ 10 on macOS).
+- [NLopt](https://github.com/stevengj/nlopt) (≥ 2.6.2).
+
+You can install NLopt from source or via package managers:
+
+``` bash
+# Arch Linux / Manjaro
 sudo pacman -S nlopt
 
-# For CentOS/Fedora:
+# CentOS / Fedora
 sudo dnf install NLopt-devel
 
-# For Debian/Ubuntu:
+# Debian / Ubuntu
 sudo apt-get install libnlopt-cxx-dev
 
-# For openSUSE:
+# openSUSE
 sudo zypper install nlopt
+
+# macOS (Homebrew)
+brew install nlopt
 ```
 
-For Ubuntu prior to 20.04 LTS (Focal Fossa), install `libnlopt-dev`. (Check whether there exists `/usr/include/nlopt.hpp`.) In CentOS, the [EPEL](https://fedoraproject.org/wiki/EPEL) repository must be installed and enabled. In macOS, one can install NLopt using [Homebrew](https://brew.sh/). We have tested our codes with the NLopt version >= 2.6.2.
+For Ubuntu versions prior to 20.04 LTS, use `libnlopt-dev`.
 
-If you are more comfortable with [CMake](https://cmake.org), skip the below instruction and go directly to **Installation using CMake**.
+---
 
-The source code of the YAM2 library can be built by running `make`. If the path to NLopt is `/usr/local`, append the path to the `make` command:
+### Build with Make
+
+```
+make
+```
+
+This generates a static library `lib/libYAM2.a`.
+
+If NLopt is installed in a non-standard location (e.g., `/usr/local`):
 
 ```
 NLOPT=/usr/local make
 ```
 
-The command will build all the source codes, and then generate a static library file, `libYAM2.a`, in the `lib` directory.
-
-The header and library files can also be installed to the other destination path outside build directory. If the path to be installed is `/usr/local`, run the command as follows.
+To install headers and libraries (e.g., into `/usr/local`):
 
 ```
 DESTDIR=/usr/local make install
 ```
 
-### Shared library
+---
 
-If the shared library is necessary (for instance, for loading in a [ROOT](https://root.cern.ch/) macro), run
+### Shared Library
+
+For dynamic linking (e.g., in [ROOT](https://root.cern.ch/) macros):
 
 ```
 make lib
 ```
 
-In Linux, `libYAM2.so`, while in macOS, `libYAM2.dylib` will be generated in the `lib` directory. See [`Makefile`](./Makefile) for the detail of the compilation flags and path settings. In the ROOT macro, add the following lines:
+This produces:
+
+- Linux: `lib/libYAM2.so`
+- macOS: `lib/libYAM2.dylib`
+
+Example usage in ROOT:
 
 ``` c++
 R__LOAD_LIBRARY(/usr/local/lib/libYAM2.so)
@@ -65,45 +97,32 @@ R__LOAD_LIBRARY(/usr/lib/libnlopt.so)
 gSystem->AddIncludePath("/usr/local/include/YAM2");
 ```
 
-Modify the lines appropriately to adjust the paths to the shared library and the include path.
+---
 
-### Installation using CMake
-
-Building and installing using CMake are supported as well. If the path to NLopt is `/usr/local` and the installation path is `/usr`, run
+### Build with CMake
 
 ```
-cd build
+mkdir -p build && cd build
 cmake -Dnlopt_DIR=/usr/local -DCMAKE_INSTALL_PREFIX=/usr/local ..
 make
+sudo make install
 ```
 
-Then, `sudo make install` will install the library and header files.
+If ROOT is installed but fails to configure due to missing dependencies (e.g., `Vdt`), install [vdt](https://github.com/dpiparo/vdt).
 
-If you see the following message while build with CMake,
+---
 
-```
-CMake Warning at CMakeLists.txt:26 (find_package):
-Found package configuration file:
+## Usage
 
-/usr/lib/cmake/ROOT/ROOTConfig.cmake
-
-but it set ROOT_FOUND to FALSE so package "ROOT" is considered to be NOT
-FOUND.  Reason given by package:
-
-ROOT could not be found because dependency Vdt could not be found.
-```
-
-install the [`vdt`](https://github.com/dpiparo/vdt) package.
-
-## How to use
-
-The interfaces for using YAM2 are defined in the header file [`yam2.h`](./include/YAM2/yam2.h). Users have to add the header to their analysis code through include directive.
+The main interface is provided in [`yam2.h`](./include/YAM2/yam2.h):
 
 ``` c++
 #include <YAM2/yam2.h>
 ```
 
-The type signature of the function for calculating M<sub>2CC</sub> can be seen in the following function declaration.
+### Basic Example
+
+The type signature of the function for calculating M<sub>2CC</sub> is given by:
 
 ``` c++
 std::optional<M2Solution> m2CCSQP(
@@ -111,48 +130,50 @@ std::optional<M2Solution> m2CCSQP(
     double eps = EPS, int neval = NEVAL);
 ```
 
-It will calculate M<sub>2CC</sub> using the sequential quadratic programming (SQP) method. For M<sub>2XC</sub>, the function to use is [`m2XCSQP`](./include/YAM2/yam2.h). The function for calculating M<sub>2CC</sub> using the augmented Lagrangian method with the BFGS update is [`m2CCAugLagBFGS`](./include/YAM2/yam2.h).
+This function computes M<sub>2CC</sub> using the sequential quadratic programming (SQP) method.
 
-In the function declaration given above, one can see that the return type of the function is [`std::optional`](https://en.cppreference.com/w/cpp/utility/optional) of [`M2Solution`](./include/YAM2/yam2.h). The class template `std::optional` causes a null value if the function has failed, or otherwise, it returns the contained value, that is, `M2Solution` in our case. The function fails if the input is incorrect or the function has eventually failed to find a minimum.
+The return type is `std::optional` of [`M2Solution`](./include/YAM2/yam2.h). If the computation fails due to invalid input or failure to converge to a minimum, the function returns an empty `std::optional`. Otherwise, it contains a valid `M2Solution` object.
 
-Once the calculation of the M<sub>2</sub> function is successful, the result can be extracted by the `value` method of `std::optional`.
+Once the M<sub>2</sub> calculation succeeds, the result can be accessed using the `value()` method of `std::optional`.
 
 ``` c++
+const auto input =
+    yam2::mkInput({a1, a2}, {b1, b2}, ptmiss, yam2::Mass{m_invis});
 const auto m2sol = yam2::m2CCSQP(input);
+
 if (!m2sol) {
     std::cerr << "Failed.\n";
 } else {
     std::cout << "M2CC = " << m2sol.value().m2() << '\n'
-              << "solution:\n"
-              << "  k1: " << m2sol.value().k1() << '\n'
-              << "  k2: " << m2sol.value().k2() << '\n';
+              << "k1: " << m2sol.value().k1() << '\n'
+              << "k2: " << m2sol.value().k2() << '\n';
 }
 ```
 
-As can be seen in the code snippet, the `M2Solution` class contains three methods: `m2` for the M<sub>2</sub> value, `k1` and `k2` for the M<sub>2</sub> solution to the invisible particle momenta. All the functions and classes are in the namespace of `yam2`.
+Available solvers include:
+- `m2CCSQP`: M<sub>2CC</sub> with sequential quadratic programming
+- `m2XCSQP`: M<sub>2XC</sub> with SQP
+- `m2CCAugLagBFGS`: M<sub>2CC</sub> with augmented Lagrangian (BFGS update)
 
-### Input
+---
 
-There are three inputs to the functions for calculating M<sub>2</sub>. The first one is an instance of [`InputKinematics`](./include/YAM2/input.h), which is for the particle momentum configuration of the given event. It can be constructed by using the [`mkInput`](./include/YAM2/input.h) function,
+### Input Format
+
+The function `mkInput` constructs the required kinematics:
 
 ``` c++
 std::optional<InputKinematics> mkInput(
     const std::vector<FourMomentum> &as,
     const std::vector<FourMomentum> &bs,
-    const TransverseMomentum &ptmiss, const Mass &minv);
+    const TransverseMomentum &ptmiss,
+    const Mass &minv);
 ```
 
-Here `as` and `bs` correspond to the four-momenta of the visible particles for the decay process of
+- `as`, `bs`: visible particle four-momenta
+- `ptmiss`: missing transverse momentum
+- `minv`: invisible particle mass
 
-```
-A1 + A2 --> a1 B1 + a2 B2 --> a1 b1 C1 + a2 b2 C2.
-```
-
-We stress that the order of the particle momenta should be set with care since it is not checked by the program: a<sub>i</sub> must be produced before having b<sub>i</sub> in the decay chain.
-
-In addition to them, users have to insert the missing transverse momentum and the invisible particle mass into `ptmiss` and `minv`, respectively. See [`momentum.h`](./include/YAM2/momentum.h) for the class definitions of `FourMomentum`, `TransverseMomentum`, and `Mass`.
-
-The input momentum configuration should be validated before substituting it into the functions for calculating M<sub>2</sub>. An example code snippet using the `mkInput` is given below.
+The input should be validated before use:
 
 ``` c++
 const auto input =
@@ -160,77 +181,58 @@ const auto input =
 if (!input) {
     std::cerr << "Invalid input.\n";
 }
-const auto m2sol = yam2::m2CCSQP(input);
 ```
 
-The other optional inputs to the [`m2CCSQP`](./include/YAM2/yam2.h) function in the above are the tolerance `eps` and the maximal number of iterations `neval`. These will be set to the default values defined in [`yam2.h`](./include/YAM2/yam2.h) unless users supply any input. In the current version of YAM2, their default values are `EPS` = 10<sup>-3</sup> and `NEVAL` = 5000. We recommend users to read the example analysis code enclosed with YAM2, [`examples/m2.cc`](./examples/m2.cc), before starting to write their analysis code for the M<sub>2</sub> variables. If you want to build the example code, run `make examples/m2`.
+Optional arguments: tolerance `eps` (default `1e-3`) and max iterations `neval` (default `5000`).
 
-Supposing that the file name of the analysis code is `m2.cc` and the path to YAM2 is `/usr/local`, an example command for building an analysis code using YAM2 is as follows.
+---
 
-```
-c++ -o m2.exe m2.cc -I/usr/local/include/YAM2 -L/usr/local/lib -lYAM2 -lnlopt
-```
+### M2Cons Example
 
-### M2Cons
-
-As of version 0.2, YAM2 can calculate the [M<sub>2Cons</sub>](https://arxiv.org/abs/1509.00298) variable. It is a variant of the M<sub>2</sub> variable, which can be used to reconstruct the resonant decay process of
-
-```
-Y --> A1 + A2 --> a1 B1 + a2 B2,
-```
-
-e.g., the Higgs boson decay to a pair of tau leptons, where each tau decays into visible (charged lepton or pions) + invisible particles (neutrinos). In this case, the on-shell mass constraint for the resonance (`Y`) is added. An example code for calculating the M<sub>2Cons</sub> variable is
+From version 2.0, YAM2 supports M<sub>2Cons</sub> [arXiv:1509.00298](https://arxiv.org/abs/1509.00298):
 
 ``` c++
-const auto zero = yam2::FourMomentum();
-
-const auto input =
-        yam2::mkInput(a1, a2, ptmiss, m_invis, {}, mY);
-
+const auto input = yam2::mkInput(a1, a2, ptmiss, m_invis, {}, mY);
 const auto m2sol = yam2::m2Cons(input);
 ```
 
-See [`m2cons.cc`](./examples/m2cons.cc) for a more complete example code.
-
-It has also been used in the study of the tau decay to lepton + invisible particle(s) at Belle II. See [arXiv:2106.16236](https://arxiv.org/abs/2106.16236). At Belle II, the center-of-mass energy (`sqrt_s`) and the three-momenta of the overall system are fixed for all events. Therefore, one can add more constraints to the invisible particle momenta.
+At lepton colliders, additional constraints can be added using sqrt(s) and longitudinal momentum:
 
 ``` c++
-const auto zero = yam2::FourMomentum();
-
-const auto input =
-        yam2::mkInput(a1, a2, ptmiss, m_invis, {}, sqrt_s, {pz});
-
+const auto input = yam2::mkInput(a1, a2, ptmiss, m_invis, {}, sqrt_s, {pz});
 const auto m2sol = yam2::m2Cons(input);
 ```
 
-Here, `pz` is the longitudinal momentum of the total system. In the case of Belle II, it is 3 GeV. `sqrt_s` is 10.58 GeV. More complete example code is given in [YAM2-ditau](https://github.com/cbpark/YAM2-ditau).
+Here, `pz` is the longitudinal momentum of the total system. See [examples/m2cons.cc](./examples/m2cons.cc) and [YAM2-ditau](https://github.com/cbpark/YAM2-ditau).
+
+---
 
 ## Citation
 
-If you use YAM2 for your analysis, please cite the paper given below:
+If you use YAM2 in your work, please cite:
 
-``` bibtex
+```bibtex
 @article{Park:2020bsu,
-    author = "Park, Chan Beom",
-    title = "{YAM2: Yet another library for the $M_2$ variables using sequential quadratic programming}",
-    eprint = "2007.15537",
-    archivePrefix = "arXiv",
-    primaryClass = "hep-ph",
-    reportNumber = "CTPU-PTC-20-18",
-    doi = "10.1016/j.cpc.2021.107967",
-    journal = "Comput. Phys. Commun.",
-    volume = "264",
-    pages = "107967",
-    year = "2021"
+  author       = "Park, Chan Beom",
+  title        = "{YAM2: Yet another library for the $M_2$ variables using sequential quadratic programming}",
+  eprint       = "2007.15537",
+  archivePrefix= "arXiv",
+  primaryClass = "hep-ph",
+  doi          = "10.1016/j.cpc.2021.107967",
+  journal      = "Comput. Phys. Commun.",
+  volume       = "264",
+  pages        = "107967",
+  year         = "2021"
 }
 ```
 
+Once published, please also cite the **YAM2 2.0 paper**.
+
+---
+
 ## References
 
-* C.B. Park, YAM2: Yet another library for the M2 variables using sequential quadratic programming, [Comput. Phys. Commun. 264 (2021) 107967](https://doi.org/10.1016/j.cpc.2021.107967), [arXiv:2007.15537](https://arxiv.org/abs/2007.15537).
-
-* W.S. Cho et al, On-shell constrained M<sub>2</sub>​ variables with applications to mass measurements and topology disambiguation, JHEP 08 (2014) 070, [arXiv:1401.1449](https://arxiv.org/abs/1401.1449), [GitHub repository](https://github.com/hepkosmos/OptiMass).
-
-* W.S. Cho et al, OPTIMASS: A Package for the Minimization of Kinematic Mass Functions with Constraints, JHEP 01 (2016) 026, [arXiv:1508.00589](https://arxiv.org/abs/1508.00589).
-
-* J. Nocedal and S. Wright, [Numerical Optimization](https://link.springer.com/book/10.1007/978-0-387-40065-5), Springer, 2006.
+- C.B. Park, *YAM2: Yet another library for the M₂ variables using sequential quadratic programming*, Comput. Phys. Commun. 264 (2021) 107967, [arXiv:2007.15537](https://arxiv.org/abs/2007.15537).
+- W.S. Cho et al., *On-shell constrained M₂ variables with applications to mass measurements and topology disambiguation*, JHEP 08 (2014) 070, [arXiv:1401.1449](https://arxiv.org/abs/1401.1449).
+- W.S. Cho et al., *OPTIMASS: A Package for the Minimization of Kinematic Mass Functions with Constraints*, JHEP 01 (2016) 026, [arXiv:1508.00589](https://arxiv.org/abs/1508.00589).
+- J. Nocedal and S. Wright, *Numerical Optimization*, Springer, 2006.
