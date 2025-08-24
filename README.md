@@ -211,18 +211,19 @@ Here, `pz` is the longitudinal momentum of the total system. See [examples/m2con
 
 If you use YAM2 in your work, please cite:
 
-```bibtex
+``` bibtex
 @article{Park:2020bsu,
-  author       = "Park, Chan Beom",
-  title        = "{YAM2: Yet another library for the $M_2$ variables using sequential quadratic programming}",
-  eprint       = "2007.15537",
-  archivePrefix= "arXiv",
-  primaryClass = "hep-ph",
-  doi          = "10.1016/j.cpc.2021.107967",
-  journal      = "Comput. Phys. Commun.",
-  volume       = "264",
-  pages        = "107967",
-  year         = "2021"
+    author = "Park, Chan Beom",
+    title = "{YAM2: Yet another library for the M2 variables using sequential quadratic programming}",
+    eprint = "2007.15537",
+    archivePrefix = "arXiv",
+    primaryClass = "hep-ph",
+    reportNumber = "CTPU-PTC-20-18",
+    doi = "10.1016/j.cpc.2021.107967",
+    journal = "Comput. Phys. Commun.",
+    volume = "264",
+    pages = "107967",
+    year = "2021"
 }
 ```
 
