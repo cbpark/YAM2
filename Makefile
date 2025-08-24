@@ -76,10 +76,12 @@ endif
 
 dist:
 	@$(MKDIR) $(ARCHIVE)
-	@$(CP) LICENSE Makefile README.md $(ARCHIVE)
-	@$(MKDIR) $(ARCHIVE)/{examples,src}
-	@$(CP) examples/*.cc $(ARCHIVE)/examples
-	@$(CP) src/*.cc src/*.h $(ARCHIVE)/src
+	@$(CP) CMakeLists.txt LICENSE Makefile README.md $(ARCHIVE)
+	@$(MKDIR) $(ARCHIVE)/{cmake/Modules,examples,include/YAM2,src}
+	@$(CP) cmake/Modules/*.cmake $(ARCHIVE)/cmake/Modules
+	@$(CP) examples/CMakeLists.txt examples/*.cc $(ARCHIVE)/examples
+	@$(CP) include/YAM2/*.h $(ARCHIVE)/include/YAM2
+	@$(CP) src/CMakeLists.txt src/*.cc src/*.h $(ARCHIVE)/src
 	@tar -czf $(ARCHIVE).tar.gz $(ARCHIVE)
 	@$(RM) -r $(ARCHIVE)
 	@echo dist tarball created: $(ARCHIVE).tar.gz
