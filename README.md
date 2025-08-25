@@ -61,7 +61,7 @@ make
 
 This generates a static library `lib/libYAM2.a`.
 
-If NLopt is installed in a non-standard location (e.g., `/usr/local`):
+If NLopt is installed in a non-standard location (e.g., `/usr/local`), you can specify its path as a prefix to the `make` command:
 
 ```
 NLOPT=/usr/local make
@@ -70,7 +70,7 @@ NLOPT=/usr/local make
 To install headers and libraries (e.g., into `/usr/local`):
 
 ```
-DESTDIR=/usr/local make install
+sudo DESTDIR=/usr/local make install
 ```
 
 ---
@@ -132,7 +132,7 @@ std::optional<M2Solution> m2CCSQP(
 
 This function computes M<sub>2CC</sub> using the sequential quadratic programming (SQP) method.
 
-The return type is `std::optional` of [`M2Solution`](./include/YAM2/yam2.h). If the computation fails due to invalid input or failure to converge to a minimum, the function returns an empty `std::optional`. Otherwise, it contains a valid `M2Solution` object.
+The return type is `std::optional` of [`M2Solution`](./include/YAM2/yam2.h) to safely handle cases where the calculation does not succeed. You should always check if the `optional` contains a value before accessing it. If the computation fails due to invalid input or failure to converge to a minimum, the function returns an empty `std::optional`. Otherwise, it contains a valid `M2Solution` object.
 
 Once the M<sub>2</sub> calculation succeeds, the result can be accessed using the `value()` method of `std::optional`.
 
@@ -145,8 +145,10 @@ if (!m2sol) {
     std::cerr << "Failed.\n";
 } else {
     std::cout << "M2CC = " << m2sol.value().m2() << '\n'
-              << "k1: " << m2sol.value().k1() << '\n'
-              << "k2: " << m2sol.value().k2() << '\n';
+              << "Invisible particle 1 momentum (k1): "
+              << m2sol.value().k1() << '\n'
+              << "Invisible particle 1 momentum (k1): "
+              << m2sol.value().k2() << '\n';
 }
 ```
 
@@ -196,7 +198,7 @@ const auto input = yam2::mkInput(a1, a2, ptmiss, m_invis, {}, mY);
 const auto m2sol = yam2::m2Cons(input);
 ```
 
-At lepton colliders, additional constraints can be added using sqrt(s) and longitudinal momentum:
+Here, `mY` is the on-shell mass of the parent particle in the _antler_ decay topology. At lepton colliders, `sqrt_s` (the center-of-mass energy) and `pz` (the total longitudinal momentum) can be used as additional constraints.
 
 ``` c++
 const auto input = yam2::mkInput(a1, a2, ptmiss, m_invis, {}, sqrt_s, {pz});
@@ -227,7 +229,7 @@ If you use YAM2 in your work, please cite:
 }
 ```
 
-Once published, please also cite the **YAM2 2.0 paper**.
+Once the YAM2 2.0 paper is published, its BibTeX entry will be added here. In the meantime, please cite the original YAM2 paper.
 
 ---
 
